@@ -74,21 +74,49 @@
   .filtros{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap}
   .filtros select,.filtros input{width:auto;flex:1;min-width:130px}
   .modal-fundo{position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;z-index:50;padding:16px}
-  .modal{background:#fff;border-radius:16px;width:100%;max-width:440px;padding:26px;max-height:92vh;overflow-y:auto}
+  .modal{background:#fff;border-radius:16px;width:100%;max-width:460px;max-height:92vh;overflow-y:auto;padding:26px}
   .modal h3{font-size:18px;margin-bottom:18px}
   .modal .linha-botoes{display:flex;gap:10px;margin-top:22px}
   .btn-sec{background:var(--cinza-claro);color:var(--texto);flex:1;padding:12px;font-weight:600}
   .btn-sec:hover{background:#e5e7eb}
   .modal .btn-principal{flex:1}
-  .seg{display:flex;gap:8px;margin-bottom:16px}
-  .seg button{flex:1;padding:10px;background:var(--cinza-claro);color:var(--cinza);font-weight:600}
-  .seg button.sel-rec{background:var(--verde-claro);color:var(--verde)}
-  .seg button.sel-desp{background:var(--vermelho-claro);color:var(--vermelho)}
-  .grade-cat{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
-  .cat-card{background:var(--card);border-radius:12px;box-shadow:var(--sombra);padding:16px;display:flex;align-items:center;gap:12px}
-  .cat-card .bolinha{width:42px;height:42px;font-size:20px}
-  .cat-card .nome{font-weight:600;flex:1}
-  .cat-card button{background:none;color:var(--cinza);padding:4px}
+  /* ---- Modal de lançamento (layout aprimorado) ---- */
+  .modal-lanc{padding:0;max-width:480px;display:flex;flex-direction:column;overflow:hidden}
+  .modal-lanc .topo-modal{display:flex;align-items:center;justify-content:space-between;padding:20px 24px 16px;border-bottom:1px solid var(--borda);flex-shrink:0}
+  .modal-lanc .topo-modal h3{margin:0;font-size:19px}
+  .modal-lanc .fechar{background:none;color:var(--cinza);font-size:22px;line-height:1;padding:4px 8px;border-radius:8px}
+  .modal-lanc .fechar:hover{background:var(--cinza-claro);color:var(--texto)}
+  .modal-lanc .corpo-modal{padding:20px 24px;overflow-y:auto;flex:1}
+  .modal-lanc .rodape-modal{padding:16px 24px;border-top:1px solid var(--borda);display:flex;gap:10px;background:#fff;flex-shrink:0}
+  .modal-lanc .rodape-modal button{flex:1;padding:13px}
+  .linha-2col{display:flex;gap:12px}
+  .linha-2col .campo{flex:1;margin-bottom:0}
+  .campo-com-prefixo{position:relative}
+  .campo-com-prefixo .prefixo{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--cinza);font-weight:600;font-size:15px;pointer-events:none}
+  .campo-com-prefixo input{padding-left:38px}
+  .bloco{margin-bottom:18px}
+  .seg{display:flex;gap:0;margin-bottom:20px;background:var(--cinza-claro);border-radius:10px;padding:4px}
+  .seg button{flex:1;padding:11px;background:none;color:var(--cinza);font-weight:600;border-radius:8px;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:6px}
+  .seg button.sel-rec{background:#fff;color:var(--verde);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+  .seg button.sel-desp{background:#fff;color:var(--vermelho);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+  .grade-cat{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px;align-items:start}
+  .cat-grupo{background:var(--card);border-radius:12px;box-shadow:var(--sombra);overflow:hidden}
+  .cat-card{padding:14px 16px;display:flex;align-items:center;gap:12px}
+  .cat-card .bolinha{width:42px;height:42px;font-size:20px;flex-shrink:0}
+  .cat-card .nome{font-weight:600;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis}
+  .cat-card .acoes-cat{display:flex;gap:2px;flex-shrink:0}
+  .cat-card button{background:none;color:var(--cinza);padding:4px;font-size:15px}
+  .cat-card button:hover{color:var(--vermelho)}
+  .subcats{border-top:1px solid var(--borda);background:#fafbfc}
+  .subcat-item{display:flex;align-items:center;gap:10px;padding:9px 16px 9px 26px;border-bottom:1px solid var(--borda)}
+  .subcat-item:last-child{border-bottom:none}
+  .subcat-item .seta{color:var(--cinza);font-size:13px;flex-shrink:0}
+  .subcat-item .nome{flex:1;min-width:0;font-size:14px;overflow:hidden;text-overflow:ellipsis}
+  .subcat-item .acoes-cat{flex-shrink:0;display:flex;gap:2px}
+  .subcat-item button{background:none;color:var(--cinza);padding:3px;font-size:13px}
+  .subcat-item button:hover{color:var(--vermelho)}
+  .btn-add-sub{display:block;width:100%;text-align:left;background:none;color:var(--verde);padding:9px 16px 9px 26px;font-weight:600;font-size:13px;border-top:1px solid var(--borda)}
+  .btn-add-sub:hover{background:var(--verde-claro)}
   .grafico-wrap{background:var(--card);border-radius:12px;box-shadow:var(--sombra);padding:20px;margin-bottom:20px}
   .grafico-wrap h3{font-size:15px;margin-bottom:16px}
   .barra-cat{margin-bottom:12px}
@@ -196,35 +224,62 @@
 </div>
 
 <div id="modal-lancamento" class="modal-fundo oculto">
-  <div class="modal">
-    <h3 id="titulo-modal-lanc">Novo lançamento</h3>
-    <div class="seg"><button id="seg-receita">Receita</button><button id="seg-despesa">Despesa</button></div>
-    <div class="campo"><label>Descrição</label><input id="lanc-desc" placeholder="Ex: Mercado, Salário…"></div>
-    <div class="campo"><label>Valor (R$)</label><input id="lanc-valor" type="number" step="0.01" placeholder="0,00"></div>
-    <div class="campo"><label>Data de competência</label><input id="lanc-data" type="date"></div>
-    <div class="campo"><label>Data de vencimento</label><input id="lanc-vencimento" type="date"></div>
-    <div class="campo" id="campo-repeticao"><label>Repetição</label>
-      <select id="lanc-repeticao">
-        <option value="unico">Lançamento único</option>
-        <option value="recorrente">Recorrente (mensal — valor cheio todo mês)</option>
-        <option value="parcelado">Parcelado (dividir valor em parcelas)</option>
-      </select>
-      <div id="campo-qtd-meses" class="oculto" style="margin-top:10px">
-        <label id="label-qtd-meses">Quantos meses</label>
-        <select id="lanc-parcelas"></select>
-      </div>
-      <div id="parcelas-info" style="font-size:12px;color:#6b7280;margin-top:6px"></div>
+  <div class="modal modal-lanc">
+    <div class="topo-modal">
+      <h3 id="titulo-modal-lanc">Novo lançamento</h3>
+      <button type="button" class="fechar" id="lanc-fechar" title="Fechar">✕</button>
     </div>
-    <div class="campo"><label>Situação</label><select id="lanc-status"><option value="pendente">Pendente (ainda não pago)</option><option value="pago">Pago / quitado</option></select></div>
-    <div class="campo"><label>Conta</label><select id="lanc-conta"></select></div>
-    <div class="campo"><label>Categoria</label><select id="lanc-categoria"></select></div>
-    <div class="campo"><label id="lanc-contato-label">Fornecedor / Cliente <span style="font-weight:400">(opcional)</span></label>
-      <div style="display:flex;gap:8px">
-        <select id="lanc-contato" style="flex:1"></select>
-        <button type="button" class="btn-sec" id="lanc-novo-contato" style="flex:0 0 auto;width:auto;padding:10px 14px">+ Novo</button>
+    <div class="corpo-modal">
+      <div class="seg"><button id="seg-receita">Receita</button><button id="seg-despesa">Despesa</button></div>
+
+      <div class="bloco campo"><label id="lanc-contato-label">Fornecedor / Cliente <span style="font-weight:400">(opcional)</span></label>
+        <div style="display:flex;gap:8px">
+          <select id="lanc-contato" style="flex:1"></select>
+          <button type="button" class="btn-sec" id="lanc-novo-contato" style="flex:0 0 auto;width:auto;padding:10px 14px">+ Novo</button>
+        </div>
+      </div>
+
+      <div class="bloco">
+        <div class="campo"><label>Descrição</label><input id="lanc-desc" placeholder="Ex: Mercado, Salário…"></div>
+      </div>
+
+      <div class="bloco">
+        <div class="linha-2col">
+          <div class="campo"><label>Valor</label>
+            <div class="campo-com-prefixo"><span class="prefixo">R$</span><input id="lanc-valor" type="number" step="0.01" placeholder="0,00"></div>
+          </div>
+          <div class="campo"><label>Situação</label><select id="lanc-status"><option value="pendente">Pendente</option><option value="pago">Pago / quitado</option></select></div>
+        </div>
+      </div>
+
+      <div class="bloco">
+        <div class="linha-2col">
+          <div class="campo"><label>Competência</label><input id="lanc-data" type="date"></div>
+          <div class="campo"><label>Vencimento</label><input id="lanc-vencimento" type="date"></div>
+        </div>
+      </div>
+
+      <div class="bloco campo" id="campo-repeticao"><label>Repetição</label>
+        <select id="lanc-repeticao">
+          <option value="unico">Lançamento único</option>
+          <option value="recorrente">Recorrente (mensal — valor cheio todo mês)</option>
+          <option value="parcelado">Parcelado (dividir valor em parcelas)</option>
+        </select>
+        <div id="campo-qtd-meses" class="oculto" style="margin-top:10px">
+          <label id="label-qtd-meses">Quantos meses</label>
+          <select id="lanc-parcelas"></select>
+        </div>
+        <div id="parcelas-info" style="font-size:12px;color:#6b7280;margin-top:6px"></div>
+      </div>
+
+      <div class="bloco" style="margin-bottom:0">
+        <div class="linha-2col">
+          <div class="campo"><label>Conta</label><select id="lanc-conta"></select></div>
+          <div class="campo"><label>Categoria</label><select id="lanc-categoria"></select></div>
+        </div>
       </div>
     </div>
-    <div class="linha-botoes"><button class="btn-sec" id="lanc-cancelar">Cancelar</button><button class="btn-principal" id="lanc-salvar">Salvar</button></div>
+    <div class="rodape-modal"><button class="btn-sec" id="lanc-cancelar">Cancelar</button><button class="btn-principal" id="lanc-salvar">Salvar</button></div>
   </div>
 </div>
 
@@ -244,7 +299,7 @@
   <div class="modal">
     <h3 id="titulo-modal-contato">Novo contato</h3>
     <div class="campo"><label>Nome</label><input id="contato-nome" placeholder="Ex: Mercado Silva, João da Silva"></div>
-    <div class="campo"><label>Tipo</label><select id="contato-tipo"><option value="fornecedor">Fornecedor</option><option value="cliente">Cliente</option></select></div>
+    <div class="campo"><label>Tipo</label><select id="contato-tipo"><option value="fornecedor">Fornecedor</option><option value="cliente">Cliente</option><option value="ambos">Ambos (fornecedor e cliente)</option></select></div>
     <div class="campo"><label>CPF / CNPJ <span style="font-weight:400;color:#6b7280">(opcional)</span></label><input id="contato-doc" placeholder="000.000.000-00 ou 00.000.000/0000-00"></div>
     <div id="contato-erro" class="erro oculto"></div>
     <div class="linha-botoes"><button class="btn-sec" id="contato-cancelar">Cancelar</button><button class="btn-principal" id="contato-salvar">Salvar</button></div>
@@ -255,9 +310,13 @@
   <div class="modal">
     <h3 id="titulo-modal-cat">Nova categoria</h3>
     <div class="campo"><label>Nome</label><input id="cat-nome" placeholder="Ex: Alimentação"></div>
+    <div class="campo"><label>Tipo</label><select id="cat-tipo"><option value="despesa">Despesa</option><option value="receita">Receita</option></select></div>
+    <div class="campo" id="campo-cat-pai"><label>Categoria principal</label>
+      <select id="cat-pai"><option value="">— Nenhuma (categoria principal)</option></select>
+      <div style="font-size:12px;color:#6b7280;margin-top:6px">Escolha uma categoria para transformar esta em subcategoria dela.</div>
+    </div>
     <div class="campo"><label>Ícone (emoji)</label><input id="cat-icone" placeholder="🍔" maxlength="2"></div>
     <div class="campo"><label>Cor</label><input id="cat-cor" type="color" value="#119E3F" style="height:46px;padding:4px"></div>
-    <div class="campo"><label>Tipo</label><select id="cat-tipo"><option value="despesa">Despesa</option><option value="receita">Receita</option></select></div>
     <div class="linha-botoes"><button class="btn-sec" id="cat-cancelar">Cancelar</button><button class="btn-principal" id="cat-salvar">Salvar</button></div>
   </div>
 </div>
@@ -534,6 +593,13 @@ function renderResumo() {
 function categoriaPorId(id) {
   return categorias.find((c) => c.id === id) || { nome: "Sem categoria", icone: "❓", cor: "#6b7280" };
 }
+function nomeCategoriaCompletoTexto(c) {
+  if (c.paiId) {
+    const pai = categorias.find((x) => x.id === c.paiId);
+    if (pai) return `${pai.nome} › ${c.nome}`;
+  }
+  return c.nome;
+}
 function contaPorId(id) { return contas.find((c) => c.id === id); }
 
 function itemHTML(l) {
@@ -545,7 +611,7 @@ function itemHTML(l) {
   const meta = [
     rotuloData(l.data),
     l.vencimento ? "vence " + rotuloData(l.vencimento) : null,
-    cat.nome,
+    cat.paiId ? nomeCategoriaCompletoTexto(cat) : cat.nome,
     conta ? (conta.icone || "🏦") + " " + conta.nome : null,
     contato ? (l.tipo === "receita" ? "🧑 " : "🏭 ") + contato.nome : null,
   ].filter(Boolean).join(" · ");
@@ -600,11 +666,14 @@ $("btn-novo-lancamento").onclick = () => abrirModalLanc();
 $("seg-receita").onclick = () => setTipoLanc("receita");
 $("seg-despesa").onclick = () => setTipoLanc("despesa");
 $("lanc-cancelar").onclick = () => $("modal-lancamento").classList.add("oculto");
+$("lanc-fechar").onclick = () => $("modal-lancamento").classList.add("oculto");
 
 function setTipoLanc(t) {
   tipoLancamentoAtual = t;
   $("seg-receita").className = t === "receita" ? "sel-rec" : "";
   $("seg-despesa").className = t === "despesa" ? "sel-desp" : "";
+  $("seg-receita").innerHTML = (t === "receita" ? "✓ " : "") + "Receita";
+  $("seg-despesa").innerHTML = (t === "despesa" ? "✓ " : "") + "Despesa";
   preencherSelectsCategoria();
   ajustarOpcoesRepeticao();
   atualizarVisibilidadeRepeticao();
@@ -892,7 +961,8 @@ function tipoContatoDoLancamento() {
 
 function preencherSelectContatoModal() {
   const tipoC = tipoContatoDoLancamento();
-  const lista = contatos.filter((c) => c.tipo === tipoC).sort((a, b) => a.nome.localeCompare(b.nome));
+  // contatos do tipo certo OU marcados como "ambos" aparecem aqui
+  const lista = contatos.filter((c) => c.tipo === tipoC || c.tipo === "ambos").sort((a, b) => a.nome.localeCompare(b.nome));
   const atual = $("lanc-contato").value;
   $("lanc-contato-label").innerHTML =
     (tipoC === "cliente" ? "Cliente" : "Fornecedor") + ` <span style="font-weight:400">(opcional)</span>`;
@@ -915,14 +985,16 @@ function preencherSelectsContato() {
 function renderContatos() {
   const filtro = $("filtro-contato-tipo").value;
   let lista = [...contatos];
-  if (filtro !== "todos") lista = lista.filter((c) => c.tipo === filtro);
+  // "ambos" aparece tanto em Fornecedores quanto em Clientes
+  if (filtro !== "todos") lista = lista.filter((c) => c.tipo === filtro || c.tipo === "ambos");
   lista.sort((a, b) => a.nome.localeCompare(b.nome));
 
   $("lista-contatos").innerHTML = lista.length
     ? lista.map((c) => {
+        const ehAmbos = c.tipo === "ambos";
         const ehCliente = c.tipo === "cliente";
-        const icone = ehCliente ? "🧑" : "🏭";
-        const rotuloTipo = ehCliente ? "Cliente" : "Fornecedor";
+        const icone = ehAmbos ? "🔁" : (ehCliente ? "🧑" : "🏭");
+        const rotuloTipo = ehAmbos ? "Fornecedor e cliente" : (ehCliente ? "Cliente" : "Fornecedor");
         const meta = [rotuloTipo, c.doc ? escapar(c.doc) : null].filter(Boolean).join(" · ");
         return `<div class="item">
           <div class="bolinha">${icone}</div>
@@ -967,13 +1039,16 @@ $("contato-salvar").onclick = async () => {
     $("contato-erro").classList.remove("oculto");
     return;
   }
-  // Evita nomes duplicados do mesmo tipo (o objetivo do cadastro é padronizar)
+  // Evita nomes duplicados quando os papéis se sobrepõem ("ambos" cobre os dois)
+  const papeis = (t) => (t === "ambos" ? ["fornecedor", "cliente"] : [t]);
+  const meus = papeis(tipo);
   const dup = contatos.find(
-    (c) => c.id !== editandoId.contato && c.tipo === tipo &&
-      c.nome.trim().toLowerCase() === nome.toLowerCase()
+    (c) => c.id !== editandoId.contato &&
+      c.nome.trim().toLowerCase() === nome.toLowerCase() &&
+      papeis(c.tipo).some((p) => meus.includes(p))
   );
   if (dup) {
-    $("contato-erro").textContent = "Já existe um contato com esse nome neste tipo.";
+    $("contato-erro").textContent = "Já existe um contato com esse nome para este papel.";
     $("contato-erro").classList.remove("oculto");
     return;
   }
@@ -995,7 +1070,7 @@ $("contato-salvar").onclick = async () => {
     // volta ao lançamento e seleciona o contato criado
     contatoVoltarParaLanc = false;
     preencherSelectContatoModal();
-    if (dados.tipo === tipoContatoDoLancamento()) $("lanc-contato").value = idSalvo;
+    if (dados.tipo === tipoContatoDoLancamento() || dados.tipo === "ambos") $("lanc-contato").value = idSalvo;
   }
   renderTudo();
 };
@@ -1016,46 +1091,142 @@ $("lanc-novo-contato").onclick = () => abrirModalContato(null, true);
 // ============================================================
 //  CATEGORIAS
 // ============================================================
+function nomeCategoriaCompleto(c) {
+  if (c.paiId) {
+    const pai = categorias.find((x) => x.id === c.paiId);
+    if (pai) return `${pai.icone} ${pai.nome} › ${c.nome}`;
+  }
+  return `${c.icone} ${c.nome}`;
+}
+
+function opcoesCategoriaAgrupadas(tipo) {
+  const principais = categorias
+    .filter((c) => c.tipo === tipo && !c.paiId)
+    .sort((a, b) => a.nome.localeCompare(b.nome));
+  let html = "";
+  for (const p of principais) {
+    const filhas = categorias
+      .filter((c) => c.paiId === p.id)
+      .sort((a, b) => a.nome.localeCompare(b.nome));
+    html += `<option value="${p.id}">${p.icone} ${escapar(p.nome)}</option>`;
+    for (const f of filhas) {
+      html += `<option value="${f.id}">&nbsp;&nbsp;&nbsp;↳ ${f.icone} ${escapar(f.nome)}</option>`;
+    }
+  }
+  return html;
+}
+
 function preencherSelectsCategoria() {
-  const doTipo = categorias.filter((c) => c.tipo === tipoLancamentoAtual);
-  $("lanc-categoria").innerHTML = doTipo.map((c) => `<option value="${c.id}">${c.icone} ${c.nome}</option>`).join("");
+  $("lanc-categoria").innerHTML = opcoesCategoriaAgrupadas(tipoLancamentoAtual);
+  const todas = [...categorias].sort((a, b) => a.nome.localeCompare(b.nome));
   $("filtro-categoria").innerHTML =
     `<option value="todas">Todas categorias</option>` +
-    categorias.map((c) => `<option value="${c.id}">${c.icone} ${c.nome}</option>`).join("");
+    todas.map((c) => `<option value="${c.id}">${nomeCategoriaCompleto(c)}</option>`).join("");
 }
 
 function renderCategorias() {
-  $("grade-categorias").innerHTML = categorias.length
-    ? categorias.map((c) => `
+  const principais = categorias
+    .filter((c) => !c.paiId)
+    .sort((a, b) => (a.tipo === b.tipo ? a.nome.localeCompare(b.nome) : a.tipo.localeCompare(b.tipo)));
+
+  if (!principais.length) {
+    $("grade-categorias").innerHTML = `<div class="vazio">Nenhuma categoria.</div>`;
+    return;
+  }
+
+  $("grade-categorias").innerHTML = principais.map((c) => {
+    const filhas = categorias
+      .filter((s) => s.paiId === c.id)
+      .sort((a, b) => a.nome.localeCompare(b.nome));
+    const subsHTML = filhas.map((s) => `
+        <div class="subcat-item">
+          <span class="seta">↳</span>
+          <div class="bolinha" style="background:${s.cor}22;width:30px;height:30px;font-size:15px;border-radius:50%;display:flex;align-items:center;justify-content:center">${s.icone}</div>
+          <div class="nome">${escapar(s.nome)}</div>
+          <div class="acoes-cat">
+            <button onclick="editarCategoria('${s.id}')" title="Editar">✏️</button>
+            <button onclick="excluirCategoria('${s.id}')" title="Excluir">🗑️</button>
+          </div>
+        </div>`).join("");
+    return `
+      <div class="cat-grupo">
         <div class="cat-card">
           <div class="bolinha" style="background:${c.cor}22">${c.icone}</div>
           <div class="nome">${escapar(c.nome)}<div style="font-size:11px;color:#6b7280;font-weight:400">${c.tipo}</div></div>
-          <button onclick="editarCategoria('${c.id}')">✏️</button>
-          <button onclick="excluirCategoria('${c.id}')">🗑️</button>
-        </div>`).join("")
-    : `<div class="vazio">Nenhuma categoria.</div>`;
+          <div class="acoes-cat">
+            <button onclick="editarCategoria('${c.id}')" title="Editar">✏️</button>
+            <button onclick="excluirCategoria('${c.id}')" title="Excluir">🗑️</button>
+          </div>
+        </div>
+        ${filhas.length ? `<div class="subcats">${subsHTML}</div>` : ""}
+        <button class="btn-add-sub" onclick="novaSubcategoria('${c.id}')">+ Subcategoria</button>
+      </div>`;
+  }).join("");
 }
 
 $("btn-nova-categoria").onclick = () => abrirModalCat();
 $("cat-cancelar").onclick = () => $("modal-categoria").classList.add("oculto");
 
-function abrirModalCat(cat = null) {
+// abre o modal já com o pai pré-selecionado para criar uma subcategoria
+window.novaSubcategoria = (paiId) => {
+  const pai = categorias.find((c) => c.id === paiId);
+  abrirModalCat(null, pai);
+};
+
+function preencherSelectPaiCategoria(tipo, ignorarId) {
+  const principais = categorias
+    .filter((c) => c.tipo === tipo && !c.paiId && c.id !== ignorarId)
+    .sort((a, b) => a.nome.localeCompare(b.nome));
+  $("cat-pai").innerHTML =
+    `<option value="">— Nenhuma (categoria principal)</option>` +
+    principais.map((c) => `<option value="${c.id}">${c.icone} ${escapar(c.nome)}</option>`).join("");
+}
+
+function abrirModalCat(cat = null, paiPreSel = null) {
   editandoId.cat = cat ? cat.id : null;
-  $("titulo-modal-cat").textContent = cat ? "Editar categoria" : "Nova categoria";
+  $("titulo-modal-cat").textContent = cat
+    ? "Editar categoria"
+    : paiPreSel ? "Nova subcategoria" : "Nova categoria";
+
+  // categoria que tem filhas não pode virar subcategoria
+  const temFilhas = cat ? categorias.some((c) => c.paiId === cat.id) : false;
+
+  const tipoInicial = cat ? cat.tipo : (paiPreSel ? paiPreSel.tipo : "despesa");
   $("cat-nome").value = cat ? cat.nome : "";
   $("cat-icone").value = cat ? cat.icone : "";
-  $("cat-cor").value = cat ? cat.cor : "#119E3F";
-  $("cat-tipo").value = cat ? cat.tipo : "despesa";
+  $("cat-cor").value = cat ? cat.cor : (paiPreSel ? paiPreSel.cor : "#119E3F");
+  $("cat-tipo").value = tipoInicial;
+
+  preencherSelectPaiCategoria(tipoInicial, cat ? cat.id : null);
+  $("cat-pai").value = cat ? (cat.paiId || "") : (paiPreSel ? paiPreSel.id : "");
+
+  // se a categoria já tem subcategorias, não deixa transformá-la em sub
+  $("campo-cat-pai").classList.toggle("oculto", temFilhas);
+
   $("modal-categoria").classList.remove("oculto");
 }
+
+// ao trocar o tipo, recarrega as opções de categoria-pai (sub só dentro do mesmo tipo)
+$("cat-tipo").addEventListener("change", () => {
+  preencherSelectPaiCategoria($("cat-tipo").value, editandoId.cat);
+  $("cat-pai").value = "";
+});
 
 $("cat-salvar").onclick = async () => {
   const nome = $("cat-nome").value.trim();
   const icone = $("cat-icone").value.trim() || "📦";
   const cor = $("cat-cor").value;
   const tipo = $("cat-tipo").value;
+  const paiId = $("campo-cat-pai").classList.contains("oculto") ? "" : ($("cat-pai").value || "");
   if (!nome) return alert("Digite o nome da categoria.");
-  const dados = { nome, icone, cor, tipo };
+
+  // a subcategoria herda o tipo da categoria-pai
+  let tipoFinal = tipo;
+  if (paiId) {
+    const pai = categorias.find((c) => c.id === paiId);
+    if (pai) tipoFinal = pai.tipo;
+  }
+  const dados = { nome, icone, cor, tipo: tipoFinal, paiId };
 
   if (editandoId.cat) {
     await col("categorias").doc(editandoId.cat).update(dados);
@@ -1071,11 +1242,24 @@ $("cat-salvar").onclick = async () => {
 
 window.editarCategoria = (id) => abrirModalCat(categorias.find((c) => c.id === id));
 window.excluirCategoria = async (id) => {
+  const filhas = categorias.filter((c) => c.paiId === id);
   const usada = lancamentos.some((l) => l.categoriaId === id);
-  if (usada && !confirm("Há lançamentos nesta categoria. Excluir mesmo assim?")) return;
-  if (!usada && !confirm("Excluir esta categoria?")) return;
+
+  if (filhas.length) {
+    if (!confirm(`Esta categoria tem ${filhas.length} subcategoria(s), que também serão excluídas. Continuar?`)) return;
+  } else if (usada) {
+    if (!confirm("Há lançamentos nesta categoria. Excluir mesmo assim?")) return;
+  } else {
+    if (!confirm("Excluir esta categoria?")) return;
+  }
+
+  // exclui as subcategorias junto
+  for (const f of filhas) {
+    await col("categorias").doc(f.id).delete();
+  }
   await col("categorias").doc(id).delete();
-  categorias = categorias.filter((c) => c.id !== id);
+  const idsRemovidos = new Set([id, ...filhas.map((f) => f.id)]);
+  categorias = categorias.filter((c) => !idsRemovidos.has(c.id));
   renderTudo();
 };
 
@@ -1101,7 +1285,9 @@ function renderRelatorios() {
 
   const porCat = {};
   doMes.filter((l) => l.tipo === "despesa").forEach((l) => {
-    porCat[l.categoriaId] = (porCat[l.categoriaId] || 0) + Number(l.valor);
+    const c = categoriaPorId(l.categoriaId);
+    const chave = c && c.paiId ? c.paiId : l.categoriaId; // agrupa subcategorias na categoria-pai
+    porCat[chave] = (porCat[chave] || 0) + Number(l.valor);
   });
   const entradas = Object.entries(porCat).sort((a, b) => b[1] - a[1]);
   const max = entradas.length ? entradas[0][1] : 1;
