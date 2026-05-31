@@ -132,7 +132,6 @@
     <button class="ativo" data-pagina="resumo">Resumo</button>
     <button data-pagina="lancamentos">Lançamentos</button>
     <button data-pagina="contas">Contas</button>
-    <button data-pagina="cartoes">Cartões</button>
     <button data-pagina="categorias">Categorias</button>
     <button data-pagina="relatorios">Relatórios</button>
   </nav>
@@ -168,11 +167,6 @@
       <div class="lista" id="lista-contas"></div>
     </div>
 
-    <div class="pagina" id="pagina-cartoes">
-      <div class="secao-titulo"><h2>Cartões de crédito</h2><button class="btn-add" id="btn-novo-cartao">+ Novo cartão</button></div>
-      <div class="lista" id="lista-cartoes"></div>
-    </div>
-
     <div class="pagina" id="pagina-categorias">
       <div class="secao-titulo"><h2>Categorias</h2><button class="btn-add" id="btn-nova-categoria">+ Nova</button></div>
       <div class="grade-cat" id="grade-categorias"></div>
@@ -198,7 +192,6 @@
     <div class="campo"><label>Situação</label><select id="lanc-status"><option value="pendente">Pendente (ainda não pago)</option><option value="pago">Pago / quitado</option></select></div>
     <div class="campo"><label>Conta</label><select id="lanc-conta"></select></div>
     <div class="campo"><label>Categoria</label><select id="lanc-categoria"></select></div>
-    <div class="campo" id="campo-cartao"><label>Cartão (opcional)</label><select id="lanc-cartao"><option value="">Nenhum / à vista</option></select></div>
     <div class="linha-botoes"><button class="btn-sec" id="lanc-cancelar">Cancelar</button><button class="btn-principal" id="lanc-salvar">Salvar</button></div>
   </div>
 </div>
@@ -223,17 +216,6 @@
     <div class="campo"><label>Cor</label><input id="cat-cor" type="color" value="#119E3F" style="height:46px;padding:4px"></div>
     <div class="campo"><label>Tipo</label><select id="cat-tipo"><option value="despesa">Despesa</option><option value="receita">Receita</option></select></div>
     <div class="linha-botoes"><button class="btn-sec" id="cat-cancelar">Cancelar</button><button class="btn-principal" id="cat-salvar">Salvar</button></div>
-  </div>
-</div>
-
-<div id="modal-cartao" class="modal-fundo oculto">
-  <div class="modal">
-    <h3 id="titulo-modal-cartao">Novo cartão</h3>
-    <div class="campo"><label>Nome do cartão</label><input id="cartao-nome" placeholder="Ex: Nubank"></div>
-    <div class="campo"><label>Limite (R$)</label><input id="cartao-limite" type="number" step="0.01" placeholder="0,00"></div>
-    <div class="campo"><label>Dia de fechamento da fatura</label><input id="cartao-fechamento" type="number" min="1" max="31" placeholder="Ex: 5"></div>
-    <div class="campo"><label>Cor</label><input id="cartao-cor" type="color" value="#820AD1" style="height:46px;padding:4px"></div>
-    <div class="linha-botoes"><button class="btn-sec" id="cartao-cancelar">Cancelar</button><button class="btn-principal" id="cartao-salvar">Salvar</button></div>
   </div>
 </div>
 
@@ -272,10 +254,9 @@ const db = firebase.firestore();
 let usuario = null;
 let lancamentos = [];
 let categorias = [];
-let cartoes = [];
 let contas = [];
 let tipoLancamentoAtual = "despesa";
-let editandoId = { lanc: null, cat: null, cartao: null, conta: null };
+let editandoId = { lanc: null, cat: null, conta: null };
 
 const CATEGORIAS_PADRAO = [
   { nome: "Alimentação", icone: "🍔", cor: "#d83933", tipo: "despesa" },
@@ -370,10 +351,9 @@ const col = (nome) => db.collection("usuarios").doc(usuario.uid).collection(nome
 
 async function carregarTudo() {
   $("carregando-inicial").classList.remove("oculto");
-  const [snapCat, snapLanc, snapCard, snapConta] = await Promise.all([
+  const [snapCat, snapLanc, snapConta] = await Promise.all([
     col("categorias").get(),
     col("lancamentos").get(),
-    col("cartoes").get(),
     col("contas").get(),
   ]);
 
@@ -384,7 +364,6 @@ async function carregarTudo() {
     if (!("vencimento" in dados)) dados.vencimento = "";
     return dados;
   });
-  cartoes = snapCard.docs.map((d) => ({ id: d.id, ...d.data() }));
   contas = snapConta.docs.map((d) => ({ id: d.id, ...d.data() }));
 
   if (categorias.length === 0) {
@@ -409,11 +388,9 @@ function renderTudo() {
   renderResumo();
   renderLancamentos();
   renderContas();
-  renderCartoes();
   renderCategorias();
   renderRelatorios();
   preencherSelectsCategoria();
-  preencherSelectCartao();
   preencherSelectsConta();
 }
 
@@ -508,12 +485,10 @@ function renderResumo() {
 function categoriaPorId(id) {
   return categorias.find((c) => c.id === id) || { nome: "Sem categoria", icone: "❓", cor: "#6b7280" };
 }
-function cartaoPorId(id) { return cartoes.find((c) => c.id === id); }
 function contaPorId(id) { return contas.find((c) => c.id === id); }
 
 function itemHTML(l) {
   const cat = categoriaPorId(l.categoriaId);
-  const card = l.cartaoId ? cartaoPorId(l.cartaoId) : null;
   const conta = l.contaId ? contaPorId(l.contaId) : null;
   const pago = l.status === "pago";
   const vencido = !pago && l.vencimento && l.vencimento < hoje();
@@ -522,7 +497,6 @@ function itemHTML(l) {
     l.vencimento ? "vence " + rotuloData(l.vencimento) : null,
     cat.nome,
     conta ? (conta.icone || "🏦") + " " + conta.nome : null,
-    card ? "💳 " + card.nome : null,
   ].filter(Boolean).join(" · ");
   const sinal = l.tipo === "receita" ? "+" : "−";
   const selo = pago
@@ -578,7 +552,6 @@ function setTipoLanc(t) {
   tipoLancamentoAtual = t;
   $("seg-receita").className = t === "receita" ? "sel-rec" : "";
   $("seg-despesa").className = t === "despesa" ? "sel-desp" : "";
-  $("campo-cartao").style.display = t === "despesa" ? "block" : "none";
   preencherSelectsCategoria();
 }
 
@@ -596,7 +569,6 @@ function abrirModalLanc(lanc = null) {
   preencherSelectsConta();
   if (lanc) $("lanc-categoria").value = lanc.categoriaId;
   if (lanc && lanc.contaId) $("lanc-conta").value = lanc.contaId;
-  $("lanc-cartao").value = lanc && lanc.cartaoId ? lanc.cartaoId : "";
   $("modal-lancamento").classList.remove("oculto");
 }
 
@@ -608,11 +580,10 @@ $("lanc-salvar").onclick = async () => {
   const status = $("lanc-status").value;
   const categoriaId = $("lanc-categoria").value;
   const contaId = $("lanc-conta").value;
-  const cartaoId = tipoLancamentoAtual === "despesa" ? $("lanc-cartao").value : "";
   if (!desc || !valor || valor <= 0 || !data) return alert("Preencha descrição, valor e data de competência.");
   if (!contaId) return alert("Selecione a conta.");
 
-  const dados = { descricao: desc, valor, data, vencimento, status, tipo: tipoLancamentoAtual, categoriaId, contaId, cartaoId };
+  const dados = { descricao: desc, valor, data, vencimento, status, tipo: tipoLancamentoAtual, categoriaId, contaId };
 
   if (editandoId.lanc) {
     await col("lancamentos").doc(editandoId.lanc).update(dados);
@@ -784,90 +755,6 @@ window.excluirCategoria = async (id) => {
   if (!usada && !confirm("Excluir esta categoria?")) return;
   await col("categorias").doc(id).delete();
   categorias = categorias.filter((c) => c.id !== id);
-  renderTudo();
-};
-
-// ============================================================
-//  CARTÕES
-// ============================================================
-function gastoNoCartao(cartaoId) {
-  const mes = mesDe(hoje());
-  return lancamentos
-    .filter((l) => l.cartaoId === cartaoId && l.tipo === "despesa" && mesDe(l.data) === mes)
-    .reduce((s, l) => s + Number(l.valor), 0);
-}
-
-function preencherSelectCartao() {
-  $("lanc-cartao").innerHTML =
-    `<option value="">Nenhum / à vista</option>` +
-    cartoes.map((c) => `<option value="${c.id}">💳 ${c.nome}</option>`).join("");
-}
-
-function renderCartoes() {
-  $("lista-cartoes").innerHTML = cartoes.length
-    ? cartoes.map((c) => {
-        const usado = gastoNoCartao(c.id);
-        const pct = c.limite > 0 ? Math.min(100, (usado / c.limite) * 100) : 0;
-        return `<div class="item">
-          <div class="bolinha" style="background:${c.cor}22">💳</div>
-          <div class="info">
-            <div class="titulo">${escapar(c.nome)}</div>
-            <div class="meta">Fatura atual: ${moeda(usado)} de ${moeda(c.limite)} · fecha dia ${c.fechamento || "-"}</div>
-            <div class="trilho" style="height:8px;background:#f3f4f6;border-radius:6px;margin-top:6px;overflow:hidden">
-              <div style="height:100%;width:${pct}%;background:${c.cor};border-radius:6px"></div>
-            </div>
-          </div>
-          <div class="acoes">
-            <button onclick="editarCartao('${c.id}')">✏️</button>
-            <button onclick="excluirCartao('${c.id}')">🗑️</button>
-          </div>
-        </div>`;
-      }).join("")
-    : `<div class="vazio">Nenhum cartão cadastrado.</div>`;
-}
-
-$("btn-novo-cartao").onclick = () => abrirModalCartao();
-$("cartao-cancelar").onclick = () => $("modal-cartao").classList.add("oculto");
-
-function abrirModalCartao(c = null) {
-  editandoId.cartao = c ? c.id : null;
-  $("titulo-modal-cartao").textContent = c ? "Editar cartão" : "Novo cartão";
-  $("cartao-nome").value = c ? c.nome : "";
-  $("cartao-limite").value = c ? c.limite : "";
-  $("cartao-fechamento").value = c ? c.fechamento : "";
-  $("cartao-cor").value = c ? c.cor : "#820AD1";
-  $("modal-cartao").classList.remove("oculto");
-}
-
-$("cartao-salvar").onclick = async () => {
-  const nome = $("cartao-nome").value.trim();
-  const limite = parseFloat($("cartao-limite").value) || 0;
-  const fechamento = parseInt($("cartao-fechamento").value) || null;
-  const cor = $("cartao-cor").value;
-  if (!nome) return alert("Digite o nome do cartão.");
-  const dados = { nome, limite, fechamento, cor };
-
-  if (editandoId.cartao) {
-    await col("cartoes").doc(editandoId.cartao).update(dados);
-    const i = cartoes.findIndex((c) => c.id === editandoId.cartao);
-    cartoes[i] = { id: editandoId.cartao, ...dados };
-  } else {
-    const ref = await col("cartoes").add(dados);
-    cartoes.push({ id: ref.id, ...dados });
-  }
-  $("modal-cartao").classList.add("oculto");
-  renderTudo();
-};
-
-window.editarCartao = (id) => abrirModalCartao(cartoes.find((c) => c.id === id));
-window.excluirCartao = async (id) => {
-  if (!confirm("Excluir este cartão? Os lançamentos ligados a ele continuarão existindo.")) return;
-  await col("cartoes").doc(id).delete();
-  cartoes = cartoes.filter((c) => c.id !== id);
-  for (const l of lancamentos.filter((l) => l.cartaoId === id)) {
-    await col("lancamentos").doc(l.id).update({ cartaoId: "" });
-    l.cartaoId = "";
-  }
   renderTudo();
 };
 
