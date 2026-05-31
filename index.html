@@ -6,14 +6,22 @@
 <title>Meu Controle Financeiro</title>
 <style>
   :root{
-    --verde:#15a34a; --verde-esc:#0f7a37; --verde-claro:#e9f7ee;
+    /* Azul como cor primária (antes era verde). Mantemos os nomes --verde*
+       como aliases para não quebrar o restante do CSS/JS, mas apontando para azul. */
+    --azul:#2563eb; --azul-esc:#1d4ed8; --azul-claro:#eaf1ff;
+    --verde:#2563eb; --verde-esc:#1d4ed8; --verde-claro:#eaf1ff;
+    /* verde "de verdade" para valores positivos/receitas */
+    --positivo:#15a34a; --positivo-esc:#0f7a37; --positivo-claro:#e9f7ee;
     --vermelho:#dc3545; --vermelho-claro:#fdecee;
-    --azul:#2563eb; --cinza:#64748b; --cinza-claro:#f1f5f9;
-    --borda:#e2e8f0; --texto:#0f172a; --bg:#f6f8fb;
+    --cinza:#64748b; --cinza-claro:#f1f5f9;
+    --borda:#e2e8f0; --texto:#0f172a; --bg:#f4f6fb;
     --card:#ffffff;
+    /* Sidebar escura */
+    --side-bg:#0f172a; --side-bg2:#1e293b; --side-txt:#cbd5e1;
+    --side-txt-fraco:#64748b; --side-ativo:#2563eb;
     --sombra:0 1px 2px rgba(15,23,42,.04),0 1px 3px rgba(15,23,42,.06);
     --sombra-md:0 4px 12px rgba(15,23,42,.08);
-    --grad-verde:linear-gradient(135deg,#15a34a 0%,#0f7a37 100%);
+    --grad-verde:linear-gradient(135deg,#2563eb 0%,#1d4ed8 100%);
   }
   *{box-sizing:border-box;margin:0;padding:0}
   body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
@@ -21,7 +29,7 @@
   button{font-family:inherit;cursor:pointer;border:none;border-radius:9px;font-size:14px;transition:all .15s ease}
   input,select{font-family:inherit;font-size:14px;padding:10px 12px;border:1px solid var(--borda);
     border-radius:9px;width:100%;background:#fff;color:var(--texto);transition:border-color .15s,box-shadow .15s}
-  input:focus,select:focus{outline:none;border-color:var(--verde);box-shadow:0 0 0 3px rgba(21,163,74,.12)}
+  input:focus,select:focus{outline:none;border-color:var(--azul);box-shadow:0 0 0 3px rgba(37,99,235,.14)}
   input::placeholder{color:#94a3b8}
   .oculto{display:none!important}
   #tela-login{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
@@ -35,33 +43,68 @@
   .link-troca{text-align:center;margin-top:18px;font-size:14px;color:var(--cinza)}
   .link-troca a{color:var(--verde);cursor:pointer;font-weight:600;text-decoration:none}
   .erro{background:var(--vermelho-claro);color:var(--vermelho);padding:10px 12px;border-radius:8px;font-size:13px;margin-bottom:16px;text-align:center}
-  #tela-app{min-height:100vh;display:flex;flex-direction:column}
-  header{background:var(--grad-verde);color:#fff;padding:14px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10;box-shadow:0 2px 8px rgba(15,122,55,.18)}
-  header .logo{font-size:18px;font-weight:700;letter-spacing:-.01em}
-  header .user{font-size:13px;opacity:.95;display:flex;align-items:center;gap:14px}
-  header .sair{background:rgba(255,255,255,.18);color:#fff;padding:7px 14px;font-size:13px;font-weight:600;backdrop-filter:blur(4px)}
-  header .sair:hover{background:rgba(255,255,255,.3)}
-  nav{background:#fff;border-bottom:1px solid var(--borda);display:flex;overflow-x:auto;position:sticky;top:50px;z-index:9;padding:0 12px}
-  nav button{background:none;padding:15px 18px;color:var(--cinza);font-weight:600;font-size:14px;border-bottom:2.5px solid transparent;border-radius:0;white-space:nowrap}
-  nav button:hover{color:var(--texto)}
-  nav button.ativo{color:var(--verde);border-bottom-color:var(--verde)}
-  main{flex:1;padding:24px 20px;max-width:1040px;margin:0 auto;width:100%}
+  /* ===================== LAYOUT COM SIDEBAR ===================== */
+  #tela-app{min-height:100vh;display:flex}
+  /* ---- Sidebar escura ---- */
+  .sidebar{width:248px;flex-shrink:0;background:var(--side-bg);color:var(--side-txt);
+    display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto;
+    border-right:1px solid #1e293b}
+  .sidebar .marca{padding:20px 20px 18px;display:flex;align-items:center;gap:11px;border-bottom:1px solid #1e293b}
+  .sidebar .marca .ic{width:38px;height:38px;border-radius:10px;background:var(--grad-verde);
+    display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0}
+  .sidebar .marca .nome{font-size:16px;font-weight:700;color:#fff;line-height:1.2;letter-spacing:-.01em}
+  .sidebar .marca .desc{font-size:11.5px;color:var(--side-txt-fraco);margin-top:1px}
+  .sidebar .menu{flex:1;padding:14px 12px}
+  .sidebar .grupo-rotulo{font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+    color:var(--side-txt-fraco);padding:14px 12px 7px}
+  .sidebar .item-menu{display:flex;align-items:center;gap:12px;width:100%;padding:10px 12px;border-radius:9px;
+    background:none;color:var(--side-txt);font-size:14px;font-weight:600;text-align:left;margin-bottom:2px;transition:all .14s}
+  .sidebar .item-menu .ic{width:20px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;opacity:.9}
+  .sidebar .item-menu:hover{background:var(--side-bg2);color:#fff}
+  .sidebar .item-menu.ativo{background:var(--side-ativo);color:#fff;box-shadow:0 2px 8px rgba(37,99,235,.4)}
+  .sidebar .item-menu.ativo .ic{opacity:1}
+  .sidebar .rodape-side{padding:14px;border-top:1px solid #1e293b}
+  .sidebar .user-mini{font-size:12.5px;color:var(--side-txt-fraco);margin-bottom:10px;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:0 4px}
+  .sidebar .sair{background:var(--side-bg2);color:#e2e8f0;width:100%;padding:10px;font-size:13px;font-weight:600;
+    display:flex;align-items:center;justify-content:center;gap:8px}
+  .sidebar .sair:hover{background:#334155;color:#fff}
+  /* ---- Área de conteúdo ---- */
+  .conteudo{flex:1;min-width:0;display:flex;flex-direction:column}
+  .topbar{background:#fff;border-bottom:1px solid var(--borda);padding:16px 28px;
+    display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:8}
+  .topbar .titulo-pg{font-size:20px;font-weight:700;letter-spacing:-.02em;display:flex;align-items:center;gap:9px}
+  .topbar .data-hoje{font-size:13px;color:var(--cinza)}
+  main{flex:1;padding:26px 28px;width:100%;margin:0 auto}
   .pagina{display:none}
   .pagina.ativa{display:block;animation:fade .25s}
   @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
-  .cards-resumo{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:16px;margin-bottom:28px}
-  .card{background:var(--card);border-radius:14px;box-shadow:var(--sombra);padding:20px;border:1px solid var(--borda)}
+  /* mobile: sidebar colapsa para barra superior simples */
+  @media(max-width:860px){
+    #tela-app{flex-direction:column}
+    .sidebar{width:100%;height:auto;position:static;flex-direction:column}
+    .sidebar .menu{display:flex;flex-wrap:wrap;gap:4px;padding:8px}
+    .sidebar .grupo-rotulo{display:none}
+    .sidebar .item-menu{width:auto;margin-bottom:0}
+    .sidebar .rodape-side{display:flex;align-items:center;justify-content:space-between;gap:10px}
+    .sidebar .user-mini{margin-bottom:0;flex:1}
+    .sidebar .sair{width:auto}
+  }
+  .cards-resumo{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:16px;margin-bottom:28px}
+  .card{background:var(--card);border-radius:14px;box-shadow:var(--sombra);padding:18px 20px;border:1px solid var(--borda);position:relative;overflow:hidden}
+  .card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--azul)}
   .card .rotulo{font-size:12.5px;color:var(--cinza);margin-bottom:8px;font-weight:500}
   .card .valor{font-size:24px;font-weight:700;letter-spacing:-.02em}
-  .card .valor.pos{color:var(--verde)}
+  .card .valor.pos{color:var(--positivo)}
   .card .valor.neg{color:var(--vermelho)}
   .card.destaque{background:var(--grad-verde);color:#fff;border:none;box-shadow:var(--sombra-md)}
+  .card.destaque::before{display:none}
   .card.destaque .rotulo{color:rgba(255,255,255,.88)}
   .card.destaque .valor{color:#fff}
   .secao-titulo{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;margin-top:8px}
   .secao-titulo h2{font-size:20px;font-weight:700;letter-spacing:-.02em}
-  .btn-add{background:var(--verde);color:#fff;padding:10px 18px;font-weight:600;display:flex;align-items:center;gap:6px;box-shadow:0 1px 3px rgba(21,163,74,.3)}
-  .btn-add:hover{background:var(--verde-esc);transform:translateY(-1px)}
+  .btn-add{background:var(--azul);color:#fff;padding:10px 18px;font-weight:600;display:flex;align-items:center;gap:6px;box-shadow:0 1px 3px rgba(37,99,235,.35)}
+  .btn-add:hover{background:var(--azul-esc);transform:translateY(-1px)}
   .lista{background:var(--card);border-radius:14px;box-shadow:var(--sombra);overflow:hidden;border:1px solid var(--borda)}
   .item{display:flex;align-items:center;gap:14px;padding:15px 18px;border-bottom:1px solid var(--borda);transition:background .12s}
   .item:hover{background:#fafbfc}
@@ -71,7 +114,7 @@
   .item .info .titulo{font-weight:600;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .item .info .meta{font-size:12px;color:var(--cinza);margin-top:1px}
   .item .montante{font-weight:700;font-size:15.5px;white-space:nowrap;letter-spacing:-.01em;font-variant-numeric:tabular-nums}
-  .item .montante.receita{color:var(--verde)}
+  .item .montante.receita{color:var(--positivo)}
   .item .montante.despesa{color:var(--vermelho)}
   .item .acoes{display:flex;gap:6px;align-items:center}
   .item .acoes button{background:none;color:var(--cinza);padding:6px 10px;font-size:12.5px;font-weight:600;border-radius:7px;border:1px solid var(--borda)}
@@ -79,7 +122,8 @@
   .item .acoes button.perigo:hover{color:var(--vermelho);background:var(--vermelho-claro);border-color:#f3c2c7}
   .vazio{padding:48px 20px;text-align:center;color:var(--cinza);font-size:14px}
   .filtros{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;align-items:center}
-  .filtros select,.filtros input{width:auto;flex:1;min-width:130px}
+  .filtros select,.filtros input{width:auto;flex:1;min-width:130px;border-radius:999px;padding:9px 16px;background:#fff;font-weight:600;color:var(--texto)}
+  .filtros select:hover{border-color:#cbd5e1}
   /* ---- Busca e ordenação ---- */
   .barra-busca{display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap}
   .campo-busca{position:relative;flex:1;min-width:200px}
@@ -93,19 +137,19 @@
   .resumo-filtro{font-size:13px;color:var(--cinza);margin-bottom:10px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
   .resumo-filtro b{color:var(--texto)}
   .resumo-filtro .neg{color:var(--vermelho)}
-  .resumo-filtro .pos{color:var(--verde)}
+  .resumo-filtro .pos{color:var(--positivo)}
   /* ---- Tabela de lançamentos ---- */
   .tabela-wrap{background:var(--card);border-radius:14px;box-shadow:var(--sombra);border:1px solid var(--borda);overflow-x:auto}
-  table.lancamentos{width:100%;border-collapse:collapse;font-size:14px;min-width:920px;table-layout:auto}
-  table.lancamentos thead th{position:sticky;top:0;background:#fafbfc;text-align:left;font-size:12px;font-weight:600;color:var(--cinza);text-transform:uppercase;letter-spacing:.03em;padding:12px 14px;border-bottom:1px solid var(--borda);white-space:nowrap;user-select:none}
+  table.lancamentos{width:100%;border-collapse:collapse;font-size:13.5px;min-width:1000px;table-layout:auto}
+  table.lancamentos thead th{position:sticky;top:0;background:#fafbfc;text-align:left;font-size:11px;font-weight:600;color:var(--cinza);text-transform:uppercase;letter-spacing:.02em;padding:11px 10px;border-bottom:1px solid var(--borda);white-space:nowrap;user-select:none}
   table.lancamentos thead th.ordenavel{cursor:pointer}
   table.lancamentos thead th.ordenavel:hover{color:var(--texto);background:#f1f5f9}
   table.lancamentos thead th .seta-ord{font-size:11px;margin-left:4px;opacity:.45}
-  table.lancamentos thead th.ativo{color:var(--verde)}
-  table.lancamentos thead th.ativo .seta-ord{opacity:1;color:var(--verde)}
+  table.lancamentos thead th.ativo{color:var(--azul)}
+  table.lancamentos thead th.ativo .seta-ord{opacity:1;color:var(--azul)}
   table.lancamentos th.num,table.lancamentos td.num{text-align:right}
   table.lancamentos th.centro,table.lancamentos td.centro{text-align:center}
-  table.lancamentos tbody td{padding:12px 14px;border-bottom:1px solid var(--borda);vertical-align:middle}
+  table.lancamentos tbody td{padding:11px 10px;border-bottom:1px solid var(--borda);vertical-align:middle}
   table.lancamentos tbody tr:last-child td{border-bottom:none}
   table.lancamentos tbody tr{transition:background .12s}
   table.lancamentos tbody tr:hover{background:#fafbfc}
@@ -120,15 +164,16 @@
   .cel-desc .txt .s{font-size:12px;color:var(--cinza)}
   .cel-conta{display:flex;align-items:center;gap:8px;min-width:0}
   td.col-valor{font-weight:700;white-space:nowrap;letter-spacing:-.01em;font-variant-numeric:tabular-nums}
-  td.col-valor.receita{color:var(--verde)}
+  td.col-valor.receita{color:var(--positivo)}
   td.col-valor.despesa{color:var(--vermelho)}
   .cat-chip{display:inline-flex;align-items:center;gap:6px;font-size:13px;max-width:200px}
   .cat-chip .pt{width:9px;height:9px;border-radius:3px;flex-shrink:0}
   .cat-chip span.nm{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .acoes-tab{display:flex;gap:6px;align-items:center;justify-content:flex-end;white-space:nowrap}
-  .acoes-tab .btn-icone{background:none;color:var(--cinza);padding:6px 8px;font-size:12.5px;font-weight:600;border-radius:7px;border:1px solid var(--borda)}
-  .acoes-tab .btn-icone:hover{background:var(--cinza-claro);color:var(--texto)}
+  .acoes-tab{display:flex;gap:7px;align-items:center;justify-content:flex-end;white-space:nowrap}
+  .acoes-tab .btn-icone{background:#fff;color:var(--cinza);min-width:34px;height:34px;padding:0 10px;font-size:12.5px;font-weight:600;border-radius:9px;border:1px solid var(--borda);display:inline-flex;align-items:center;justify-content:center;gap:5px}
+  .acoes-tab .btn-icone:hover{background:var(--azul-claro);color:var(--azul);border-color:#bcd2ff}
   .acoes-tab .btn-icone.perigo:hover{background:var(--vermelho-claro);color:var(--vermelho);border-color:#f3c2c7}
+  .acoes-tab .btn-icone.editar:hover{background:var(--azul-claro);color:var(--azul);border-color:#bcd2ff}
   .modal-fundo{position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;z-index:50;padding:16px}
   .modal{background:#fff;border-radius:16px;width:100%;max-width:460px;max-height:92vh;overflow-y:auto;padding:26px}
   .modal h3{font-size:18px;margin-bottom:18px}
@@ -153,7 +198,7 @@
   .bloco{margin-bottom:18px}
   .seg{display:flex;gap:0;margin-bottom:20px;background:var(--cinza-claro);border-radius:10px;padding:4px}
   .seg button{flex:1;padding:11px;background:none;color:var(--cinza);font-weight:600;border-radius:8px;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:6px}
-  .seg button.sel-rec{background:#fff;color:var(--verde);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+  .seg button.sel-rec{background:#fff;color:var(--positivo);box-shadow:0 1px 3px rgba(0,0,0,.12)}
   .seg button.sel-desp{background:#fff;color:var(--vermelho);box-shadow:0 1px 3px rgba(0,0,0,.12)}
   .grade-cat{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px;align-items:start}
   .cat-grupo{background:var(--card);border-radius:12px;box-shadow:var(--sombra);overflow:hidden}
@@ -182,12 +227,12 @@
   .carregando{text-align:center;padding:60px;color:var(--cinza)}
   .selo{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:700;padding:4px 10px;border-radius:20px;margin-top:3px;white-space:nowrap}
   .selo::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor;flex-shrink:0}
-  .selo.pago{background:var(--verde-claro);color:var(--verde-esc)}
+  .selo.pago{background:var(--positivo-claro);color:var(--positivo-esc)}
   .selo.pendente{background:#fff7e6;color:#b45309}
   .selo.vencido{background:var(--vermelho-claro);color:var(--vermelho)}
   .item.pendente-item{opacity:.82}
-  .btn-quitar{background:var(--verde);color:#fff;padding:7px 12px;font-size:12px;font-weight:600;white-space:nowrap}
-  .btn-quitar:hover{background:var(--verde-esc)}
+  .btn-quitar{background:var(--positivo);color:#fff;padding:7px 12px;font-size:12px;font-weight:600;white-space:nowrap}
+  .btn-quitar:hover{background:var(--positivo-esc)}
   .btn-estornar{background:var(--cinza-claro);color:var(--cinza);padding:7px 12px;font-size:12px;font-weight:600;white-space:nowrap}
   .btn-estornar:hover{background:#e2e8f0}
   @media(max-width:600px){main{padding:14px}.card .valor{font-size:20px}header .user span.email{display:none}}
@@ -209,19 +254,36 @@
 </div>
 
 <div id="tela-app" class="oculto">
-  <header>
-    <div class="logo">Minhas Finanças</div>
-    <div class="user"><span class="email" id="header-email"></span><button class="sair" id="btn-sair">Sair</button></div>
-  </header>
-  <nav>
-    <button class="ativo" data-pagina="resumo">Resumo</button>
-    <button data-pagina="lancamentos">Lançamentos</button>
-    <button data-pagina="contas">Contas</button>
-    <button data-pagina="contatos">Contatos</button>
-    <button data-pagina="categorias">Categorias</button>
-    <button data-pagina="relatorios">Relatórios</button>
-  </nav>
-  <main>
+  <aside class="sidebar">
+    <div class="marca">
+      <div class="ic">💰</div>
+      <div>
+        <div class="nome">Minhas Finanças</div>
+        <div class="desc">Controle financeiro</div>
+      </div>
+    </div>
+    <nav class="menu">
+      <div class="grupo-rotulo">Principal</div>
+      <button class="item-menu ativo" data-pagina="resumo"><span class="ic">📊</span><span>Resumo</span></button>
+      <button class="item-menu" data-pagina="lancamentos"><span class="ic">💸</span><span>Lançamentos</span></button>
+      <button class="item-menu" data-pagina="relatorios"><span class="ic">📈</span><span>Relatórios</span></button>
+      <div class="grupo-rotulo">Cadastros</div>
+      <button class="item-menu" data-pagina="contas"><span class="ic">🏦</span><span>Contas</span></button>
+      <button class="item-menu" data-pagina="contatos"><span class="ic">👥</span><span>Contatos</span></button>
+      <button class="item-menu" data-pagina="categorias"><span class="ic">🏷️</span><span>Categorias</span></button>
+    </nav>
+    <div class="rodape-side">
+      <div class="user-mini" id="header-email"></div>
+      <button class="sair" id="btn-sair"><span>↩</span><span>Sair</span></button>
+    </div>
+  </aside>
+
+  <div class="conteudo">
+    <div class="topbar">
+      <div class="titulo-pg" id="titulo-pagina"><span id="titulo-pagina-ic">📊</span><span id="titulo-pagina-txt">Resumo</span></div>
+      <div class="data-hoje" id="data-hoje"></div>
+    </div>
+    <main id="main-app">
     <div id="carregando-inicial" class="carregando">Carregando seus dados…</div>
 
     <div class="pagina ativa" id="pagina-resumo">
@@ -286,6 +348,7 @@
       <div class="grafico-wrap"><h3>Despesas por categoria</h3><div id="barras-categoria"></div></div>
     </div>
   </main>
+  </div>
 </div>
 
 <div id="modal-lancamento" class="modal-fundo oculto">
@@ -569,14 +632,38 @@ function renderTudo() {
 // ============================================================
 //  NAVEGAÇÃO
 // ============================================================
-document.querySelectorAll("nav button").forEach((b) => {
+const META_PAGINAS = {
+  resumo:      { ic: "📊", titulo: "Resumo" },
+  lancamentos: { ic: "💸", titulo: "Lançamentos" },
+  relatorios:  { ic: "📈", titulo: "Relatórios" },
+  contas:      { ic: "🏦", titulo: "Contas" },
+  contatos:    { ic: "👥", titulo: "Contatos" },
+  categorias:  { ic: "🏷️", titulo: "Categorias" },
+};
+document.querySelectorAll(".item-menu").forEach((b) => {
   b.onclick = () => {
-    document.querySelectorAll("nav button").forEach((x) => x.classList.remove("ativo"));
+    document.querySelectorAll(".item-menu").forEach((x) => x.classList.remove("ativo"));
     b.classList.add("ativo");
     document.querySelectorAll(".pagina").forEach((p) => p.classList.remove("ativa"));
-    $("pagina-" + b.dataset.pagina).classList.add("ativa");
+    const pg = b.dataset.pagina;
+    $("pagina-" + pg).classList.add("ativa");
+    const meta = META_PAGINAS[pg] || { ic: "", titulo: "" };
+    $("titulo-pagina-ic").textContent = meta.ic;
+    $("titulo-pagina-txt").textContent = meta.titulo;
   };
 });
+
+// data por extenso na topbar (ex: "domingo, 31 de maio de 2026")
+(function preencherDataHoje() {
+  const el = $("data-hoje");
+  if (!el) return;
+  try {
+    el.textContent = new Date().toLocaleDateString("pt-BR", {
+      weekday: "long", day: "numeric", month: "long", year: "numeric",
+    });
+  } catch (e) { /* ignora */ }
+})();
+
 
 // ============================================================
 //  FILTROS DE MÊS
@@ -897,7 +984,7 @@ function linhaTabelaHTML(l) {
     <td class="num">
       <div class="acoes-tab">
         ${botaoStatus}
-        <button class="btn-icone" onclick="editarLancamento('${l.id}')" title="Editar">Editar</button>
+        <button class="btn-icone editar" onclick="editarLancamento('${l.id}')" title="Editar">Editar</button>
         <button class="btn-icone perigo" onclick="excluirLancamento('${l.id}')" title="Excluir">Excluir</button>
       </div>
     </td>
