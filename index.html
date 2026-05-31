@@ -66,23 +66,24 @@
   .item{display:flex;align-items:center;gap:14px;padding:15px 18px;border-bottom:1px solid var(--borda);transition:background .12s}
   .item:hover{background:#fafbfc}
   .item:last-child{border-bottom:none}
-  .item .bolinha{width:40px;height:40px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0;background:var(--cinza-claro)}
+  .item .bolinha{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;flex-shrink:0;background:var(--cinza-claro);letter-spacing:-.02em}
   .item .info{flex:1;min-width:0}
   .item .info .titulo{font-weight:600;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .item .info .meta{font-size:12px;color:var(--cinza);margin-top:1px}
-  .item .montante{font-weight:700;font-size:15.5px;white-space:nowrap;letter-spacing:-.01em}
+  .item .montante{font-weight:700;font-size:15.5px;white-space:nowrap;letter-spacing:-.01em;font-variant-numeric:tabular-nums}
   .item .montante.receita{color:var(--verde)}
   .item .montante.despesa{color:var(--vermelho)}
-  .item .acoes{display:flex;gap:4px;align-items:center}
-  .item .acoes button{background:none;color:var(--cinza);padding:7px;font-size:15px;border-radius:7px}
-  .item .acoes button:hover{color:var(--vermelho);background:var(--cinza-claro)}
+  .item .acoes{display:flex;gap:6px;align-items:center}
+  .item .acoes button{background:none;color:var(--cinza);padding:6px 10px;font-size:12.5px;font-weight:600;border-radius:7px;border:1px solid var(--borda)}
+  .item .acoes button:hover{color:var(--texto);background:var(--cinza-claro)}
+  .item .acoes button.perigo:hover{color:var(--vermelho);background:var(--vermelho-claro);border-color:#f3c2c7}
   .vazio{padding:48px 20px;text-align:center;color:var(--cinza);font-size:14px}
   .filtros{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;align-items:center}
   .filtros select,.filtros input{width:auto;flex:1;min-width:130px}
   /* ---- Busca e ordenação ---- */
   .barra-busca{display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap}
   .campo-busca{position:relative;flex:1;min-width:200px}
-  .campo-busca .lupa{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:#94a3b8;font-size:15px;pointer-events:none}
+  .campo-busca .lupa{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#94a3b8;display:flex;align-items:center;pointer-events:none}
   .campo-busca input{padding-left:38px;width:100%}
   .campo-busca .limpar{position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;color:#94a3b8;padding:4px 7px;font-size:15px;border-radius:6px}
   .campo-busca .limpar:hover{background:var(--cinza-claro);color:var(--texto)}
@@ -95,7 +96,7 @@
   .resumo-filtro .pos{color:var(--verde)}
   /* ---- Tabela de lançamentos ---- */
   .tabela-wrap{background:var(--card);border-radius:14px;box-shadow:var(--sombra);border:1px solid var(--borda);overflow-x:auto}
-  table.lancamentos{width:100%;border-collapse:collapse;font-size:14px;min-width:760px}
+  table.lancamentos{width:100%;border-collapse:collapse;font-size:14px;min-width:920px;table-layout:auto}
   table.lancamentos thead th{position:sticky;top:0;background:#fafbfc;text-align:left;font-size:12px;font-weight:600;color:var(--cinza);text-transform:uppercase;letter-spacing:.03em;padding:12px 14px;border-bottom:1px solid var(--borda);white-space:nowrap;user-select:none}
   table.lancamentos thead th.ordenavel{cursor:pointer}
   table.lancamentos thead th.ordenavel:hover{color:var(--texto);background:#f1f5f9}
@@ -110,20 +111,24 @@
   table.lancamentos tbody tr:hover{background:#fafbfc}
   table.lancamentos tbody tr.pendente-linha{background:#fffdf7}
   table.lancamentos tbody tr.pendente-linha:hover{background:#fffaf0}
-  .cel-desc{display:flex;align-items:center;gap:11px;min-width:0}
-  .cel-desc .bolinha{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;background:var(--cinza-claro)}
+  table.lancamentos td.col-data,table.lancamentos th.col-data{white-space:nowrap}
+  table.lancamentos td.col-conta{white-space:nowrap}
+  .cel-desc{display:flex;align-items:center;gap:10px;min-width:0}
+  .avatar{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:12.5px;font-weight:700;flex-shrink:0;letter-spacing:-.02em}
   .cel-desc .txt{min-width:0}
   .cel-desc .txt .t{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:240px}
   .cel-desc .txt .s{font-size:12px;color:var(--cinza)}
-  td.col-valor{font-weight:700;white-space:nowrap;letter-spacing:-.01em}
+  .cel-conta{display:flex;align-items:center;gap:8px;min-width:0}
+  td.col-valor{font-weight:700;white-space:nowrap;letter-spacing:-.01em;font-variant-numeric:tabular-nums}
   td.col-valor.receita{color:var(--verde)}
   td.col-valor.despesa{color:var(--vermelho)}
   .cat-chip{display:inline-flex;align-items:center;gap:6px;font-size:13px;max-width:200px}
   .cat-chip .pt{width:9px;height:9px;border-radius:3px;flex-shrink:0}
   .cat-chip span.nm{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .acoes-tab{display:flex;gap:3px;align-items:center;justify-content:flex-end}
-  .acoes-tab button{background:none;color:var(--cinza);padding:6px;font-size:14px;border-radius:7px}
-  .acoes-tab button:hover{color:var(--vermelho);background:var(--cinza-claro)}
+  .acoes-tab{display:flex;gap:6px;align-items:center;justify-content:flex-end;white-space:nowrap}
+  .acoes-tab .btn-icone{background:none;color:var(--cinza);padding:6px 8px;font-size:12.5px;font-weight:600;border-radius:7px;border:1px solid var(--borda)}
+  .acoes-tab .btn-icone:hover{background:var(--cinza-claro);color:var(--texto)}
+  .acoes-tab .btn-icone.perigo:hover{background:var(--vermelho-claro);color:var(--vermelho);border-color:#f3c2c7}
   .modal-fundo{position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;z-index:50;padding:16px}
   .modal{background:#fff;border-radius:16px;width:100%;max-width:460px;max-height:92vh;overflow-y:auto;padding:26px}
   .modal h3{font-size:18px;margin-bottom:18px}
@@ -155,17 +160,17 @@
   .cat-card{padding:14px 16px;display:flex;align-items:center;gap:12px}
   .cat-card .bolinha{width:42px;height:42px;font-size:20px;flex-shrink:0}
   .cat-card .nome{font-weight:600;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis}
-  .cat-card .acoes-cat{display:flex;gap:2px;flex-shrink:0}
-  .cat-card button{background:none;color:var(--cinza);padding:4px;font-size:15px}
-  .cat-card button:hover{color:var(--vermelho)}
+  .cat-card .acoes-cat{display:flex;gap:4px;flex-shrink:0}
+  .cat-card button{background:none;color:var(--cinza);padding:5px 9px;font-size:12px;font-weight:600;border-radius:6px;border:1px solid var(--borda)}
+  .cat-card button:hover{color:var(--texto);background:var(--cinza-claro)}
   .subcats{border-top:1px solid var(--borda);background:#fafbfc}
   .subcat-item{display:flex;align-items:center;gap:10px;padding:9px 16px 9px 26px;border-bottom:1px solid var(--borda)}
   .subcat-item:last-child{border-bottom:none}
   .subcat-item .seta{color:var(--cinza);font-size:13px;flex-shrink:0}
   .subcat-item .nome{flex:1;min-width:0;font-size:14px;overflow:hidden;text-overflow:ellipsis}
-  .subcat-item .acoes-cat{flex-shrink:0;display:flex;gap:2px}
-  .subcat-item button{background:none;color:var(--cinza);padding:3px;font-size:13px}
-  .subcat-item button:hover{color:var(--vermelho)}
+  .subcat-item .acoes-cat{flex-shrink:0;display:flex;gap:4px}
+  .subcat-item button{background:none;color:var(--cinza);padding:4px 8px;font-size:11.5px;font-weight:600;border-radius:6px;border:1px solid var(--borda)}
+  .subcat-item button:hover{color:var(--texto);background:var(--cinza-claro)}
   .btn-add-sub{display:block;width:100%;text-align:left;background:none;color:var(--verde);padding:9px 16px 9px 26px;font-weight:600;font-size:13px;border-top:1px solid var(--borda)}
   .btn-add-sub:hover{background:var(--verde-claro)}
   .grafico-wrap{background:var(--card);border-radius:12px;box-shadow:var(--sombra);padding:20px;margin-bottom:20px}
@@ -175,7 +180,8 @@
   .barra-cat .trilho{height:10px;background:var(--cinza-claro);border-radius:6px;overflow:hidden}
   .barra-cat .preench{height:100%;border-radius:6px}
   .carregando{text-align:center;padding:60px;color:var(--cinza)}
-  .selo{display:inline-block;font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px;margin-top:3px}
+  .selo{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:700;padding:4px 10px;border-radius:20px;margin-top:3px;white-space:nowrap}
+  .selo::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor;flex-shrink:0}
   .selo.pago{background:var(--verde-claro);color:var(--verde-esc)}
   .selo.pendente{background:#fff7e6;color:#b45309}
   .selo.vencido{background:var(--vermelho-claro);color:var(--vermelho)}
@@ -191,7 +197,7 @@
 
 <div id="tela-login">
   <div class="login-box">
-    <h1>💰 Minhas Finanças</h1>
+    <h1>Minhas Finanças</h1>
     <p class="sub">Controle seu dinheiro na nuvem</p>
     <div id="login-erro" class="erro oculto"></div>
     <div class="campo"><label>E-mail</label><input type="email" id="login-email" placeholder="voce@email.com" autocomplete="email"></div>
@@ -204,7 +210,7 @@
 
 <div id="tela-app" class="oculto">
   <header>
-    <div class="logo">💰 Minhas Finanças</div>
+    <div class="logo">Minhas Finanças</div>
     <div class="user"><span class="email" id="header-email"></span><button class="sair" id="btn-sair">Sair</button></div>
   </header>
   <nav>
@@ -234,7 +240,7 @@
       <div class="secao-titulo"><h2>Lançamentos</h2><button class="btn-add" id="btn-novo-lancamento">+ Novo</button></div>
       <div class="barra-busca">
         <div class="campo-busca">
-          <span class="lupa">🔍</span>
+          <span class="lupa"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.5" y2="16.5"></line></svg></span>
           <input id="busca-lancamento" type="text" placeholder="Buscar por descrição, contato, categoria…" autocomplete="off">
           <button class="limpar oculto" id="limpar-busca" title="Limpar">✕</button>
         </div>
@@ -348,7 +354,7 @@
     <div class="campo"><label>Nome da conta</label><input id="conta-nome" placeholder="Ex: Nubank, Carteira, Poupança"></div>
     <div class="campo"><label>Tipo</label><select id="conta-tipo"><option value="Conta corrente">Conta corrente</option><option value="Poupança">Poupança</option><option value="Carteira / Dinheiro">Carteira / Dinheiro</option><option value="Investimento">Investimento</option><option value="Outra">Outra</option></select></div>
     <div class="campo"><label>Saldo inicial (R$)</label><input id="conta-saldo" type="number" step="0.01" placeholder="0,00"></div>
-    <div class="campo"><label>Ícone (emoji)</label><input id="conta-icone" placeholder="🏦" maxlength="2"></div>
+    <input id="conta-icone" type="hidden" value="">
     <div class="campo"><label>Cor</label><input id="conta-cor" type="color" value="#119E3F" style="height:46px;padding:4px"></div>
     <div class="linha-botoes"><button class="btn-sec" id="conta-cancelar">Cancelar</button><button class="btn-principal" id="conta-salvar">Salvar</button></div>
   </div>
@@ -374,7 +380,7 @@
       <select id="cat-pai"><option value="">— Nenhuma (categoria principal)</option></select>
       <div style="font-size:12px;color:#6b7280;margin-top:6px">Escolha uma categoria para transformar esta em subcategoria dela.</div>
     </div>
-    <div class="campo"><label>Ícone (emoji)</label><input id="cat-icone" placeholder="🍔" maxlength="2"></div>
+    <input id="cat-icone" type="hidden" value="">
     <div class="campo"><label>Cor</label><input id="cat-cor" type="color" value="#119E3F" style="height:46px;padding:4px"></div>
     <div class="linha-botoes"><button class="btn-sec" id="cat-cancelar">Cancelar</button><button class="btn-principal" id="cat-salvar">Salvar</button></div>
   </div>
@@ -421,19 +427,19 @@ let tipoLancamentoAtual = "despesa";
 let editandoId = { lanc: null, cat: null, conta: null, contato: null };
 
 const CATEGORIAS_PADRAO = [
-  { nome: "Alimentação", icone: "🍔", cor: "#d83933", tipo: "despesa" },
-  { nome: "Transporte", icone: "🚗", cor: "#2563eb", tipo: "despesa" },
-  { nome: "Moradia", icone: "🏠", cor: "#7c3aed", tipo: "despesa" },
-  { nome: "Lazer", icone: "🎬", cor: "#ea580c", tipo: "despesa" },
-  { nome: "Saúde", icone: "💊", cor: "#0891b2", tipo: "despesa" },
-  { nome: "Outros", icone: "📦", cor: "#6b7280", tipo: "despesa" },
-  { nome: "Salário", icone: "💵", cor: "#119E3F", tipo: "receita" },
-  { nome: "Extra", icone: "✨", cor: "#16a34a", tipo: "receita" },
+  { nome: "Alimentação", icone: "", cor: "#d83933", tipo: "despesa" },
+  { nome: "Transporte", icone: "", cor: "#2563eb", tipo: "despesa" },
+  { nome: "Moradia", icone: "", cor: "#7c3aed", tipo: "despesa" },
+  { nome: "Lazer", icone: "", cor: "#ea580c", tipo: "despesa" },
+  { nome: "Saúde", icone: "", cor: "#0891b2", tipo: "despesa" },
+  { nome: "Outros", icone: "", cor: "#6b7280", tipo: "despesa" },
+  { nome: "Salário", icone: "", cor: "#119E3F", tipo: "receita" },
+  { nome: "Extra", icone: "", cor: "#16a34a", tipo: "receita" },
 ];
 
 // Contas padrão no primeiro acesso
 const CONTAS_PADRAO = [
-  { nome: "Carteira", tipo: "Carteira / Dinheiro", saldoInicial: 0, icone: "👛", cor: "#16a34a" },
+  { nome: "Carteira", tipo: "Carteira / Dinheiro", saldoInicial: 0, icone: "", cor: "#16a34a" },
 ];
 
 const $ = (id) => document.getElementById(id);
@@ -660,7 +666,7 @@ function renderResumo() {
 //  LANÇAMENTOS
 // ============================================================
 function categoriaPorId(id) {
-  return categorias.find((c) => c.id === id) || { nome: "Sem categoria", icone: "❓", cor: "#6b7280" };
+  return categorias.find((c) => c.id === id) || { nome: "Sem categoria", icone: "", cor: "#6b7280" };
 }
 function nomeCategoriaCompletoTexto(c) {
   if (c.paiId) {
@@ -691,6 +697,22 @@ function catPaiObj(c) {
 }
 function contaPorId(id) { return contas.find((c) => c.id === id); }
 
+// Gera 1-2 letras iniciais a partir de um nome, para usar como avatar sem emoji.
+function iniciais(nome) {
+  const partes = String(nome || "").trim().split(/\s+/).filter(Boolean);
+  if (!partes.length) return "?";
+  if (partes.length === 1) return partes[0].slice(0, 2).toUpperCase();
+  return (partes[0][0] + partes[partes.length - 1][0]).toUpperCase();
+}
+// Decide cor do texto (claro/escuro) com base na luminância da cor de fundo.
+function corTextoContraste(hex) {
+  const h = String(hex || "#6b7280").replace("#", "");
+  if (h.length < 6) return "#fff";
+  const r = parseInt(h.slice(0, 2), 16), g = parseInt(h.slice(2, 4), 16), b = parseInt(h.slice(4, 6), 16);
+  const lum = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+  return lum > 0.62 ? "#1f2937" : "#fff";
+}
+
 function itemHTML(l) {
   const cat = categoriaPorId(l.categoriaId);
   const conta = l.contaId ? contaPorId(l.contaId) : null;
@@ -701,20 +723,21 @@ function itemHTML(l) {
     rotuloData(l.data),
     l.vencimento ? "vence " + rotuloData(l.vencimento) : null,
     cat.paiId ? nomeCategoriaCompletoTexto(cat) : cat.nome,
-    conta ? (conta.icone || "🏦") + " " + conta.nome : null,
-    contato ? (l.tipo === "receita" ? "🧑 " : "🏭 ") + contato.nome : null,
+    conta ? conta.nome : null,
+    contato ? contato.nome : null,
   ].filter(Boolean).join(" · ");
   const sinal = l.tipo === "receita" ? "+" : "−";
   const selo = pago
-    ? `<span class="selo pago">✓ Pago</span>`
+    ? `<span class="selo pago">Pago</span>`
     : vencido
-      ? `<span class="selo vencido">⚠ Vencido</span>`
-      : `<span class="selo pendente">● Pendente</span>`;
+      ? `<span class="selo vencido">Vencido</span>`
+      : `<span class="selo pendente">Pendente</span>`;
   const botaoStatus = pago
     ? `<button class="btn-estornar" onclick="alternarQuitar('${l.id}')" title="Marcar como pendente">Estornar</button>`
     : `<button class="btn-quitar" onclick="alternarQuitar('${l.id}')" title="Marcar como pago">Quitar</button>`;
+  const corCat = cat.cor || "#6b7280";
   return `<div class="item ${pago ? "" : "pendente-item"}">
-    <div class="bolinha" style="background:${cat.cor}22">${cat.icone}</div>
+    <div class="bolinha" style="background:${corCat};color:${corTextoContraste(corCat)}">${escapar(iniciais(cat.nome))}</div>
     <div class="info">
       <div class="titulo">${escapar(l.descricao)}</div>
       <div class="meta">${meta}</div>
@@ -723,8 +746,8 @@ function itemHTML(l) {
     <div class="montante ${l.tipo}">${sinal} ${moeda(l.valor)}</div>
     <div class="acoes">
       ${botaoStatus}
-      <button onclick="editarLancamento('${l.id}')" title="Editar">✏️</button>
-      <button onclick="excluirLancamento('${l.id}')" title="Excluir">🗑️</button>
+      <button onclick="editarLancamento('${l.id}')" title="Editar">Editar</button>
+      <button class="perigo" onclick="excluirLancamento('${l.id}')" title="Excluir">Excluir</button>
     </div>
   </div>`;
 }
@@ -814,7 +837,7 @@ function renderLancamentos() {
   ];
   const thead = cols.map((c) => {
     const ativo = ordenLanc.col === c.id;
-    const seta = ativo ? (ordenLanc.dir === "asc" ? "▲" : "▼") : "↕";
+    const seta = ativo ? (ordenLanc.dir === "asc" ? "↑" : "↓") : "↕";
     return `<th class="ordenavel ${c.cls} ${ativo ? "ativo" : ""}" onclick="ordenarPor('${c.id}')" title="Ordenar por ${c.rotulo}">${c.rotulo}<span class="seta-ord">${seta}</span></th>`;
   }).join("") + `<th class="num">Ações</th>`;
 
@@ -846,32 +869,36 @@ function linhaTabelaHTML(l) {
   const vencido = !pago && l.vencimento && l.vencimento < hoje();
   const sinal = l.tipo === "receita" ? "+" : "−";
   const selo = pago
-    ? `<span class="selo pago">✓ Pago</span>`
+    ? `<span class="selo pago">Pago</span>`
     : vencido
-      ? `<span class="selo vencido">⚠ Vencido</span>`
-      : `<span class="selo pendente">● Pendente</span>`;
+      ? `<span class="selo vencido">Vencido</span>`
+      : `<span class="selo pendente">Pendente</span>`;
   const botaoStatus = pago
     ? `<button class="btn-estornar" onclick="alternarQuitar('${l.id}')" title="Marcar como pendente">Estornar</button>`
     : `<button class="btn-quitar" onclick="alternarQuitar('${l.id}')" title="Marcar como pago">Quitar</button>`;
+  const corCat = catPai.cor || "#6b7280";
+  const corConta = (conta && conta.cor) || "#475569";
   return `<tr class="${pago ? "" : "pendente-linha"}">
-    <td class="centro">${rotuloData(l.data)}</td>
-    <td class="centro">${l.vencimento ? rotuloData(l.vencimento) : "—"}</td>
+    <td class="centro col-data">${rotuloData(l.data)}</td>
+    <td class="centro col-data">${l.vencimento ? rotuloData(l.vencimento) : "—"}</td>
     <td>${contato ? escapar(contato.nome) : "—"}</td>
     <td>
       <div class="cel-desc">
-        <div class="bolinha" style="background:${catPai.cor}22">${catPai.icone}</div>
+        <div class="avatar" style="background:${corCat};color:${corTextoContraste(corCat)}">${escapar(iniciais(catPai.nome))}</div>
         <div class="txt"><div class="t">${escapar(catPai.nome)}</div></div>
       </div>
     </td>
     <td>${sub ? `<span class="cat-chip"><span class="pt" style="background:${cat.cor}"></span><span class="nm">${escapar(sub)}</span></span>` : "—"}</td>
     <td class="num col-valor ${l.tipo}">${sinal} ${moeda(l.valor)}</td>
-    <td>${conta ? (conta.icone || "🏦") + " " + escapar(conta.nome) : "—"}</td>
+    <td class="col-conta">${conta
+      ? `<span class="cel-conta"><span class="avatar" style="width:24px;height:24px;font-size:10.5px;background:${corConta};color:${corTextoContraste(corConta)}">${escapar(iniciais(conta.nome))}</span><span>${escapar(conta.nome)}</span></span>`
+      : "—"}</td>
     <td class="centro">${selo}</td>
     <td class="num">
       <div class="acoes-tab">
         ${botaoStatus}
-        <button onclick="editarLancamento('${l.id}')" title="Editar">✏️</button>
-        <button onclick="excluirLancamento('${l.id}')" title="Excluir">🗑️</button>
+        <button class="btn-icone" onclick="editarLancamento('${l.id}')" title="Editar">Editar</button>
+        <button class="btn-icone perigo" onclick="excluirLancamento('${l.id}')" title="Excluir">Excluir</button>
       </div>
     </td>
   </tr>`;
@@ -887,8 +914,8 @@ function setTipoLanc(t) {
   tipoLancamentoAtual = t;
   $("seg-receita").className = t === "receita" ? "sel-rec" : "";
   $("seg-despesa").className = t === "despesa" ? "sel-desp" : "";
-  $("seg-receita").innerHTML = (t === "receita" ? "✓ " : "") + "Receita";
-  $("seg-despesa").innerHTML = (t === "despesa" ? "✓ " : "") + "Despesa";
+  $("seg-receita").innerHTML = "Receita";
+  $("seg-despesa").innerHTML = "Despesa";
   preencherSelectsCategoria();
   ajustarOpcoesRepeticao();
   atualizarVisibilidadeRepeticao();
@@ -1090,10 +1117,10 @@ window.excluirLancamento = async (id) => {
 //  CONTAS
 // ============================================================
 function preencherSelectsConta() {
-  $("lanc-conta").innerHTML = contas.map((c) => `<option value="${c.id}">${c.icone || "🏦"} ${c.nome}</option>`).join("");
+  $("lanc-conta").innerHTML = contas.map((c) => `<option value="${c.id}">${escapar(c.nome)}</option>`).join("");
   $("filtro-conta").innerHTML =
     `<option value="todas">Todas contas</option>` +
-    contas.map((c) => `<option value="${c.id}">${c.icone || "🏦"} ${c.nome}</option>`).join("");
+    contas.map((c) => `<option value="${c.id}">${escapar(c.nome)}</option>`).join("");
 }
 
 function renderContas() {
@@ -1101,16 +1128,17 @@ function renderContas() {
     ? contas.map((c) => {
         const saldo = saldoDaConta(c.id);
         const cor = saldo >= 0 ? "var(--verde)" : "var(--vermelho)";
+        const corC = c.cor || "#475569";
         return `<div class="item">
-          <div class="bolinha" style="background:${c.cor || "#119E3F"}22">${c.icone || "🏦"}</div>
+          <div class="bolinha" style="background:${corC};color:${corTextoContraste(corC)}">${escapar(iniciais(c.nome))}</div>
           <div class="info">
             <div class="titulo">${escapar(c.nome)}</div>
             <div class="meta">${escapar(c.tipo || "")} · saldo inicial ${moeda(c.saldoInicial || 0)}</div>
           </div>
           <div class="montante" style="color:${cor}">${moeda(saldo)}</div>
           <div class="acoes">
-            <button onclick="editarConta('${c.id}')">✏️</button>
-            <button onclick="excluirConta('${c.id}')">🗑️</button>
+            <button onclick="editarConta('${c.id}')" title="Editar">Editar</button>
+            <button class="perigo" onclick="excluirConta('${c.id}')" title="Excluir">Excluir</button>
           </div>
         </div>`;
       }).join("")
@@ -1135,7 +1163,7 @@ $("conta-salvar").onclick = async () => {
   const nome = $("conta-nome").value.trim();
   const tipo = $("conta-tipo").value;
   const saldoInicial = parseFloat($("conta-saldo").value) || 0;
-  const icone = $("conta-icone").value.trim() || "🏦";
+  const icone = $("conta-icone").value.trim();
   const cor = $("conta-cor").value;
   if (!nome) return alert("Digite o nome da conta.");
   const dados = { nome, tipo, saldoInicial, icone, cor };
@@ -1208,18 +1236,18 @@ function renderContatos() {
     ? lista.map((c) => {
         const ehAmbos = c.tipo === "ambos";
         const ehCliente = c.tipo === "cliente";
-        const icone = ehAmbos ? "🔁" : (ehCliente ? "🧑" : "🏭");
         const rotuloTipo = ehAmbos ? "Fornecedor e cliente" : (ehCliente ? "Cliente" : "Fornecedor");
         const meta = [rotuloTipo, c.doc ? escapar(c.doc) : null].filter(Boolean).join(" · ");
+        const corC = ehAmbos ? "#7c3aed" : (ehCliente ? "#2563eb" : "#475569");
         return `<div class="item">
-          <div class="bolinha">${icone}</div>
+          <div class="bolinha" style="background:${corC};color:#fff">${escapar(iniciais(c.nome))}</div>
           <div class="info">
             <div class="titulo">${escapar(c.nome)}</div>
             <div class="meta">${meta}</div>
           </div>
           <div class="acoes">
-            <button onclick="editarContato('${c.id}')" title="Editar">✏️</button>
-            <button onclick="excluirContato('${c.id}')" title="Excluir">🗑️</button>
+            <button onclick="editarContato('${c.id}')" title="Editar">Editar</button>
+            <button class="perigo" onclick="excluirContato('${c.id}')" title="Excluir">Excluir</button>
           </div>
         </div>`;
       }).join("")
@@ -1309,9 +1337,9 @@ $("lanc-novo-contato").onclick = () => abrirModalContato(null, true);
 function nomeCategoriaCompleto(c) {
   if (c.paiId) {
     const pai = categorias.find((x) => x.id === c.paiId);
-    if (pai) return `${pai.icone} ${pai.nome} › ${c.nome}`;
+    if (pai) return `${pai.nome} › ${c.nome}`;
   }
-  return `${c.icone} ${c.nome}`;
+  return c.nome;
 }
 
 function opcoesCategoriaAgrupadas(tipo) {
@@ -1323,9 +1351,9 @@ function opcoesCategoriaAgrupadas(tipo) {
     const filhas = categorias
       .filter((c) => c.paiId === p.id)
       .sort((a, b) => a.nome.localeCompare(b.nome));
-    html += `<option value="${p.id}">${p.icone} ${escapar(p.nome)}</option>`;
+    html += `<option value="${p.id}">${escapar(p.nome)}</option>`;
     for (const f of filhas) {
-      html += `<option value="${f.id}">&nbsp;&nbsp;&nbsp;↳ ${f.icone} ${escapar(f.nome)}</option>`;
+      html += `<option value="${f.id}">&nbsp;&nbsp;&nbsp;› ${escapar(f.nome)}</option>`;
     }
   }
   return html;
@@ -1355,22 +1383,22 @@ function renderCategorias() {
       .sort((a, b) => a.nome.localeCompare(b.nome));
     const subsHTML = filhas.map((s) => `
         <div class="subcat-item">
-          <span class="seta">↳</span>
-          <div class="bolinha" style="background:${s.cor}22;width:30px;height:30px;font-size:15px;border-radius:50%;display:flex;align-items:center;justify-content:center">${s.icone}</div>
+          <span class="seta">›</span>
+          <div class="avatar" style="width:28px;height:28px;font-size:11px;background:${s.cor || "#6b7280"};color:${corTextoContraste(s.cor)}">${escapar(iniciais(s.nome))}</div>
           <div class="nome">${escapar(s.nome)}</div>
           <div class="acoes-cat">
-            <button onclick="editarCategoria('${s.id}')" title="Editar">✏️</button>
-            <button onclick="excluirCategoria('${s.id}')" title="Excluir">🗑️</button>
+            <button onclick="editarCategoria('${s.id}')" title="Editar">Editar</button>
+            <button onclick="excluirCategoria('${s.id}')" title="Excluir">Excluir</button>
           </div>
         </div>`).join("");
     return `
       <div class="cat-grupo">
         <div class="cat-card">
-          <div class="bolinha" style="background:${c.cor}22">${c.icone}</div>
+          <div class="avatar" style="width:42px;height:42px;font-size:15px;border-radius:11px;background:${c.cor || "#6b7280"};color:${corTextoContraste(c.cor)}">${escapar(iniciais(c.nome))}</div>
           <div class="nome">${escapar(c.nome)}<div style="font-size:11px;color:#6b7280;font-weight:400">${c.tipo}</div></div>
           <div class="acoes-cat">
-            <button onclick="editarCategoria('${c.id}')" title="Editar">✏️</button>
-            <button onclick="excluirCategoria('${c.id}')" title="Excluir">🗑️</button>
+            <button onclick="editarCategoria('${c.id}')" title="Editar">Editar</button>
+            <button onclick="excluirCategoria('${c.id}')" title="Excluir">Excluir</button>
           </div>
         </div>
         ${filhas.length ? `<div class="subcats">${subsHTML}</div>` : ""}
@@ -1394,7 +1422,7 @@ function preencherSelectPaiCategoria(tipo, ignorarId) {
     .sort((a, b) => a.nome.localeCompare(b.nome));
   $("cat-pai").innerHTML =
     `<option value="">— Nenhuma (categoria principal)</option>` +
-    principais.map((c) => `<option value="${c.id}">${c.icone} ${escapar(c.nome)}</option>`).join("");
+    principais.map((c) => `<option value="${c.id}">${escapar(c.nome)}</option>`).join("");
 }
 
 function abrirModalCat(cat = null, paiPreSel = null) {
@@ -1429,7 +1457,7 @@ $("cat-tipo").addEventListener("change", () => {
 
 $("cat-salvar").onclick = async () => {
   const nome = $("cat-nome").value.trim();
-  const icone = $("cat-icone").value.trim() || "📦";
+  const icone = $("cat-icone").value.trim();
   const cor = $("cat-cor").value;
   const tipo = $("cat-tipo").value;
   const paiId = $("campo-cat-pai").classList.contains("oculto") ? "" : ($("cat-pai").value || "");
@@ -1512,7 +1540,7 @@ function renderRelatorios() {
         const c = categoriaPorId(id);
         const pct = (val / max) * 100;
         return `<div class="barra-cat">
-          <div class="topo"><span>${c.icone} ${escapar(c.nome)}</span><span><b>${moeda(val)}</b></span></div>
+          <div class="topo"><span style="display:inline-flex;align-items:center;gap:7px"><span style="width:10px;height:10px;border-radius:3px;background:${c.cor};display:inline-block"></span>${escapar(c.nome)}</span><span><b>${moeda(val)}</b></span></div>
           <div class="trilho"><div class="preench" style="width:${pct}%;background:${c.cor}"></div></div>
         </div>`;
       }).join("")
