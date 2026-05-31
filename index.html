@@ -6,19 +6,23 @@
 <title>Meu Controle Financeiro</title>
 <style>
   :root{
-    --verde:#119E3F; --verde-esc:#0d7d31; --verde-claro:#e8f6ed;
-    --vermelho:#d83933; --vermelho-claro:#fbeaea;
-    --azul:#2563eb; --cinza:#6b7280; --cinza-claro:#f3f4f6;
-    --borda:#e5e7eb; --texto:#1f2937; --bg:#f7f8fa;
-    --card:#ffffff; --sombra:0 1px 3px rgba(0,0,0,.08);
+    --verde:#15a34a; --verde-esc:#0f7a37; --verde-claro:#e9f7ee;
+    --vermelho:#dc3545; --vermelho-claro:#fdecee;
+    --azul:#2563eb; --cinza:#64748b; --cinza-claro:#f1f5f9;
+    --borda:#e2e8f0; --texto:#0f172a; --bg:#f6f8fb;
+    --card:#ffffff;
+    --sombra:0 1px 2px rgba(15,23,42,.04),0 1px 3px rgba(15,23,42,.06);
+    --sombra-md:0 4px 12px rgba(15,23,42,.08);
+    --grad-verde:linear-gradient(135deg,#15a34a 0%,#0f7a37 100%);
   }
   *{box-sizing:border-box;margin:0;padding:0}
   body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
     background:var(--bg);color:var(--texto);line-height:1.5;-webkit-font-smoothing:antialiased}
-  button{font-family:inherit;cursor:pointer;border:none;border-radius:8px;font-size:14px}
-  input,select{font-family:inherit;font-size:15px;padding:10px 12px;border:1px solid var(--borda);
-    border-radius:8px;width:100%;background:#fff}
-  input:focus,select:focus{outline:none;border-color:var(--verde)}
+  button{font-family:inherit;cursor:pointer;border:none;border-radius:9px;font-size:14px;transition:all .15s ease}
+  input,select{font-family:inherit;font-size:14px;padding:10px 12px;border:1px solid var(--borda);
+    border-radius:9px;width:100%;background:#fff;color:var(--texto);transition:border-color .15s,box-shadow .15s}
+  input:focus,select:focus{outline:none;border-color:var(--verde);box-shadow:0 0 0 3px rgba(21,163,74,.12)}
+  input::placeholder{color:#94a3b8}
   .oculto{display:none!important}
   #tela-login{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
   .login-box{background:var(--card);border-radius:16px;box-shadow:var(--sombra);padding:36px 32px;width:100%;max-width:400px}
@@ -32,47 +36,94 @@
   .link-troca a{color:var(--verde);cursor:pointer;font-weight:600;text-decoration:none}
   .erro{background:var(--vermelho-claro);color:var(--vermelho);padding:10px 12px;border-radius:8px;font-size:13px;margin-bottom:16px;text-align:center}
   #tela-app{min-height:100vh;display:flex;flex-direction:column}
-  header{background:var(--verde);color:#fff;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}
-  header .logo{font-size:18px;font-weight:700}
-  header .user{font-size:13px;opacity:.9;display:flex;align-items:center;gap:12px}
-  header .sair{background:rgba(255,255,255,.2);color:#fff;padding:6px 12px;font-size:13px}
-  header .sair:hover{background:rgba(255,255,255,.32)}
-  nav{background:#fff;border-bottom:1px solid var(--borda);display:flex;overflow-x:auto;position:sticky;top:50px;z-index:9}
-  nav button{background:none;padding:14px 18px;color:var(--cinza);font-weight:600;font-size:14px;border-bottom:3px solid transparent;border-radius:0;white-space:nowrap}
+  header{background:var(--grad-verde);color:#fff;padding:14px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10;box-shadow:0 2px 8px rgba(15,122,55,.18)}
+  header .logo{font-size:18px;font-weight:700;letter-spacing:-.01em}
+  header .user{font-size:13px;opacity:.95;display:flex;align-items:center;gap:14px}
+  header .sair{background:rgba(255,255,255,.18);color:#fff;padding:7px 14px;font-size:13px;font-weight:600;backdrop-filter:blur(4px)}
+  header .sair:hover{background:rgba(255,255,255,.3)}
+  nav{background:#fff;border-bottom:1px solid var(--borda);display:flex;overflow-x:auto;position:sticky;top:50px;z-index:9;padding:0 12px}
+  nav button{background:none;padding:15px 18px;color:var(--cinza);font-weight:600;font-size:14px;border-bottom:2.5px solid transparent;border-radius:0;white-space:nowrap}
+  nav button:hover{color:var(--texto)}
   nav button.ativo{color:var(--verde);border-bottom-color:var(--verde)}
-  main{flex:1;padding:20px;max-width:1000px;margin:0 auto;width:100%}
+  main{flex:1;padding:24px 20px;max-width:1040px;margin:0 auto;width:100%}
   .pagina{display:none}
   .pagina.ativa{display:block;animation:fade .25s}
   @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
-  .cards-resumo{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-bottom:24px}
-  .card{background:var(--card);border-radius:12px;box-shadow:var(--sombra);padding:18px}
-  .card .rotulo{font-size:13px;color:var(--cinza);margin-bottom:6px}
-  .card .valor{font-size:24px;font-weight:700}
+  .cards-resumo{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:16px;margin-bottom:28px}
+  .card{background:var(--card);border-radius:14px;box-shadow:var(--sombra);padding:20px;border:1px solid var(--borda)}
+  .card .rotulo{font-size:12.5px;color:var(--cinza);margin-bottom:8px;font-weight:500}
+  .card .valor{font-size:24px;font-weight:700;letter-spacing:-.02em}
   .card .valor.pos{color:var(--verde)}
   .card .valor.neg{color:var(--vermelho)}
-  .card.destaque{background:var(--verde);color:#fff}
-  .card.destaque .rotulo{color:rgba(255,255,255,.85)}
+  .card.destaque{background:var(--grad-verde);color:#fff;border:none;box-shadow:var(--sombra-md)}
+  .card.destaque .rotulo{color:rgba(255,255,255,.88)}
   .card.destaque .valor{color:#fff}
-  .secao-titulo{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;margin-top:8px}
-  .secao-titulo h2{font-size:18px}
-  .btn-add{background:var(--verde);color:#fff;padding:9px 16px;font-weight:600;display:flex;align-items:center;gap:6px}
-  .btn-add:hover{background:var(--verde-esc)}
-  .lista{background:var(--card);border-radius:12px;box-shadow:var(--sombra);overflow:hidden}
-  .item{display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid var(--borda)}
+  .secao-titulo{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;margin-top:8px}
+  .secao-titulo h2{font-size:20px;font-weight:700;letter-spacing:-.02em}
+  .btn-add{background:var(--verde);color:#fff;padding:10px 18px;font-weight:600;display:flex;align-items:center;gap:6px;box-shadow:0 1px 3px rgba(21,163,74,.3)}
+  .btn-add:hover{background:var(--verde-esc);transform:translateY(-1px)}
+  .lista{background:var(--card);border-radius:14px;box-shadow:var(--sombra);overflow:hidden;border:1px solid var(--borda)}
+  .item{display:flex;align-items:center;gap:14px;padding:15px 18px;border-bottom:1px solid var(--borda);transition:background .12s}
+  .item:hover{background:#fafbfc}
   .item:last-child{border-bottom:none}
-  .item .bolinha{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;background:var(--cinza-claro)}
+  .item .bolinha{width:40px;height:40px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0;background:var(--cinza-claro)}
   .item .info{flex:1;min-width:0}
   .item .info .titulo{font-weight:600;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .item .info .meta{font-size:12px;color:var(--cinza)}
-  .item .montante{font-weight:700;font-size:15px;white-space:nowrap}
+  .item .info .meta{font-size:12px;color:var(--cinza);margin-top:1px}
+  .item .montante{font-weight:700;font-size:15.5px;white-space:nowrap;letter-spacing:-.01em}
   .item .montante.receita{color:var(--verde)}
   .item .montante.despesa{color:var(--vermelho)}
-  .item .acoes{display:flex;gap:6px}
-  .item .acoes button{background:none;color:var(--cinza);padding:6px;font-size:16px}
-  .item .acoes button:hover{color:var(--vermelho)}
-  .vazio{padding:40px 20px;text-align:center;color:var(--cinza);font-size:14px}
-  .filtros{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap}
+  .item .acoes{display:flex;gap:4px;align-items:center}
+  .item .acoes button{background:none;color:var(--cinza);padding:7px;font-size:15px;border-radius:7px}
+  .item .acoes button:hover{color:var(--vermelho);background:var(--cinza-claro)}
+  .vazio{padding:48px 20px;text-align:center;color:var(--cinza);font-size:14px}
+  .filtros{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;align-items:center}
   .filtros select,.filtros input{width:auto;flex:1;min-width:130px}
+  /* ---- Busca e ordenação ---- */
+  .barra-busca{display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+  .campo-busca{position:relative;flex:1;min-width:200px}
+  .campo-busca .lupa{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:#94a3b8;font-size:15px;pointer-events:none}
+  .campo-busca input{padding-left:38px;width:100%}
+  .campo-busca .limpar{position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;color:#94a3b8;padding:4px 7px;font-size:15px;border-radius:6px}
+  .campo-busca .limpar:hover{background:var(--cinza-claro);color:var(--texto)}
+  .ordenar-wrap{display:flex;align-items:center;gap:8px;flex-shrink:0}
+  .ordenar-wrap label{font-size:13px;color:var(--cinza);font-weight:600;white-space:nowrap}
+  .ordenar-wrap select{min-width:150px}
+  .resumo-filtro{font-size:13px;color:var(--cinza);margin-bottom:10px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+  .resumo-filtro b{color:var(--texto)}
+  .resumo-filtro .neg{color:var(--vermelho)}
+  .resumo-filtro .pos{color:var(--verde)}
+  /* ---- Tabela de lançamentos ---- */
+  .tabela-wrap{background:var(--card);border-radius:14px;box-shadow:var(--sombra);border:1px solid var(--borda);overflow-x:auto}
+  table.lancamentos{width:100%;border-collapse:collapse;font-size:14px;min-width:760px}
+  table.lancamentos thead th{position:sticky;top:0;background:#fafbfc;text-align:left;font-size:12px;font-weight:600;color:var(--cinza);text-transform:uppercase;letter-spacing:.03em;padding:12px 14px;border-bottom:1px solid var(--borda);white-space:nowrap;user-select:none}
+  table.lancamentos thead th.ordenavel{cursor:pointer}
+  table.lancamentos thead th.ordenavel:hover{color:var(--texto);background:#f1f5f9}
+  table.lancamentos thead th .seta-ord{font-size:11px;margin-left:4px;opacity:.45}
+  table.lancamentos thead th.ativo{color:var(--verde)}
+  table.lancamentos thead th.ativo .seta-ord{opacity:1;color:var(--verde)}
+  table.lancamentos th.num,table.lancamentos td.num{text-align:right}
+  table.lancamentos th.centro,table.lancamentos td.centro{text-align:center}
+  table.lancamentos tbody td{padding:12px 14px;border-bottom:1px solid var(--borda);vertical-align:middle}
+  table.lancamentos tbody tr:last-child td{border-bottom:none}
+  table.lancamentos tbody tr{transition:background .12s}
+  table.lancamentos tbody tr:hover{background:#fafbfc}
+  table.lancamentos tbody tr.pendente-linha{background:#fffdf7}
+  table.lancamentos tbody tr.pendente-linha:hover{background:#fffaf0}
+  .cel-desc{display:flex;align-items:center;gap:11px;min-width:0}
+  .cel-desc .bolinha{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;background:var(--cinza-claro)}
+  .cel-desc .txt{min-width:0}
+  .cel-desc .txt .t{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:240px}
+  .cel-desc .txt .s{font-size:12px;color:var(--cinza)}
+  td.col-valor{font-weight:700;white-space:nowrap;letter-spacing:-.01em}
+  td.col-valor.receita{color:var(--verde)}
+  td.col-valor.despesa{color:var(--vermelho)}
+  .cat-chip{display:inline-flex;align-items:center;gap:6px;font-size:13px;max-width:200px}
+  .cat-chip .pt{width:9px;height:9px;border-radius:3px;flex-shrink:0}
+  .cat-chip span.nm{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .acoes-tab{display:flex;gap:3px;align-items:center;justify-content:flex-end}
+  .acoes-tab button{background:none;color:var(--cinza);padding:6px;font-size:14px;border-radius:7px}
+  .acoes-tab button:hover{color:var(--vermelho);background:var(--cinza-claro)}
   .modal-fundo{position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;z-index:50;padding:16px}
   .modal{background:#fff;border-radius:16px;width:100%;max-width:460px;max-height:92vh;overflow-y:auto;padding:26px}
   .modal h3{font-size:18px;margin-bottom:18px}
@@ -124,15 +175,15 @@
   .barra-cat .trilho{height:10px;background:var(--cinza-claro);border-radius:6px;overflow:hidden}
   .barra-cat .preench{height:100%;border-radius:6px}
   .carregando{text-align:center;padding:60px;color:var(--cinza)}
-  .selo{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;margin-top:2px}
+  .selo{display:inline-block;font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px;margin-top:3px}
   .selo.pago{background:var(--verde-claro);color:var(--verde-esc)}
   .selo.pendente{background:#fff7e6;color:#b45309}
   .selo.vencido{background:var(--vermelho-claro);color:var(--vermelho)}
-  .item.pendente-item{opacity:.75}
-  .btn-quitar{background:var(--verde);color:#fff;padding:6px 10px;font-size:12px;font-weight:600;white-space:nowrap}
+  .item.pendente-item{opacity:.82}
+  .btn-quitar{background:var(--verde);color:#fff;padding:7px 12px;font-size:12px;font-weight:600;white-space:nowrap}
   .btn-quitar:hover{background:var(--verde-esc)}
-  .btn-estornar{background:var(--cinza-claro);color:var(--cinza);padding:6px 10px;font-size:12px;font-weight:600;white-space:nowrap}
-  .btn-estornar:hover{background:#e5e7eb}
+  .btn-estornar{background:var(--cinza-claro);color:var(--cinza);padding:7px 12px;font-size:12px;font-weight:600;white-space:nowrap}
+  .btn-estornar:hover{background:#e2e8f0}
   @media(max-width:600px){main{padding:14px}.card .valor{font-size:20px}header .user span.email{display:none}}
 </style>
 </head>
@@ -181,6 +232,13 @@
 
     <div class="pagina" id="pagina-lancamentos">
       <div class="secao-titulo"><h2>Lançamentos</h2><button class="btn-add" id="btn-novo-lancamento">+ Novo</button></div>
+      <div class="barra-busca">
+        <div class="campo-busca">
+          <span class="lupa">🔍</span>
+          <input id="busca-lancamento" type="text" placeholder="Buscar por descrição, contato, categoria…" autocomplete="off">
+          <button class="limpar oculto" id="limpar-busca" title="Limpar">✕</button>
+        </div>
+      </div>
       <div class="filtros">
         <select id="filtro-mes"></select>
         <select id="filtro-tipo"><option value="todos">Todos</option><option value="receita">Receitas</option><option value="despesa">Despesas</option></select>
@@ -189,7 +247,8 @@
         <select id="filtro-conta"><option value="todas">Todas contas</option></select>
         <select id="filtro-lanc-contato"><option value="todos">Todos contatos</option></select>
       </div>
-      <div class="lista" id="lista-lancamentos"></div>
+      <div class="resumo-filtro" id="resumo-filtro-lancamentos"></div>
+      <div class="tabela-wrap" id="tabela-lancamentos"></div>
     </div>
 
     <div class="pagina" id="pagina-contas">
@@ -540,6 +599,16 @@ $("filtro-status").onchange = renderLancamentos;
 $("filtro-categoria").onchange = renderLancamentos;
 $("filtro-conta").onchange = renderLancamentos;
 $("filtro-lanc-contato").onchange = renderLancamentos;
+$("busca-lancamento").addEventListener("input", () => {
+  $("limpar-busca").classList.toggle("oculto", !$("busca-lancamento").value);
+  renderLancamentos();
+});
+$("limpar-busca").onclick = () => {
+  $("busca-lancamento").value = "";
+  $("limpar-busca").classList.add("oculto");
+  renderLancamentos();
+  $("busca-lancamento").focus();
+};
 $("rel-mes").onchange = renderRelatorios;
 
 // ============================================================
@@ -600,6 +669,26 @@ function nomeCategoriaCompletoTexto(c) {
   }
   return c.nome;
 }
+// Para as colunas separadas de Categoria e Sub-categoria:
+// se o lançamento aponta para uma subcategoria, a categoria é o pai e a sub é ela mesma;
+// se aponta direto para uma categoria principal, a sub fica vazia.
+function catPaiNome(c) {
+  if (c.paiId) {
+    const pai = categorias.find((x) => x.id === c.paiId);
+    return pai ? pai.nome : c.nome;
+  }
+  return c.nome;
+}
+function catSubNome(c) {
+  return c.paiId ? c.nome : "";
+}
+function catPaiObj(c) {
+  if (c.paiId) {
+    const pai = categorias.find((x) => x.id === c.paiId);
+    if (pai) return pai;
+  }
+  return c;
+}
 function contaPorId(id) { return contas.find((c) => c.id === id); }
 
 function itemHTML(l) {
@@ -648,6 +737,7 @@ function renderLancamentos() {
   const catF = $("filtro-categoria").value;
   const contaF = $("filtro-conta").value;
   const contatoF = $("filtro-lanc-contato").value;
+  const termo = ($("busca-lancamento").value || "").trim().toLowerCase();
 
   let lista = lancamentos.filter((l) => mesDe(l.data) === mes);
   if (tipo !== "todos") lista = lista.filter((l) => l.tipo === tipo);
@@ -655,11 +745,136 @@ function renderLancamentos() {
   if (catF !== "todas") lista = lista.filter((l) => l.categoriaId === catF);
   if (contaF !== "todas") lista = lista.filter((l) => l.contaId === contaF);
   if (contatoF !== "todos") lista = lista.filter((l) => l.contatoId === contatoF);
-  lista.sort((a, b) => b.data.localeCompare(a.data));
 
-  $("lista-lancamentos").innerHTML = lista.length
-    ? lista.map(itemHTML).join("")
-    : `<div class="vazio">Nenhum lançamento neste filtro.</div>`;
+  // busca textual: descrição, categoria (com pai), conta e contato
+  if (termo) {
+    lista = lista.filter((l) => {
+      const cat = categoriaPorId(l.categoriaId);
+      const conta = l.contaId ? contaPorId(l.contaId) : null;
+      const contato = l.contatoId ? contatoPorId(l.contatoId) : null;
+      const alvo = [
+        l.descricao,
+        nomeCategoriaCompletoTexto(cat),
+        conta ? conta.nome : "",
+        contato ? contato.nome : "",
+      ].join(" ").toLowerCase();
+      return alvo.includes(termo);
+    });
+  }
+
+  // valor de ordenação por coluna
+  const statusPeso = (l) => (l.status === "pago" ? 2 : (l.vencimento && l.vencimento < hoje() ? 0 : 1));
+  const chaveOrd = (l) => {
+    const cat = categoriaPorId(l.categoriaId);
+    switch (ordenLanc.col) {
+      case "vencimento": return l.vencimento || "";
+      case "categoria": return catPaiNome(cat).toLowerCase();
+      case "subcategoria": return catSubNome(cat).toLowerCase();
+      case "fornecedor": { const c = contatoPorId(l.contatoId); return (c ? c.nome : "").toLowerCase(); }
+      case "valor": return Number(l.valor) || 0;
+      case "conta": { const c = contaPorId(l.contaId); return (c ? c.nome : "").toLowerCase(); }
+      case "status": return statusPeso(l);
+      case "data":
+      default: return l.data || "";
+    }
+  };
+  const dir = ordenLanc.dir === "asc" ? 1 : -1;
+  lista.sort((a, b) => {
+    const va = chaveOrd(a), vb = chaveOrd(b);
+    let r;
+    if (typeof va === "number" && typeof vb === "number") r = va - vb;
+    else r = String(va).localeCompare(String(vb), "pt-BR");
+    if (r === 0) r = (b.data || "").localeCompare(a.data || ""); // desempate por data
+    return r * dir;
+  });
+
+  // resumo do filtro atual
+  const rec = lista.filter((l) => l.tipo === "receita").reduce((s, l) => s + Number(l.valor), 0);
+  const desp = lista.filter((l) => l.tipo === "despesa").reduce((s, l) => s + Number(l.valor), 0);
+  $("resumo-filtro-lancamentos").innerHTML = lista.length
+    ? `<span>${lista.length} lançamento${lista.length > 1 ? "s" : ""}${termo ? ` para “${escapar(termo)}”` : ""}</span>
+       <span>Receitas <b class="pos">${moeda(rec)}</b> · Despesas <b class="neg">${moeda(desp)}</b> · Saldo <b class="${rec - desp >= 0 ? "pos" : "neg"}">${moeda(rec - desp)}</b></span>`
+    : "";
+
+  if (!lista.length) {
+    $("tabela-lancamentos").innerHTML =
+      `<div class="vazio">${termo ? "Nenhum lançamento corresponde à busca." : "Nenhum lançamento neste filtro."}</div>`;
+    return;
+  }
+
+  const cols = [
+    { id: "data", rotulo: "Data competência", cls: "centro" },
+    { id: "vencimento", rotulo: "Data vencimento", cls: "centro" },
+    { id: "fornecedor", rotulo: "Fornecedor", cls: "" },
+    { id: "categoria", rotulo: "Categoria", cls: "" },
+    { id: "subcategoria", rotulo: "Sub-categoria", cls: "" },
+    { id: "valor", rotulo: "Valor", cls: "num" },
+    { id: "conta", rotulo: "Conta", cls: "" },
+    { id: "status", rotulo: "Situação", cls: "centro" },
+  ];
+  const thead = cols.map((c) => {
+    const ativo = ordenLanc.col === c.id;
+    const seta = ativo ? (ordenLanc.dir === "asc" ? "▲" : "▼") : "↕";
+    return `<th class="ordenavel ${c.cls} ${ativo ? "ativo" : ""}" onclick="ordenarPor('${c.id}')" title="Ordenar por ${c.rotulo}">${c.rotulo}<span class="seta-ord">${seta}</span></th>`;
+  }).join("") + `<th class="num">Ações</th>`;
+
+  const linhas = lista.map(linhaTabelaHTML).join("");
+  $("tabela-lancamentos").innerHTML =
+    `<table class="lancamentos"><thead><tr>${thead}</tr></thead><tbody>${linhas}</tbody></table>`;
+}
+
+// estado da ordenação por coluna (padrão: data, decrescente)
+let ordenLanc = { col: "data", dir: "desc" };
+window.ordenarPor = (col) => {
+  if (ordenLanc.col === col) {
+    ordenLanc.dir = ordenLanc.dir === "asc" ? "desc" : "asc";
+  } else {
+    ordenLanc.col = col;
+    // texto começa A→Z; números/datas começam do maior/mais recente
+    ordenLanc.dir = ["categoria", "subcategoria", "fornecedor", "conta"].includes(col) ? "asc" : "desc";
+  }
+  renderLancamentos();
+};
+
+function linhaTabelaHTML(l) {
+  const cat = categoriaPorId(l.categoriaId);
+  const catPai = catPaiObj(cat);
+  const sub = catSubNome(cat);
+  const conta = l.contaId ? contaPorId(l.contaId) : null;
+  const contato = l.contatoId ? contatoPorId(l.contatoId) : null;
+  const pago = l.status === "pago";
+  const vencido = !pago && l.vencimento && l.vencimento < hoje();
+  const sinal = l.tipo === "receita" ? "+" : "−";
+  const selo = pago
+    ? `<span class="selo pago">✓ Pago</span>`
+    : vencido
+      ? `<span class="selo vencido">⚠ Vencido</span>`
+      : `<span class="selo pendente">● Pendente</span>`;
+  const botaoStatus = pago
+    ? `<button class="btn-estornar" onclick="alternarQuitar('${l.id}')" title="Marcar como pendente">Estornar</button>`
+    : `<button class="btn-quitar" onclick="alternarQuitar('${l.id}')" title="Marcar como pago">Quitar</button>`;
+  return `<tr class="${pago ? "" : "pendente-linha"}">
+    <td class="centro">${rotuloData(l.data)}</td>
+    <td class="centro">${l.vencimento ? rotuloData(l.vencimento) : "—"}</td>
+    <td>${contato ? escapar(contato.nome) : "—"}</td>
+    <td>
+      <div class="cel-desc">
+        <div class="bolinha" style="background:${catPai.cor}22">${catPai.icone}</div>
+        <div class="txt"><div class="t">${escapar(catPai.nome)}</div></div>
+      </div>
+    </td>
+    <td>${sub ? `<span class="cat-chip"><span class="pt" style="background:${cat.cor}"></span><span class="nm">${escapar(sub)}</span></span>` : "—"}</td>
+    <td class="num col-valor ${l.tipo}">${sinal} ${moeda(l.valor)}</td>
+    <td>${conta ? (conta.icone || "🏦") + " " + escapar(conta.nome) : "—"}</td>
+    <td class="centro">${selo}</td>
+    <td class="num">
+      <div class="acoes-tab">
+        ${botaoStatus}
+        <button onclick="editarLancamento('${l.id}')" title="Editar">✏️</button>
+        <button onclick="excluirLancamento('${l.id}')" title="Excluir">🗑️</button>
+      </div>
+    </td>
+  </tr>`;
 }
 
 $("btn-novo-lancamento").onclick = () => abrirModalLanc();
