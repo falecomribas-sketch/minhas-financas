@@ -132,6 +132,7 @@
     <button class="ativo" data-pagina="resumo">Resumo</button>
     <button data-pagina="lancamentos">Lançamentos</button>
     <button data-pagina="contas">Contas</button>
+    <button data-pagina="contatos">Contatos</button>
     <button data-pagina="categorias">Categorias</button>
     <button data-pagina="relatorios">Relatórios</button>
   </nav>
@@ -158,6 +159,7 @@
         <select id="filtro-status"><option value="todos">Pagos e pendentes</option><option value="pendente">Só pendentes</option><option value="pago">Só pagos</option></select>
         <select id="filtro-categoria"><option value="todas">Todas categorias</option></select>
         <select id="filtro-conta"><option value="todas">Todas contas</option></select>
+        <select id="filtro-lanc-contato"><option value="todos">Todos contatos</option></select>
       </div>
       <div class="lista" id="lista-lancamentos"></div>
     </div>
@@ -165,6 +167,18 @@
     <div class="pagina" id="pagina-contas">
       <div class="secao-titulo"><h2>Contas bancárias</h2><button class="btn-add" id="btn-nova-conta">+ Nova conta</button></div>
       <div class="lista" id="lista-contas"></div>
+    </div>
+
+    <div class="pagina" id="pagina-contatos">
+      <div class="secao-titulo"><h2>Fornecedores e clientes</h2><button class="btn-add" id="btn-novo-contato">+ Novo contato</button></div>
+      <div class="filtros">
+        <select id="filtro-contato-tipo">
+          <option value="todos">Todos</option>
+          <option value="fornecedor">Fornecedores</option>
+          <option value="cliente">Clientes</option>
+        </select>
+      </div>
+      <div class="lista" id="lista-contatos"></div>
     </div>
 
     <div class="pagina" id="pagina-categorias">
@@ -189,9 +203,27 @@
     <div class="campo"><label>Valor (R$)</label><input id="lanc-valor" type="number" step="0.01" placeholder="0,00"></div>
     <div class="campo"><label>Data de competência</label><input id="lanc-data" type="date"></div>
     <div class="campo"><label>Data de vencimento</label><input id="lanc-vencimento" type="date"></div>
+    <div class="campo" id="campo-repeticao"><label>Repetição</label>
+      <select id="lanc-repeticao">
+        <option value="unico">Lançamento único</option>
+        <option value="recorrente">Recorrente (mensal — valor cheio todo mês)</option>
+        <option value="parcelado">Parcelado (dividir valor em parcelas)</option>
+      </select>
+      <div id="campo-qtd-meses" class="oculto" style="margin-top:10px">
+        <label id="label-qtd-meses">Quantos meses</label>
+        <select id="lanc-parcelas"></select>
+      </div>
+      <div id="parcelas-info" style="font-size:12px;color:#6b7280;margin-top:6px"></div>
+    </div>
     <div class="campo"><label>Situação</label><select id="lanc-status"><option value="pendente">Pendente (ainda não pago)</option><option value="pago">Pago / quitado</option></select></div>
     <div class="campo"><label>Conta</label><select id="lanc-conta"></select></div>
     <div class="campo"><label>Categoria</label><select id="lanc-categoria"></select></div>
+    <div class="campo"><label id="lanc-contato-label">Fornecedor / Cliente <span style="font-weight:400">(opcional)</span></label>
+      <div style="display:flex;gap:8px">
+        <select id="lanc-contato" style="flex:1"></select>
+        <button type="button" class="btn-sec" id="lanc-novo-contato" style="flex:0 0 auto;width:auto;padding:10px 14px">+ Novo</button>
+      </div>
+    </div>
     <div class="linha-botoes"><button class="btn-sec" id="lanc-cancelar">Cancelar</button><button class="btn-principal" id="lanc-salvar">Salvar</button></div>
   </div>
 </div>
@@ -205,6 +237,17 @@
     <div class="campo"><label>Ícone (emoji)</label><input id="conta-icone" placeholder="🏦" maxlength="2"></div>
     <div class="campo"><label>Cor</label><input id="conta-cor" type="color" value="#119E3F" style="height:46px;padding:4px"></div>
     <div class="linha-botoes"><button class="btn-sec" id="conta-cancelar">Cancelar</button><button class="btn-principal" id="conta-salvar">Salvar</button></div>
+  </div>
+</div>
+
+<div id="modal-contato" class="modal-fundo oculto" style="z-index:60">
+  <div class="modal">
+    <h3 id="titulo-modal-contato">Novo contato</h3>
+    <div class="campo"><label>Nome</label><input id="contato-nome" placeholder="Ex: Mercado Silva, João da Silva"></div>
+    <div class="campo"><label>Tipo</label><select id="contato-tipo"><option value="fornecedor">Fornecedor</option><option value="cliente">Cliente</option></select></div>
+    <div class="campo"><label>CPF / CNPJ <span style="font-weight:400;color:#6b7280">(opcional)</span></label><input id="contato-doc" placeholder="000.000.000-00 ou 00.000.000/0000-00"></div>
+    <div id="contato-erro" class="erro oculto"></div>
+    <div class="linha-botoes"><button class="btn-sec" id="contato-cancelar">Cancelar</button><button class="btn-principal" id="contato-salvar">Salvar</button></div>
   </div>
 </div>
 
@@ -255,8 +298,9 @@ let usuario = null;
 let lancamentos = [];
 let categorias = [];
 let contas = [];
+let contatos = [];
 let tipoLancamentoAtual = "despesa";
-let editandoId = { lanc: null, cat: null, conta: null };
+let editandoId = { lanc: null, cat: null, conta: null, contato: null };
 
 const CATEGORIAS_PADRAO = [
   { nome: "Alimentação", icone: "🍔", cor: "#d83933", tipo: "despesa" },
@@ -351,10 +395,11 @@ const col = (nome) => db.collection("usuarios").doc(usuario.uid).collection(nome
 
 async function carregarTudo() {
   $("carregando-inicial").classList.remove("oculto");
-  const [snapCat, snapLanc, snapConta] = await Promise.all([
+  const [snapCat, snapLanc, snapConta, snapContato] = await Promise.all([
     col("categorias").get(),
     col("lancamentos").get(),
     col("contas").get(),
+    col("contatos").get(),
   ]);
 
   categorias = snapCat.docs.map((d) => ({ id: d.id, ...d.data() }));
@@ -365,6 +410,7 @@ async function carregarTudo() {
     return dados;
   });
   contas = snapConta.docs.map((d) => ({ id: d.id, ...d.data() }));
+  contatos = snapContato.docs.map((d) => ({ id: d.id, ...d.data() }));
 
   if (categorias.length === 0) {
     for (const c of CATEGORIAS_PADRAO) {
@@ -388,10 +434,12 @@ function renderTudo() {
   renderResumo();
   renderLancamentos();
   renderContas();
+  renderContatos();
   renderCategorias();
   renderRelatorios();
   preencherSelectsCategoria();
   preencherSelectsConta();
+  preencherSelectsContato();
 }
 
 // ============================================================
@@ -432,6 +480,7 @@ $("filtro-tipo").onchange = renderLancamentos;
 $("filtro-status").onchange = renderLancamentos;
 $("filtro-categoria").onchange = renderLancamentos;
 $("filtro-conta").onchange = renderLancamentos;
+$("filtro-lanc-contato").onchange = renderLancamentos;
 $("rel-mes").onchange = renderRelatorios;
 
 // ============================================================
@@ -490,6 +539,7 @@ function contaPorId(id) { return contas.find((c) => c.id === id); }
 function itemHTML(l) {
   const cat = categoriaPorId(l.categoriaId);
   const conta = l.contaId ? contaPorId(l.contaId) : null;
+  const contato = l.contatoId ? contatoPorId(l.contatoId) : null;
   const pago = l.status === "pago";
   const vencido = !pago && l.vencimento && l.vencimento < hoje();
   const meta = [
@@ -497,6 +547,7 @@ function itemHTML(l) {
     l.vencimento ? "vence " + rotuloData(l.vencimento) : null,
     cat.nome,
     conta ? (conta.icone || "🏦") + " " + conta.nome : null,
+    contato ? (l.tipo === "receita" ? "🧑 " : "🏭 ") + contato.nome : null,
   ].filter(Boolean).join(" · ");
   const sinal = l.tipo === "receita" ? "+" : "−";
   const selo = pago
@@ -530,12 +581,14 @@ function renderLancamentos() {
   const statusF = $("filtro-status").value;
   const catF = $("filtro-categoria").value;
   const contaF = $("filtro-conta").value;
+  const contatoF = $("filtro-lanc-contato").value;
 
   let lista = lancamentos.filter((l) => mesDe(l.data) === mes);
   if (tipo !== "todos") lista = lista.filter((l) => l.tipo === tipo);
   if (statusF !== "todos") lista = lista.filter((l) => (l.status || "pago") === statusF);
   if (catF !== "todas") lista = lista.filter((l) => l.categoriaId === catF);
   if (contaF !== "todas") lista = lista.filter((l) => l.contaId === contaF);
+  if (contatoF !== "todos") lista = lista.filter((l) => l.contatoId === contatoF);
   lista.sort((a, b) => b.data.localeCompare(a.data));
 
   $("lista-lancamentos").innerHTML = lista.length
@@ -553,6 +606,58 @@ function setTipoLanc(t) {
   $("seg-receita").className = t === "receita" ? "sel-rec" : "";
   $("seg-despesa").className = t === "despesa" ? "sel-desp" : "";
   preencherSelectsCategoria();
+  ajustarOpcoesRepeticao();
+  atualizarVisibilidadeRepeticao();
+  preencherSelectContatoModal();
+}
+
+function preencherSelectParcelas() {
+  const sel = $("lanc-parcelas");
+  let opts = "";
+  for (let i = 2; i <= 60; i++) opts += `<option value="${i}">${i}x</option>`;
+  sel.innerHTML = opts;
+}
+
+// O modo "parcelado" só existe para despesas; receita só pode ser única ou recorrente
+function ajustarOpcoesRepeticao() {
+  const opParc = $("lanc-repeticao").querySelector('option[value="parcelado"]');
+  if (tipoLancamentoAtual === "receita") {
+    opParc.classList.add("oculto");
+    if ($("lanc-repeticao").value === "parcelado") $("lanc-repeticao").value = "unico";
+  } else {
+    opParc.classList.remove("oculto");
+  }
+}
+
+function atualizarVisibilidadeRepeticao() {
+  // Repetição só ao criar (não em edição)
+  const emEdicao = !!editandoId.lanc;
+  $("campo-repeticao").classList.toggle("oculto", emEdicao);
+  if (emEdicao) { $("lanc-repeticao").value = "unico"; }
+
+  const modo = $("lanc-repeticao").value;
+  const precisaMeses = !emEdicao && (modo === "recorrente" || modo === "parcelado");
+  $("campo-qtd-meses").classList.toggle("oculto", !precisaMeses);
+  $("label-qtd-meses").textContent = modo === "parcelado" ? "Número de parcelas" : "Quantos meses";
+  if (!precisaMeses) $("lanc-parcelas").value = "2";
+  atualizarInfoRepeticao();
+}
+
+function atualizarInfoRepeticao() {
+  const modo = $("lanc-repeticao").value;
+  const n = parseInt($("lanc-parcelas").value || "0", 10);
+  const valor = parseFloat($("lanc-valor").value);
+  const info = $("parcelas-info");
+  if (editandoId.lanc || modo === "unico" || !n) { info.textContent = ""; return; }
+  if (modo === "parcelado" && valor > 0) {
+    info.textContent = `${n} parcelas de ${moeda(valor / n)} — total ${moeda(valor)}.`;
+  } else if (modo === "recorrente" && valor > 0) {
+    info.textContent = `${n} lançamentos de ${moeda(valor)} (um por mês) — total ${moeda(valor * n)}.`;
+  } else if (modo === "recorrente") {
+    info.textContent = `${n} lançamentos mensais com o valor informado.`;
+  } else {
+    info.textContent = "";
+  }
 }
 
 function abrirModalLanc(lanc = null) {
@@ -565,11 +670,33 @@ function abrirModalLanc(lanc = null) {
   $("lanc-data").value = lanc ? lanc.data : hoje();
   $("lanc-vencimento").value = lanc ? (lanc.vencimento || "") : "";
   $("lanc-status").value = lanc ? (lanc.status || "pago") : "pendente";
+  preencherSelectParcelas();
+  $("lanc-repeticao").value = "unico";
+  $("lanc-parcelas").value = "2";
+  ajustarOpcoesRepeticao();
+  atualizarVisibilidadeRepeticao();
   preencherSelectsCategoria();
   preencherSelectsConta();
+  preencherSelectContatoModal();
   if (lanc) $("lanc-categoria").value = lanc.categoriaId;
   if (lanc && lanc.contaId) $("lanc-conta").value = lanc.contaId;
+  if (lanc && lanc.contatoId) $("lanc-contato").value = lanc.contatoId;
   $("modal-lancamento").classList.remove("oculto");
+}
+$("lanc-repeticao").addEventListener("change", atualizarVisibilidadeRepeticao);
+$("lanc-parcelas").addEventListener("change", atualizarInfoRepeticao);
+$("lanc-valor").addEventListener("input", atualizarInfoRepeticao);
+
+// Avança uma data (YYYY-MM-DD) em n meses, preservando o dia (ajustando p/ fim de mês)
+function somarMeses(dataStr, n) {
+  if (!dataStr) return "";
+  const [a, m, d] = dataStr.split("-").map(Number);
+  const base = new Date(a, m - 1 + n, 1);
+  const ultimoDia = new Date(base.getFullYear(), base.getMonth() + 1, 0).getDate();
+  const dia = Math.min(d, ultimoDia);
+  const mm = String(base.getMonth() + 1).padStart(2, "0");
+  const dd = String(dia).padStart(2, "0");
+  return `${base.getFullYear()}-${mm}-${dd}`;
 }
 
 $("lanc-salvar").onclick = async () => {
@@ -580,16 +707,59 @@ $("lanc-salvar").onclick = async () => {
   const status = $("lanc-status").value;
   const categoriaId = $("lanc-categoria").value;
   const contaId = $("lanc-conta").value;
+  const contatoId = $("lanc-contato").value || "";
   if (!desc || !valor || valor <= 0 || !data) return alert("Preencha descrição, valor e data de competência.");
   if (!contaId) return alert("Selecione a conta.");
 
-  const dados = { descricao: desc, valor, data, vencimento, status, tipo: tipoLancamentoAtual, categoriaId, contaId };
+  const modo = (!editandoId.lanc) ? $("lanc-repeticao").value : "unico";
+  const n = parseInt($("lanc-parcelas").value || "0", 10);
 
   if (editandoId.lanc) {
+    const dados = { descricao: desc, valor, data, vencimento, status, tipo: tipoLancamentoAtual, categoriaId, contaId, contatoId };
     await col("lancamentos").doc(editandoId.lanc).update(dados);
     const i = lancamentos.findIndex((l) => l.id === editandoId.lanc);
-    lancamentos[i] = { id: editandoId.lanc, ...dados };
+    lancamentos[i] = { id: editandoId.lanc, ...lancamentos[i], ...dados };
+
+  } else if (modo === "parcelado" && n > 1) {
+    // Parcelado: divide o valor; só despesa
+    const grupoId = "g_" + Date.now() + "_" + Math.random().toString(36).slice(2, 8);
+    const totalCent = Math.round(valor * 100);
+    const baseCent = Math.floor(totalCent / n);
+    const resto = totalCent - baseCent * n;
+    for (let i = 0; i < n; i++) {
+      const valorParcela = (baseCent + (i < resto ? 1 : 0)) / 100;
+      const dados = {
+        descricao: `${desc} (${i + 1}/${n})`,
+        valor: valorParcela,
+        data: somarMeses(data, i),
+        vencimento: vencimento ? somarMeses(vencimento, i) : "",
+        status: i === 0 ? status : "pendente",
+        tipo: "despesa", categoriaId, contaId, contatoId,
+        grupoId, grupoTipo: "parcelado", parcelaNum: i + 1, parcelasTotal: n,
+      };
+      const ref = await col("lancamentos").add(dados);
+      lancamentos.push({ id: ref.id, ...dados });
+    }
+
+  } else if (modo === "recorrente" && n > 1) {
+    // Recorrente: valor cheio repetido todo mês; despesa ou receita
+    const grupoId = "g_" + Date.now() + "_" + Math.random().toString(36).slice(2, 8);
+    for (let i = 0; i < n; i++) {
+      const dados = {
+        descricao: desc,
+        valor,
+        data: somarMeses(data, i),
+        vencimento: vencimento ? somarMeses(vencimento, i) : "",
+        status: i === 0 ? status : "pendente",
+        tipo: tipoLancamentoAtual, categoriaId, contaId, contatoId,
+        grupoId, grupoTipo: "recorrente", parcelaNum: i + 1, parcelasTotal: n,
+      };
+      const ref = await col("lancamentos").add(dados);
+      lancamentos.push({ id: ref.id, ...dados });
+    }
+
   } else {
+    const dados = { descricao: desc, valor, data, vencimento, status, tipo: tipoLancamentoAtual, categoriaId, contaId, contatoId };
     const ref = await col("lancamentos").add(dados);
     lancamentos.push({ id: ref.id, ...dados });
   }
@@ -608,9 +778,27 @@ window.alternarQuitar = async (id) => {
   renderTudo();
 };
 window.excluirLancamento = async (id) => {
-  if (!confirm("Excluir este lançamento?")) return;
+  const l = lancamentos.find((x) => x.id === id);
+  if (!l) return;
+  if (l.grupoId) {
+    const grupo = lancamentos.filter((x) => x.grupoId === l.grupoId);
+    const nome = l.grupoTipo === "recorrente" ? "recorrência" : "parcelamento";
+    const todas = confirm(
+      `Este lançamento faz parte de um ${nome} (${grupo.length} lançamentos).\n\n` +
+      `OK = excluir TODOS\nCancelar = excluir só este`
+    );
+    if (todas) {
+      for (const p of grupo) await col("lancamentos").doc(p.id).delete();
+      const ids = new Set(grupo.map((p) => p.id));
+      lancamentos = lancamentos.filter((x) => !ids.has(x.id));
+      renderTudo();
+      return;
+    }
+  } else {
+    if (!confirm("Excluir este lançamento?")) return;
+  }
   await col("lancamentos").doc(id).delete();
-  lancamentos = lancamentos.filter((l) => l.id !== id);
+  lancamentos = lancamentos.filter((x) => x.id !== id);
   renderTudo();
 };
 
@@ -691,6 +879,139 @@ window.excluirConta = async (id) => {
   contas = contas.filter((c) => c.id !== id);
   renderTudo();
 };
+
+// ============================================================
+//  CONTATOS (fornecedores e clientes)
+// ============================================================
+function contatoPorId(id) { return contatos.find((c) => c.id === id); }
+
+// Para uma DESPESA usamos fornecedores; para uma RECEITA, clientes.
+function tipoContatoDoLancamento() {
+  return tipoLancamentoAtual === "receita" ? "cliente" : "fornecedor";
+}
+
+function preencherSelectContatoModal() {
+  const tipoC = tipoContatoDoLancamento();
+  const lista = contatos.filter((c) => c.tipo === tipoC).sort((a, b) => a.nome.localeCompare(b.nome));
+  const atual = $("lanc-contato").value;
+  $("lanc-contato-label").innerHTML =
+    (tipoC === "cliente" ? "Cliente" : "Fornecedor") + ` <span style="font-weight:400">(opcional)</span>`;
+  $("lanc-contato").innerHTML =
+    `<option value="">— Nenhum —</option>` +
+    lista.map((c) => `<option value="${c.id}">${escapar(c.nome)}${c.doc ? " · " + escapar(c.doc) : ""}</option>`).join("");
+  if ([...$("lanc-contato").options].some((o) => o.value === atual)) $("lanc-contato").value = atual;
+}
+
+function preencherSelectsContato() {
+  // filtro na página de lançamentos
+  const atual = $("filtro-lanc-contato").value;
+  $("filtro-lanc-contato").innerHTML =
+    `<option value="todos">Todos contatos</option>` +
+    [...contatos].sort((a, b) => a.nome.localeCompare(b.nome))
+      .map((c) => `<option value="${c.id}">${escapar(c.nome)}</option>`).join("");
+  if ([...$("filtro-lanc-contato").options].some((o) => o.value === atual)) $("filtro-lanc-contato").value = atual;
+}
+
+function renderContatos() {
+  const filtro = $("filtro-contato-tipo").value;
+  let lista = [...contatos];
+  if (filtro !== "todos") lista = lista.filter((c) => c.tipo === filtro);
+  lista.sort((a, b) => a.nome.localeCompare(b.nome));
+
+  $("lista-contatos").innerHTML = lista.length
+    ? lista.map((c) => {
+        const ehCliente = c.tipo === "cliente";
+        const icone = ehCliente ? "🧑" : "🏭";
+        const rotuloTipo = ehCliente ? "Cliente" : "Fornecedor";
+        const meta = [rotuloTipo, c.doc ? escapar(c.doc) : null].filter(Boolean).join(" · ");
+        return `<div class="item">
+          <div class="bolinha">${icone}</div>
+          <div class="info">
+            <div class="titulo">${escapar(c.nome)}</div>
+            <div class="meta">${meta}</div>
+          </div>
+          <div class="acoes">
+            <button onclick="editarContato('${c.id}')" title="Editar">✏️</button>
+            <button onclick="excluirContato('${c.id}')" title="Excluir">🗑️</button>
+          </div>
+        </div>`;
+      }).join("")
+    : `<div class="vazio">Nenhum contato cadastrado. Clique em "+ Novo contato".</div>`;
+}
+
+$("filtro-contato-tipo").onchange = renderContatos;
+$("btn-novo-contato").onclick = () => abrirModalContato();
+$("contato-cancelar").onclick = () => $("modal-contato").classList.add("oculto");
+
+// Abre o modal de contato. Se "voltarParaLanc" for true, ao salvar volta ao lançamento
+// e já seleciona o contato recém-criado.
+let contatoVoltarParaLanc = false;
+function abrirModalContato(c = null, voltarParaLanc = false) {
+  contatoVoltarParaLanc = voltarParaLanc;
+  editandoId.contato = c ? c.id : null;
+  $("titulo-modal-contato").textContent = c ? "Editar contato" : "Novo contato";
+  $("contato-nome").value = c ? c.nome : "";
+  // se veio do modal de lançamento, sugere o tipo conforme o lançamento
+  $("contato-tipo").value = c ? c.tipo : (voltarParaLanc ? tipoContatoDoLancamento() : "fornecedor");
+  $("contato-doc").value = c ? (c.doc || "") : "";
+  $("contato-erro").classList.add("oculto");
+  $("modal-contato").classList.remove("oculto");
+}
+
+$("contato-salvar").onclick = async () => {
+  const nome = $("contato-nome").value.trim();
+  const tipo = $("contato-tipo").value;
+  const doc = $("contato-doc").value.trim();
+  if (!nome) {
+    $("contato-erro").textContent = "Digite o nome do contato.";
+    $("contato-erro").classList.remove("oculto");
+    return;
+  }
+  // Evita nomes duplicados do mesmo tipo (o objetivo do cadastro é padronizar)
+  const dup = contatos.find(
+    (c) => c.id !== editandoId.contato && c.tipo === tipo &&
+      c.nome.trim().toLowerCase() === nome.toLowerCase()
+  );
+  if (dup) {
+    $("contato-erro").textContent = "Já existe um contato com esse nome neste tipo.";
+    $("contato-erro").classList.remove("oculto");
+    return;
+  }
+  const dados = { nome, tipo, doc };
+  let idSalvo;
+  if (editandoId.contato) {
+    await col("contatos").doc(editandoId.contato).update(dados);
+    const i = contatos.findIndex((c) => c.id === editandoId.contato);
+    contatos[i] = { id: editandoId.contato, ...dados };
+    idSalvo = editandoId.contato;
+  } else {
+    const ref = await col("contatos").add(dados);
+    contatos.push({ id: ref.id, ...dados });
+    idSalvo = ref.id;
+  }
+  $("modal-contato").classList.add("oculto");
+
+  if (contatoVoltarParaLanc) {
+    // volta ao lançamento e seleciona o contato criado
+    contatoVoltarParaLanc = false;
+    preencherSelectContatoModal();
+    if (dados.tipo === tipoContatoDoLancamento()) $("lanc-contato").value = idSalvo;
+  }
+  renderTudo();
+};
+
+window.editarContato = (id) => abrirModalContato(contatos.find((c) => c.id === id));
+window.excluirContato = async (id) => {
+  const usado = lancamentos.some((l) => l.contatoId === id);
+  if (usado && !confirm("Há lançamentos vinculados a este contato. Excluir mesmo assim? (os lançamentos ficam sem contato)")) return;
+  if (!usado && !confirm("Excluir este contato?")) return;
+  await col("contatos").doc(id).delete();
+  contatos = contatos.filter((c) => c.id !== id);
+  renderTudo();
+};
+
+// botão "+ Novo" dentro do modal de lançamento
+$("lanc-novo-contato").onclick = () => abrirModalContato(null, true);
 
 // ============================================================
 //  CATEGORIAS
