@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Meu Controle Financeiro</title>
+<style>
+  :root{
+    --verde:#119E3F; --verde-esc:#0d7d31; --verde-claro:#e8f6ed;
+    --vermelho:#d83933; --vermelho-claro:#fbeaea;
+    --azul:#2563eb; --cinza:#6b7280; --cinza-claro:#f3f4f6;
+    --borda:#e5e7eb; --texto:#1f2937; --bg:#f7f8fa;
+    --card:#ffffff; --sombra:0 1px 3px rgba(0,0,0,.08);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:var(--bg);color:var(--texto);line-height:1.5;-webkit-font-smoothing:antialiased}
+  button{font-family:inherit;cursor:pointer;border:none;border-radius:8px;font-size:14px}
+  input,select{font-family:inherit;font-size:15px;padding:10px 12px;border:1px solid var(--borda);
+    border-radius:8px;width:100%;background:#fff}
+  input:focus,select:focus{outline:none;border-color:var(--verde)}
+  .oculto{display:none!important}
+
+  /* ===== LOGIN ===== */
+  #tela-login{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+  .login-box{background:var(--card);border-radius:16px;box-shadow:var(--sombra);padding:36px 32px;
+    width:100%;max-width:400px}
+  .login-box h1{color:var(--verde);font-size:26px;margin-bottom:4px;text-align:center}
+  .login-box .sub{color:var(--cinza);text-align:center;margin-bottom:26px;font-size:14px}
+  .campo{margin-bottom:16px}
+  .campo label{display:block;font-size:13px;color:var(--cinza);margin-bottom:6px;font-weight:600}
+  .btn-principal{background:var(--verde);color:#fff;width:100%;padding:12px;font-weight:600;font-size:15px}
+  .btn-principal:hover{background:var(--verde-esc)}
+  .link-troca{text-align:center;margin-top:18px;font-size:14px;color:var(--cinza)}
+  .link-troca a{color:var(--verde);cursor:pointer;font-weight:600;text-decoration:none}
+  .erro{background:var(--vermelho-claro);color:var(--vermelho);padding:10px 12px;border-radius:8px;
+    font-size:13px;margin-bottom:16px;text-align:center}
+
+  /* ===== APP ===== */
+  #tela-app{min-height:100vh;display:flex;flex-direction:column}
+  header{background:var(--verde);color:#fff;padding:14px 20px;display:flex;align-items:center;
+    justify-content:space-between;position:sticky;top:0;z-index:10}
+  header .logo{font-size:18px;font-weight:700}
+  header .user{font-size:13px;opacity:.9;display:flex;align-items:center;gap:12px}
+  header .sair{background:rgba(255,255,255,.2);color:#fff;padding:6px 12px;font-size:13px}
+  header .sair:hover{background:rgba(255,255,255,.32)}
+
+  nav{background:#fff;border-bottom:1px solid var(--borda);display:flex;overflow-x:auto;
+    position:sticky;top:50px;z-index:9}
+  nav button{background:none;padding:14px 18px;color:var(--cinza);font-weight:600;font-size:14px;
+    border-bottom:3px solid transparent;border-radius:0;white-space:nowrap}
+  nav button.ativo{color:var(--verde);border-bottom-color:var(--verde)}
+
+  main{flex:1;padding:20px;max-width:1000px;margin:0 auto;width:100%}
+  .pagina{display:none}
+  .pagina.ativa{display:block;animation:fade .25s}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+  .cards-resumo{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-bottom:24px}
+  .card{background:var(--card);border-radius:12px;box-shadow:var(--sombra);padding:18px}
+  .card .rotulo{font-size:13px;color:var(--cinza);margin-bottom:6px}
+  .card .valor{font-size:24px;font-weight:700}
+  .card .valor.pos{color:var(--verde)}
+  .card .valor.neg{color:var(--vermelho)}
+
+  .secao-titulo{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;margin-top:8px}
+  .secao-titulo h2{font-size:18px}
+  .btn-add{background:var(--verde);color:#fff;padding:9px 16px;font-weight:600;display:flex;align-items:center;gap:6px}
+  .btn-add:hover{background:var(--verde-esc)}
+
+  .lista{background:var(--card);border-radius:12px;box-shadow:var(--sombra);overflow:hidden}
+  .item{display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid var(--borda)}
+  .item:last-child{border-bottom:none}
+  .item .bolinha{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;
+    justify-content:center;font-size:18px;flex-shrink:0;background:var(--cinza-claro)}
+  .item .info{flex:1;min-width:0}
+  .item .info .titulo{font-weight:600;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .item .info .meta{font-size:12px;color:var(--cinza)}
+  .item .montante{font-weight:700;font-size:15px;white-space:nowrap}
+  .item .montante.receita{color:var(--verde)}
+  .item .montante.despesa{color:var(--vermelho)}
+  .item .acoes{display:flex;gap:6px}
+  .item .acoes button{background:none;color:var(--cinza);padding:6px;font-size:16px}
+  .item .acoes button:hover{color:var(--vermelho)}
+  .vazio{padding:40px 20px;text-align:center;color:var(--cinza);font-size:14px}
+
+  .filtros{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap}
+  .filtros select,.filtros input{width:auto;flex:1;min-width:130px}
+
+  /* ===== MODAL ===== */
+  .modal-fundo{position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;
+    justify-content:center;z-index:50;padding:16px}
+  .modal{background:#fff;border-radius:16px;width:100%;max-width:440px;padding:26px;max-height:92vh;overflow-y:auto}
+  .modal h3{font-size:18px;margin-bottom:18px}
+  .modal .linha-botoes{display:flex;gap:10px;margin-top:22px}
+  .btn-sec{background:var(--cinza-claro);color:var(--texto);flex:1;padding:12px;font-weight:600}
+  .btn-sec:hover{background:#e5e7eb}
+  .modal .btn-principal{flex:1}
+  .seg{display:flex;gap:8px;margin-bottom:16px}
+  .seg button{flex:1;padding:10px;background:var(--cinza-claro);color:var(--cinza);font-weight:600}
+  .seg button.sel-rec{background:var(--verde-claro);color:var(--verde)}
+  .seg button.sel-desp{background:var(--vermelho-claro);color:var(--vermelho)}
+
+  .grade-cat{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+  .cat-card{background:var(--card);border-radius:12px;box-shadow:var(--sombra);padding:16px;
+    display:flex;align-items:center;gap:12px}
+  .cat-card .bolinha{width:42px;height:42px;font-size:20px}
+  .cat-card .nome{font-weight:600;flex:1}
+  .cat-card button{background:none;color:var(--cinza);padding:4px}
+
+  .grafico-wrap{background:var(--card);border-radius:12px;box-shadow:var(--sombra);padding:20px;margin-bottom:20px}
+  .grafico-wrap h3{font-size:15px;margin-bottom:16px}
+  .barra-cat{margin-bottom:12px}
+  .barra-cat .topo{display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px}
+  .barra-cat .trilho{height:10px;background:var(--cinza-claro);border-radius:6px;overflow:hidden}
+  .barra-cat .preench{height:100%;border-radius:6px}
+
+  .carregando{text-align:center;padding:60px;color:var(--cinza)}
+  @media(max-width:600px){
+    main{padding:14px}
+    .card .valor{font-size:20px}
+    header .user span.email{display:none}
+  }
+</style>
+</head>
+<body>
+
+<!-- ===================== TELA DE LOGIN ===================== -->
+<div id="tela-login">
+  <div class="login-box">
+    <h1>💰 Minhas Finanças</h1>
+    <p class="sub">Controle seu dinheiro na nuvem</p>
+    <div id="login-erro" class="erro oculto"></div>
+
+    <div class="campo">
+      <label>E-mail</label>
+      <input type="email" id="login-email" placeholder="voce@email.com" autocomplete="email">
+    </div>
+    <div class="campo">
+      <label>Senha</label>
+      <input type="password" id="login-senha" placeholder="••••••••" autocomplete="current-password">
+    </div>
+    <button class="btn-principal" id="btn-entrar">Entrar</button>
+
+    <p class="link-troca" id="modo-cadastro-link">
+      Não tem conta? <a id="link-cadastrar">Criar conta</a>
+    </p>
+    <p class="link-troca oculto" id="modo-login-link">
+      Já tem conta? <a id="link-voltar-login">Fazer login</a>
+    </p>
+  </div>
+</div>
+
+<!-- ===================== TELA DO APP ===================== -->
+<div id="tela-app" class="oculto">
+  <header>
+    <div class="logo">💰 Minhas Finanças</div>
+    <div class="user">
+      <span class="email" id="header-email"></span>
+      <button class="sair" id="btn-sair">Sair</button>
+    </div>
+  </header>
+
+  <nav>
+    <button class="ativo" data-pagina="resumo">Resumo</button>
+    <button data-pagina="lancamentos">Lançamentos</button>
+    <button data-pagina="cartoes">Cartões</button>
+    <button data-pagina="categorias">Categorias</button>
+    <button data-pagina="relatorios">Relatórios</button>
+  </nav>
+
+  <main>
+    <div id="carregando-inicial" class="carregando">Carregando seus dados…</div>
+
+    <!-- RESUMO -->
+    <div class="pagina ativa" id="pagina-resumo">
+      <div class="cards-resumo">
+        <div class="card"><div class="rotulo">Receitas do mês</div><div class="valor pos" id="r-receitas">R$ 0,00</div></div>
+        <div class="card"><div class="rotulo">Despesas do mês</div><div class="valor neg" id="r-despesas">R$ 0,00</div></div>
+        <div class="card"><div class="rotulo">Saldo do mês</div><div class="valor" id="r-saldo">R$ 0,00</div></div>
+      </div>
+      <div class="secao-titulo"><h2>Últimos lançamentos</h2></div>
+      <div class="lista" id="r-ultimos"></div>
+    </div>
+
+    <!-- LANÇAMENTOS -->
+    <div class="pagina" id="pagina-lancamentos">
+      <div class="secao-titulo">
+        <h2>Lançamentos</h2>
+        <button class="btn-add" id="btn-novo-lancamento">+ Novo</button>
+      </div>
+      <div class="filtros">
+        <select id="filtro-mes"></select>
+        <select id="filtro-tipo">
+          <option value="todos">Todos</option>
+          <option value="receita">Receitas</option>
+          <option value="despesa">Despesas</option>
+        </select>
+        <select id="filtro-categoria"><option value="todas">Todas categorias</option></select>
+      </div>
+      <div class="lista" id="lista-lancamentos"></div>
+    </div>
+
+    <!-- CARTÕES -->
+    <div class="pagina" id="pagina-cartoes">
+      <div class="secao-titulo">
+        <h2>Cartões de crédito</h2>
+        <button class="btn-add" id="btn-novo-cartao">+ Novo cartão</button>
+      </div>
+      <div class="lista" id="lista-cartoes"></div>
+    </div>
+
+    <!-- CATEGORIAS -->
+    <div class="pagina" id="pagina-categorias">
+      <div class="secao-titulo">
+        <h2>Categorias</h2>
+        <button class="btn-add" id="btn-nova-categoria">+ Nova</button>
+      </div>
+      <div class="grade-cat" id="grade-categorias"></div>
+    </div>
+
+    <!-- RELATÓRIOS -->
+    <div class="pagina" id="pagina-relatorios">
+      <div class="secao-titulo"><h2>Relatórios</h2></div>
+      <div class="filtros"><select id="rel-mes"></select></div>
+      <div class="grafico-wrap">
+        <h3>Receitas x Despesas</h3>
+        <div style="position:relative;height:240px"><canvas id="grafico-rd"></canvas></div>
+      </div>
+      <div class="grafico-wrap">
+        <h3>Despesas por categoria</h3>
+        <div id="barras-categoria"></div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- ===================== MODAIS ===================== -->
+<div id="modal-lancamento" class="modal-fundo oculto">
+  <div class="modal">
+    <h3 id="titulo-modal-lanc">Novo lançamento</h3>
+    <div class="seg">
+      <button id="seg-receita">Receita</button>
+      <button id="seg-despesa">Despesa</button>
+    </div>
+    <div class="campo"><label>Descrição</label><input id="lanc-desc" placeholder="Ex: Mercado, Salário…"></div>
+    <div class="campo"><label>Valor (R$)</label><input id="lanc-valor" type="number" step="0.01" placeholder="0,00"></div>
+    <div class="campo"><label>Data</label><input id="lanc-data" type="date"></div>
+    <div class="campo"><label>Categoria</label><select id="lanc-categoria"></select></div>
+    <div class="campo" id="campo-cartao"><label>Cartão (opcional)</label><select id="lanc-cartao"><option value="">Nenhum / à vista</option></select></div>
+    <div class="linha-botoes">
+      <button class="btn-sec" id="lanc-cancelar">Cancelar</button>
+      <button class="btn-principal" id="lanc-salvar">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<div id="modal-categoria" class="modal-fundo oculto">
+  <div class="modal">
+    <h3 id="titulo-modal-cat">Nova categoria</h3>
+    <div class="campo"><label>Nome</label><input id="cat-nome" placeholder="Ex: Alimentação"></div>
+    <div class="campo"><label>Ícone (emoji)</label><input id="cat-icone" placeholder="🍔" maxlength="2"></div>
+    <div class="campo"><label>Cor</label><input id="cat-cor" type="color" value="#119E3F" style="height:46px;padding:4px"></div>
+    <div class="campo"><label>Tipo</label>
+      <select id="cat-tipo"><option value="despesa">Despesa</option><option value="receita">Receita</option></select>
+    </div>
+    <div class="linha-botoes">
+      <button class="btn-sec" id="cat-cancelar">Cancelar</button>
+      <button class="btn-principal" id="cat-salvar">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<div id="modal-cartao" class="modal-fundo oculto">
+  <div class="modal">
+    <h3 id="titulo-modal-cartao">Novo cartão</h3>
+    <div class="campo"><label>Nome do cartão</label><input id="cartao-nome" placeholder="Ex: Nubank"></div>
+    <div class="campo"><label>Limite (R$)</label><input id="cartao-limite" type="number" step="0.01" placeholder="0,00"></div>
+    <div class="campo"><label>Dia de fechamento da fatura</label><input id="cartao-fechamento" type="number" min="1" max="31" placeholder="Ex: 5"></div>
+    <div class="campo"><label>Cor</label><input id="cartao-cor" type="color" value="#820AD1" style="height:46px;padding:4px"></div>
+    <div class="linha-botoes">
+      <button class="btn-sec" id="cartao-cancelar">Cancelar</button>
+      <button class="btn-principal" id="cartao-salvar">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Firebase + Config + App -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script src="firebase-config.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
