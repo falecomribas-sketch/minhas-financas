@@ -573,9 +573,12 @@
       <div class="painel-grafico" style="margin-top:18px">
         <div class="painel-cab" style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
           <h3>DRE — Demonstração de Resultado</h3>
-          <label style="display:flex;align-items:center;gap:7px;font-size:13px;color:var(--cinza);font-weight:600;cursor:pointer">
-            <input type="checkbox" id="dre-so-pago" style="width:auto"> Considerar só o que foi pago/recebido
-          </label>
+          <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+            <label style="display:flex;align-items:center;gap:7px;font-size:13px;color:var(--cinza);font-weight:600;cursor:pointer">
+              <input type="checkbox" id="dre-so-pago" style="width:auto"> Considerar só o que foi pago/recebido
+            </label>
+            <button class="btn-export" id="dre-export-xls" title="Exportar DRE para Excel">⬇ Excel</button>
+          </div>
         </div>
         <div id="rel-dre"></div>
       </div>
@@ -2762,8 +2765,51 @@ function exportarExcel() {
   XLSX.writeFile(wb, `relatorio_${per.rotulo.replace(/[^\w]+/g, "_")}.xlsx`);
 }
 
+// Exporta SÓ a DRE. No modo Ano sai com colunas mensais; senão, coluna única.
+function exportarDREexcel() {
+  if (!window.XLSX) { alert("Biblioteca de Excel ainda carregando. Tente novamente em instantes."); return; }
+  const per = periodoRelatorio();
+  let lista = lancamentosDoPeriodo();
+  if (typeof dreSoPago !== "undefined" && dreSoPago) lista = lista.filter((l) => l.status === "pago");
+
+  let aoa;
+  if (relModo === "ano") {
+    const elAno = $("rel-ano");
+    const ano = (elAno && elAno.value) || String(new Date().getFullYear());
+    const MESES = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
+    const gRec = agruparDREmensal(lista, ano, "receita");
+    const gDesp = agruparDREmensal(lista, ano, "despesa");
+    const somaMeses = (grupos) => { const a = new Array(12).fill(0); grupos.forEach((g) => g.meses.forEach((v, i) => a[i] += v)); return a; };
+    const recMes = somaMeses(gRec), despMes = somaMeses(gDesp);
+    const totRec = gRec.reduce((s, g) => s + g.total, 0), totDesp = gDesp.reduce((s, g) => s + g.total, 0);
+    aoa = [];
+    aoa.push([`DRE — ${per.rotulo}`]);
+    aoa.push([]);
+    aoa.push(["Conta", ...MESES, "Total"]);
+    aoa.push(["Receita bruta", ...recMes, totRec]);
+    gRec.forEach((g) => {
+      aoa.push(["  " + g.nome, ...g.meses, g.total]);
+      g.filhas.forEach((f) => aoa.push(["    " + f.nome, ...f.meses, f.total]));
+    });
+    aoa.push(["(-) Despesas totais", ...despMes.map((v) => -v), -totDesp]);
+    gDesp.forEach((g) => {
+      aoa.push(["  " + g.nome, ...g.meses.map((v) => -v), -g.total]);
+      g.filhas.forEach((f) => aoa.push(["    " + f.nome, ...f.meses.map((v) => -v), -f.total]));
+    });
+    aoa.push(["Resultado", ...recMes.map((v, i) => v - despMes[i]), totRec - totDesp]);
+  } else {
+    aoa = [[`DRE — ${per.rotulo}`], [], ["Conta", "Valor"], ...dreParaExport()];
+  }
+
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(aoa), "DRE");
+  XLSX.writeFile(wb, `dre_${per.rotulo.replace(/[^\w]+/g, "_")}.xlsx`);
+}
+
 $("rel-export-pdf").onclick = exportarPDF;
 $("rel-export-xls").onclick = exportarExcel;
+const dreXlsBtn = $("dre-export-xls");
+if (dreXlsBtn) dreXlsBtn.onclick = exportarDREexcel;
 
 // ============================================================
 //  UTIL
