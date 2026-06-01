@@ -101,6 +101,69 @@
   .card.destaque::before{display:none}
   .card.destaque .rotulo{color:rgba(255,255,255,.88)}
   .card.destaque .valor{color:#fff}
+  /* faixas coloridas por tipo de card */
+  .card.card-rec::before,.card.card-areceber::before{background:var(--positivo)}
+  .card.card-desp::before,.card.card-apagar::before{background:var(--vermelho)}
+  .card.card-projetado::before{background:var(--cinza)}
+  .card .card-sub{font-size:12px;color:var(--cinza);margin-top:7px;font-weight:500;display:flex;align-items:center;gap:5px;min-height:16px}
+  .card.destaque .card-sub{color:rgba(255,255,255,.85)}
+  .card .card-sub .var-up{color:var(--positivo);font-weight:600}
+  .card .card-sub .var-down{color:var(--vermelho);font-weight:600}
+  .cards-pendentes{grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+  /* topo do resumo: seletor de mês + botão */
+  .resumo-topo{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:20px;flex-wrap:wrap}
+  .resumo-mes-wrap{display:flex;align-items:center;gap:6px}
+  .resumo-mes-wrap select{width:auto;min-width:150px;border-radius:999px;font-weight:600;padding:9px 16px}
+  .nav-mes{width:38px;height:38px;border-radius:50%;background:#fff;border:1px solid var(--borda);color:var(--cinza);font-size:20px;line-height:1;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .nav-mes:hover{background:var(--azul-claro);color:var(--azul);border-color:#bcd2ff}
+  /* dois painéis lado a lado */
+  .resumo-2col{display:grid;grid-template-columns:1.4fr 1fr;gap:18px;margin-bottom:28px}
+  @media(max-width:880px){.resumo-2col{grid-template-columns:1fr}}
+  .painel-grafico,.painel-contas{background:var(--card);border-radius:14px;box-shadow:var(--sombra);border:1px solid var(--borda);padding:18px 20px}
+  .painel-cab{margin-bottom:14px}
+  .painel-cab h3{font-size:15px;font-weight:700;letter-spacing:-.01em}
+  .conta-linha{display:flex;align-items:center;gap:12px;padding:11px 2px;border-bottom:1px solid var(--borda)}
+  .conta-linha:last-child{border-bottom:none}
+  .conta-linha .nome{flex:1;min-width:0;font-weight:600;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .conta-linha .saldo{font-weight:700;font-size:14.5px;font-variant-numeric:tabular-nums;white-space:nowrap}
+  .conta-linha .saldo.pos{color:var(--positivo)}
+  .conta-linha .saldo.neg{color:var(--vermelho)}
+  /* ---- Relatórios ---- */
+  .rel-export{display:flex;gap:8px}
+  .btn-export{background:#fff;border:1px solid var(--borda);color:var(--cinza);padding:9px 14px;font-weight:600;font-size:13px;border-radius:9px}
+  .btn-export:hover{background:var(--azul-claro);color:var(--azul);border-color:#bcd2ff}
+  .rel-periodo{display:flex;align-items:center;gap:14px;margin-bottom:22px;flex-wrap:wrap}
+  .seg-periodo{display:inline-flex;background:var(--cinza-claro);border-radius:10px;padding:4px;gap:2px}
+  .seg-periodo button{background:none;color:var(--cinza);font-weight:600;font-size:13.5px;padding:8px 16px;border-radius:8px}
+  .seg-periodo button.ativo{background:#fff;color:var(--azul);box-shadow:0 1px 3px rgba(0,0,0,.1)}
+  .rel-controles{display:flex;align-items:center;gap:8px}
+  .rel-controles select,.rel-controles input{width:auto;min-width:140px;border-radius:999px;font-weight:600;padding:9px 16px}
+  .rel-controles input[type=date]{min-width:150px}
+  .rel-cards{grid-template-columns:repeat(auto-fit,minmax(180px,1fr))}
+  .rel-2col{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:0;margin-top:18px}
+  @media(max-width:880px){.rel-2col{grid-template-columns:1fr}}
+  .rel-legenda{display:flex;flex-direction:column;gap:8px}
+  .rel-legenda .leg-item{display:flex;align-items:center;gap:9px;font-size:13.5px}
+  .rel-legenda .leg-cor{width:11px;height:11px;border-radius:3px;flex-shrink:0}
+  .rel-legenda .leg-nome{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:600}
+  .rel-legenda .leg-val{font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
+  .rel-legenda .leg-pct{color:var(--cinza);font-size:12px;min-width:42px;text-align:right}
+  .rel-top-linha{display:flex;align-items:center;gap:12px;padding:11px 2px;border-bottom:1px solid var(--borda)}
+  .rel-top-linha:last-child{border-bottom:none}
+  .rel-top-linha .pos-num{width:24px;height:24px;border-radius:7px;background:var(--cinza-claro);color:var(--cinza);font-weight:700;font-size:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .rel-top-linha .nome{flex:1;min-width:0}
+  .rel-top-linha .nome .t{font-weight:600;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .rel-top-linha .nome .s{font-size:12px;color:var(--cinza)}
+  .rel-top-linha .val{font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap;color:var(--vermelho)}
+  .rel-pr-linha{display:flex;align-items:center;gap:14px;padding:12px 2px;border-bottom:1px solid var(--borda)}
+  .rel-pr-linha:last-child{border-bottom:none}
+  .rel-pr-linha .rot{width:90px;flex-shrink:0;font-weight:600;font-size:13.5px}
+  .rel-pr-linha .barras{flex:1;min-width:0}
+  .rel-pr-linha .bar-row{display:flex;align-items:center;gap:8px;margin:3px 0;font-size:12px}
+  .rel-pr-linha .bar-row .trk{flex:1;height:9px;background:var(--cinza-claro);border-radius:5px;overflow:hidden}
+  .rel-pr-linha .bar-row .fill{height:100%;border-radius:5px}
+  .rel-pr-linha .bar-row .lbl{width:120px;text-align:right;font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap}
+  .rel-vazio{padding:40px 20px;text-align:center;color:var(--cinza);font-size:14px}
   .secao-titulo{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;margin-top:8px}
   .secao-titulo h2{font-size:20px;font-weight:700;letter-spacing:-.02em}
   .btn-add{background:var(--azul);color:#fff;padding:10px 18px;font-weight:600;display:flex;align-items:center;gap:6px;box-shadow:0 1px 3px rgba(37,99,235,.35)}
@@ -200,24 +263,34 @@
   .seg button{flex:1;padding:11px;background:none;color:var(--cinza);font-weight:600;border-radius:8px;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:6px}
   .seg button.sel-rec{background:#fff;color:var(--positivo);box-shadow:0 1px 3px rgba(0,0,0,.12)}
   .seg button.sel-desp{background:#fff;color:var(--vermelho);box-shadow:0 1px 3px rgba(0,0,0,.12)}
-  .grade-cat{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px;align-items:start}
-  .cat-grupo{background:var(--card);border-radius:12px;box-shadow:var(--sombra);overflow:hidden}
-  .cat-card{padding:14px 16px;display:flex;align-items:center;gap:12px}
-  .cat-card .bolinha{width:42px;height:42px;font-size:20px;flex-shrink:0}
-  .cat-card .nome{font-weight:600;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis}
-  .cat-card .acoes-cat{display:flex;gap:4px;flex-shrink:0}
-  .cat-card button{background:none;color:var(--cinza);padding:5px 9px;font-size:12px;font-weight:600;border-radius:6px;border:1px solid var(--borda)}
-  .cat-card button:hover{color:var(--texto);background:var(--cinza-claro)}
-  .subcats{border-top:1px solid var(--borda);background:#fafbfc}
-  .subcat-item{display:flex;align-items:center;gap:10px;padding:9px 16px 9px 26px;border-bottom:1px solid var(--borda)}
+  .seg button.sel-transf{background:#fff;color:var(--azul);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+  .grade-cat{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:18px;align-items:start}
+  .cat-grupo{background:var(--card);border-radius:14px;box-shadow:var(--sombra);border:1px solid var(--borda);overflow:hidden;transition:box-shadow .18s,transform .18s}
+  .cat-grupo:hover{box-shadow:var(--sombra-md)}
+  /* Cabeçalho da categoria principal */
+  .cat-card{padding:16px 18px;display:flex;align-items:center;gap:13px;border-bottom:1px solid var(--borda)}
+  .cat-card .avatar{width:44px;height:44px;font-size:15px;border-radius:12px;flex-shrink:0}
+  .cat-card .nome{font-weight:700;font-size:15.5px;flex:1;min-width:0;letter-spacing:-.01em;display:flex;flex-direction:column;gap:5px}
+  .cat-card .nome .txt-nome{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .cat-tag{align-self:flex-start;font-size:10.5px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;padding:2px 8px;border-radius:999px}
+  .cat-tag.receita{background:var(--positivo-claro);color:var(--positivo-esc)}
+  .cat-tag.despesa{background:var(--vermelho-claro);color:var(--vermelho)}
+  /* Ações: ícones discretos que aparecem no hover */
+  .acoes-cat{display:flex;gap:4px;flex-shrink:0;opacity:0;transition:opacity .15s}
+  .cat-card:hover .acoes-cat,.subcat-item:hover .acoes-cat{opacity:1}
+  .acoes-cat button{background:none;color:var(--cinza);width:30px;height:30px;padding:0;font-size:14px;border-radius:8px;border:1px solid transparent;display:inline-flex;align-items:center;justify-content:center;line-height:1}
+  .acoes-cat button:hover{color:var(--azul);background:var(--azul-claro);border-color:#bcd2ff}
+  .acoes-cat button.perigo:hover{color:var(--vermelho);background:var(--vermelho-claro);border-color:#f3c2c7}
+  @media(hover:none){.acoes-cat{opacity:1}}
+  /* Lista de subcategorias */
+  .subcats{background:#fafbfc}
+  .subcat-item{display:flex;align-items:center;gap:11px;padding:11px 18px 11px 22px;border-bottom:1px solid var(--borda)}
   .subcat-item:last-child{border-bottom:none}
-  .subcat-item .seta{color:var(--cinza);font-size:13px;flex-shrink:0}
-  .subcat-item .nome{flex:1;min-width:0;font-size:14px;overflow:hidden;text-overflow:ellipsis}
-  .subcat-item .acoes-cat{flex-shrink:0;display:flex;gap:4px}
-  .subcat-item button{background:none;color:var(--cinza);padding:4px 8px;font-size:11.5px;font-weight:600;border-radius:6px;border:1px solid var(--borda)}
-  .subcat-item button:hover{color:var(--texto);background:var(--cinza-claro)}
-  .btn-add-sub{display:block;width:100%;text-align:left;background:none;color:var(--verde);padding:9px 16px 9px 26px;font-weight:600;font-size:13px;border-top:1px solid var(--borda)}
-  .btn-add-sub:hover{background:var(--verde-claro)}
+  .subcat-item .avatar{width:30px;height:30px;font-size:11px;border-radius:9px;flex-shrink:0}
+  .subcat-item .nome{flex:1;min-width:0;font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .btn-add-sub{display:flex;align-items:center;gap:7px;width:100%;text-align:left;background:none;color:var(--azul);padding:13px 18px;font-weight:600;font-size:13px;border-top:1px solid var(--borda);transition:background .14s}
+  .btn-add-sub:hover{background:var(--azul-claro)}
+  .btn-add-sub .mais{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:6px;background:var(--azul);color:#fff;font-size:13px;line-height:1}
   .grafico-wrap{background:var(--card);border-radius:12px;box-shadow:var(--sombra);padding:20px;margin-bottom:20px}
   .grafico-wrap h3{font-size:15px;margin-bottom:16px}
   .barra-cat{margin-bottom:12px}
@@ -287,13 +360,67 @@
     <div id="carregando-inicial" class="carregando">Carregando seus dados…</div>
 
     <div class="pagina ativa" id="pagina-resumo">
-      <div class="cards-resumo">
-        <div class="card destaque"><div class="rotulo">Patrimônio total (todas as contas)</div><div class="valor" id="r-patrimonio">R$ 0,00</div></div>
-        <div class="card"><div class="rotulo">Receitas do mês</div><div class="valor pos" id="r-receitas">R$ 0,00</div></div>
-        <div class="card"><div class="rotulo">Despesas do mês</div><div class="valor neg" id="r-despesas">R$ 0,00</div></div>
-        <div class="card"><div class="rotulo">Saldo do mês</div><div class="valor" id="r-saldo">R$ 0,00</div></div>
-        <div class="card"><div class="rotulo">A pagar (pendente)</div><div class="valor neg" id="r-apagar">R$ 0,00</div></div>
+      <div class="resumo-topo">
+        <div class="resumo-mes-wrap">
+          <button class="nav-mes" id="resumo-mes-ant" title="Mês anterior">‹</button>
+          <select id="resumo-mes"></select>
+          <button class="nav-mes" id="resumo-mes-prox" title="Próximo mês">›</button>
+        </div>
+        <button class="btn-add" id="btn-resumo-novo">+ Novo lançamento</button>
       </div>
+
+      <div class="cards-resumo">
+        <div class="card destaque">
+          <div class="rotulo">Patrimônio total (todas as contas)</div>
+          <div class="valor" id="r-patrimonio">R$ 0,00</div>
+          <div class="card-sub" id="r-patrimonio-prev"></div>
+        </div>
+        <div class="card card-rec">
+          <div class="rotulo">Receitas do mês</div>
+          <div class="valor pos" id="r-receitas">R$ 0,00</div>
+          <div class="card-sub" id="r-receitas-var"></div>
+        </div>
+        <div class="card card-desp">
+          <div class="rotulo">Despesas do mês</div>
+          <div class="valor neg" id="r-despesas">R$ 0,00</div>
+          <div class="card-sub" id="r-despesas-var"></div>
+        </div>
+        <div class="card">
+          <div class="rotulo">Saldo do mês</div>
+          <div class="valor" id="r-saldo">R$ 0,00</div>
+          <div class="card-sub" id="r-saldo-sub"></div>
+        </div>
+      </div>
+
+      <div class="cards-resumo cards-pendentes">
+        <div class="card card-apagar">
+          <div class="rotulo">A pagar (pendente)</div>
+          <div class="valor neg" id="r-apagar">R$ 0,00</div>
+          <div class="card-sub" id="r-apagar-sub"></div>
+        </div>
+        <div class="card card-areceber">
+          <div class="rotulo">A receber (pendente)</div>
+          <div class="valor pos" id="r-areceber">R$ 0,00</div>
+          <div class="card-sub" id="r-areceber-sub"></div>
+        </div>
+        <div class="card card-projetado">
+          <div class="rotulo">Saldo projetado do mês</div>
+          <div class="valor" id="r-projetado">R$ 0,00</div>
+          <div class="card-sub">se tudo pendente for quitado</div>
+        </div>
+      </div>
+
+      <div class="resumo-2col">
+        <div class="painel-grafico">
+          <div class="painel-cab"><h3>Receitas x Despesas (6 meses)</h3></div>
+          <div style="position:relative;height:230px"><canvas id="grafico-tendencia"></canvas></div>
+        </div>
+        <div class="painel-contas">
+          <div class="painel-cab"><h3>Saldo por conta</h3></div>
+          <div id="r-contas"></div>
+        </div>
+      </div>
+
       <div class="secao-titulo"><h2>Últimos lançamentos</h2></div>
       <div class="lista" id="r-ultimos"></div>
     </div>
@@ -309,7 +436,7 @@
       </div>
       <div class="filtros">
         <select id="filtro-mes"></select>
-        <select id="filtro-tipo"><option value="todos">Todos</option><option value="receita">Receitas</option><option value="despesa">Despesas</option></select>
+        <select id="filtro-tipo"><option value="todos">Todos</option><option value="receita">Receitas</option><option value="despesa">Despesas</option><option value="transferencia">Transferências</option></select>
         <select id="filtro-status"><option value="todos">Pagos e pendentes</option><option value="pendente">Só pendentes</option><option value="pago">Só pagos</option></select>
         <select id="filtro-categoria"><option value="todas">Todas categorias</option></select>
         <select id="filtro-conta"><option value="todas">Todas contas</option></select>
@@ -342,10 +469,68 @@
     </div>
 
     <div class="pagina" id="pagina-relatorios">
-      <div class="secao-titulo"><h2>Relatórios</h2></div>
-      <div class="filtros"><select id="rel-mes"></select></div>
-      <div class="grafico-wrap"><h3>Receitas x Despesas</h3><div style="position:relative;height:240px"><canvas id="grafico-rd"></canvas></div></div>
-      <div class="grafico-wrap"><h3>Despesas por categoria</h3><div id="barras-categoria"></div></div>
+      <div class="secao-titulo">
+        <h2>Relatórios</h2>
+        <div class="rel-export">
+          <button class="btn-export" id="rel-export-pdf" title="Exportar PDF">⬇ PDF</button>
+          <button class="btn-export" id="rel-export-xls" title="Exportar Excel">⬇ Excel</button>
+        </div>
+      </div>
+
+      <div class="rel-periodo">
+        <div class="seg-periodo">
+          <button data-modo="mes" class="ativo">Mês</button>
+          <button data-modo="ano">Ano</button>
+          <button data-modo="custom">Personalizado</button>
+        </div>
+        <div class="rel-controles" id="rel-ctrl-mes"><select id="rel-mes"></select></div>
+        <div class="rel-controles oculto" id="rel-ctrl-ano"><select id="rel-ano"></select></div>
+        <div class="rel-controles oculto" id="rel-ctrl-custom">
+          <input type="date" id="rel-de" title="De"> <span style="color:var(--cinza)">até</span> <input type="date" id="rel-ate" title="Até">
+        </div>
+      </div>
+
+      <div class="cards-resumo rel-cards">
+        <div class="card card-rec"><div class="rotulo">Receitas no período</div><div class="valor pos" id="rel-c-rec">R$ 0,00</div><div class="card-sub" id="rel-c-rec-sub"></div></div>
+        <div class="card card-desp"><div class="rotulo">Despesas no período</div><div class="valor neg" id="rel-c-desp">R$ 0,00</div><div class="card-sub" id="rel-c-desp-sub"></div></div>
+        <div class="card"><div class="rotulo">Saldo do período</div><div class="valor" id="rel-c-saldo">R$ 0,00</div><div class="card-sub">receitas − despesas</div></div>
+        <div class="card"><div class="rotulo">Taxa de economia</div><div class="valor" id="rel-c-economia">0%</div><div class="card-sub">do que entrou, quanto sobrou</div></div>
+        <div class="card"><div class="rotulo">Ticket médio (despesa)</div><div class="valor" id="rel-c-ticket">R$ 0,00</div><div class="card-sub" id="rel-c-ticket-sub"></div></div>
+      </div>
+
+      <div class="painel-grafico" style="margin-bottom:18px">
+        <div class="painel-cab"><h3>Evolução (últimos 12 meses)</h3></div>
+        <div style="position:relative;height:280px"><canvas id="grafico-evolucao"></canvas></div>
+      </div>
+
+      <div class="rel-2col">
+        <div class="painel-grafico">
+          <div class="painel-cab"><h3>Despesas por categoria</h3></div>
+          <div id="rel-rosca-despesa-wrap" style="position:relative;height:240px;margin-bottom:8px"><canvas id="rel-rosca-despesa"></canvas></div>
+          <div id="rel-legenda-despesa" class="rel-legenda"></div>
+        </div>
+        <div class="painel-grafico">
+          <div class="painel-cab"><h3>Receitas por categoria</h3></div>
+          <div id="rel-rosca-receita-wrap" style="position:relative;height:240px;margin-bottom:8px"><canvas id="rel-rosca-receita"></canvas></div>
+          <div id="rel-legenda-receita" class="rel-legenda"></div>
+        </div>
+      </div>
+
+      <div class="rel-2col">
+        <div class="painel-grafico">
+          <div class="painel-cab"><h3>Maiores gastos do período</h3></div>
+          <div id="rel-top-gastos"></div>
+        </div>
+        <div class="painel-grafico">
+          <div class="painel-cab"><h3>Onde você mais gastou</h3></div>
+          <div id="rel-top-fornecedores"></div>
+        </div>
+      </div>
+
+      <div class="painel-grafico" style="margin-top:18px">
+        <div class="painel-cab"><h3>Previsto x Realizado no período</h3></div>
+        <div id="rel-prev-real"></div>
+      </div>
     </div>
   </main>
   </div>
@@ -358,12 +543,19 @@
       <button type="button" class="fechar" id="lanc-fechar" title="Fechar">✕</button>
     </div>
     <div class="corpo-modal">
-      <div class="seg"><button id="seg-receita">Receita</button><button id="seg-despesa">Despesa</button></div>
+      <div class="seg"><button id="seg-receita">Receita</button><button id="seg-despesa">Despesa</button><button id="seg-transferencia">Transferência</button></div>
 
-      <div class="bloco campo"><label id="lanc-contato-label">Fornecedor / Cliente <span style="font-weight:400">(opcional)</span></label>
+      <div class="bloco campo" id="bloco-contato"><label id="lanc-contato-label">Fornecedor / Cliente <span style="font-weight:400">(opcional)</span></label>
         <div style="display:flex;gap:8px">
           <select id="lanc-contato" style="flex:1"></select>
           <button type="button" class="btn-sec" id="lanc-novo-contato" style="flex:0 0 auto;width:auto;padding:10px 14px">+ Novo</button>
+        </div>
+      </div>
+
+      <div class="bloco oculto" id="bloco-transferencia">
+        <div class="linha-2col">
+          <div class="campo"><label>De (conta de origem)</label><select id="lanc-conta-origem"></select></div>
+          <div class="campo"><label>Para (conta de destino)</label><select id="lanc-conta-destino"></select></div>
         </div>
       </div>
 
@@ -400,7 +592,7 @@
         <div id="parcelas-info" style="font-size:12px;color:#6b7280;margin-top:6px"></div>
       </div>
 
-      <div class="bloco" style="margin-bottom:0">
+      <div class="bloco" id="bloco-conta-categoria" style="margin-bottom:0">
         <div class="linha-2col">
           <div class="campo"><label>Conta</label><select id="lanc-conta"></select></div>
           <div class="campo"><label>Categoria</label><select id="lanc-categoria"></select></div>
@@ -454,6 +646,10 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<!-- Exportação: PDF (jsPDF + autotable) e Excel (SheetJS) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
 <script>
 /* ============================================================
@@ -629,6 +825,19 @@ function renderTudo() {
   preencherSelectsContato();
 }
 
+// ---- Interações da tela de Resumo ----
+$("resumo-mes").addEventListener("change", (e) => { mesResumo = e.target.value; renderResumo(); });
+function pularMesResumo(passo) {
+  const opts = [...$("resumo-mes").options].map((o) => o.value); // do mais recente p/ antigo
+  const i = opts.indexOf(mesResumo);
+  // passo +1 = mês mais novo (índice menor); passo -1 = mais antigo (índice maior)
+  const novo = opts[i - passo];
+  if (novo) { mesResumo = novo; renderResumo(); }
+}
+$("resumo-mes-prox").onclick = () => pularMesResumo(1);
+$("resumo-mes-ant").onclick = () => pularMesResumo(-1);
+$("btn-resumo-novo").onclick = () => abrirModalLanc();
+
 // ============================================================
 //  NAVEGAÇÃO
 // ============================================================
@@ -680,11 +889,29 @@ function rotuloMes(m) {
 }
 function prepararFiltrosDeMes() {
   const meses = listaMeses();
-  [$("filtro-mes"), $("rel-mes")].forEach((sel) => {
-    const atual = sel.value;
-    sel.innerHTML = meses.map((m) => `<option value="${m}">${rotuloMes(m)}</option>`).join("");
-    if (meses.includes(atual)) sel.value = atual;
-  });
+
+  // Filtro de lançamentos: começa em "Todos os meses"
+  const selL = $("filtro-mes");
+  const atualL = selL.value;
+  selL.innerHTML = `<option value="todos">Todos os meses</option>`
+    + meses.map((m) => `<option value="${m}">${rotuloMes(m)}</option>`).join("");
+  selL.value = (atualL === "todos" || meses.includes(atualL)) ? atualL : "todos";
+
+  // Filtro de relatórios: continua exigindo um mês específico
+  const selR = $("rel-mes");
+  const atualR = selR.value;
+  selR.innerHTML = meses.map((m) => `<option value="${m}">${rotuloMes(m)}</option>`).join("");
+  if (meses.includes(atualR)) selR.value = atualR;
+
+  // Seletor de ano dos relatórios
+  const anos = [...new Set(meses.map((m) => m.slice(0, 4)))].sort().reverse();
+  if (!anos.includes(String(new Date().getFullYear()))) anos.unshift(String(new Date().getFullYear()));
+  const selA = $("rel-ano");
+  if (selA) {
+    const atualA = selA.value;
+    selA.innerHTML = anos.map((a) => `<option value="${a}">${a}</option>`).join("");
+    if (anos.includes(atualA)) selA.value = atualA;
+  }
 }
 $("filtro-mes").onchange = renderLancamentos;
 $("filtro-tipo").onchange = renderLancamentos;
@@ -711,8 +938,14 @@ function saldoDaConta(contaId) {
   const conta = contas.find((c) => c.id === contaId);
   if (!conta) return 0;
   let saldo = Number(conta.saldoInicial || 0);
-  for (const l of lancamentos.filter((x) => x.contaId === contaId && x.status === "pago")) {
-    saldo += l.tipo === "receita" ? Number(l.valor) : -Number(l.valor);
+  for (const l of lancamentos.filter((x) => x.status === "pago")) {
+    if (l.tipo === "transferencia") {
+      // sai da origem, entra no destino — neutro no patrimônio total
+      if (l.contaId === contaId) saldo -= Number(l.valor);
+      if (l.contaDestinoId === contaId) saldo += Number(l.valor);
+    } else if (l.contaId === contaId) {
+      saldo += l.tipo === "receita" ? Number(l.valor) : -Number(l.valor);
+    }
   }
   return saldo;
 }
@@ -723,30 +956,168 @@ function patrimonioTotal() {
 // ============================================================
 //  RESUMO
 // ============================================================
-function renderResumo() {
-  $("r-patrimonio").textContent = moeda(patrimonioTotal());
+let mesResumo = null;          // mês atualmente exibido no resumo (YYYY-MM)
+let graficoTendencia = null;
 
-  const mes = mesDe(hoje());
-  const doMes = lancamentos.filter((l) => mesDe(l.data) === mes);
-  const pagos = doMes.filter((l) => l.status === "pago");
-  const rec = pagos.filter((l) => l.tipo === "receita").reduce((s, l) => s + Number(l.valor), 0);
-  const desp = pagos.filter((l) => l.tipo === "despesa").reduce((s, l) => s + Number(l.valor), 0);
+// mês anterior a um YYYY-MM
+function mesAnterior(m) {
+  const [a, mm] = m.split("-").map(Number);
+  const d = new Date(a, mm - 2, 1);
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+}
+// soma de despesas/receitas PAGAS de um mês (por competência)
+function totalPagoNoMes(mes, tipo) {
+  return lancamentos
+    .filter((l) => l.tipo === tipo && l.status === "pago" && mesDe(l.data) === mes)
+    .reduce((s, l) => s + Number(l.valor), 0);
+}
+
+function prepararSeletorMesResumo() {
+  const meses = listaMeses(); // já vem do mais recente para o mais antigo
+  if (!mesResumo || !meses.includes(mesResumo)) mesResumo = mesDe(hoje());
+  if (!meses.includes(mesResumo)) meses.unshift(mesResumo);
+  $("resumo-mes").innerHTML = meses
+    .map((m) => `<option value="${m}">${rotuloMes(m)}</option>`)
+    .join("");
+  $("resumo-mes").value = mesResumo;
+}
+
+function renderResumo() {
+  prepararSeletorMesResumo();
+  const mes = mesResumo;
+  const mesAnt = mesAnterior(mes);
+
+  // Patrimônio (realizado) e projeção considerando pendências do mês
+  const patrim = patrimonioTotal();
+  $("r-patrimonio").textContent = moeda(patrim);
+
+  // Realizado do mês (pago)
+  const rec = totalPagoNoMes(mes, "receita");
+  const desp = totalPagoNoMes(mes, "despesa");
   $("r-receitas").textContent = moeda(rec);
   $("r-despesas").textContent = moeda(desp);
+
+  // Variação vs. mês anterior
+  const recAnt = totalPagoNoMes(mesAnt, "receita");
+  const despAnt = totalPagoNoMes(mesAnt, "despesa");
+  $("r-receitas-var").innerHTML = textoVariacao(rec, recAnt, true);
+  $("r-despesas-var").innerHTML = textoVariacao(desp, despAnt, false);
+
+  // Saldo realizado do mês
   const saldo = rec - desp;
   const elSaldo = $("r-saldo");
   elSaldo.textContent = moeda(saldo);
   elSaldo.className = "valor " + (saldo >= 0 ? "pos" : "neg");
+  $("r-saldo-sub").textContent = "receitas − despesas (já pagas)";
 
+  // Pendentes do mês (por competência)
+  const doMes = lancamentos.filter((l) => mesDe(l.data) === mes);
   const apagar = doMes
     .filter((l) => l.status !== "pago" && l.tipo === "despesa")
     .reduce((s, l) => s + Number(l.valor), 0);
+  const areceber = doMes
+    .filter((l) => l.status !== "pago" && l.tipo === "receita")
+    .reduce((s, l) => s + Number(l.valor), 0);
+  const qtdApagar = doMes.filter((l) => l.status !== "pago" && l.tipo === "despesa").length;
+  const qtdAreceber = doMes.filter((l) => l.status !== "pago" && l.tipo === "receita").length;
   $("r-apagar").textContent = moeda(apagar);
+  $("r-areceber").textContent = moeda(areceber);
+  $("r-apagar-sub").textContent = qtdApagar ? `${qtdApagar} conta(s) em aberto` : "nada em aberto";
+  $("r-areceber-sub").textContent = qtdAreceber ? `${qtdAreceber} a receber` : "nada a receber";
 
-  const ultimos = [...lancamentos].sort((a, b) => b.data.localeCompare(a.data)).slice(0, 5);
+  // Saldo projetado do mês (realizado + tudo que está pendente neste mês)
+  const projetado = saldo + areceber - apagar;
+  const elProj = $("r-projetado");
+  elProj.textContent = moeda(projetado);
+  elProj.className = "valor " + (projetado >= 0 ? "pos" : "neg");
+
+  // Patrimônio projetado (subtexto do card destaque)
+  const patrimProj = patrim + areceber - apagar;
+  $("r-patrimonio-prev").textContent =
+    (apagar || areceber) ? `Projetado: ${moeda(patrimProj)}` : "";
+
+  // Saldo por conta
+  renderContasResumo();
+
+  // Gráfico de tendência (6 meses)
+  renderGraficoTendencia();
+
+  // Últimos lançamentos
+  const ultimos = [...lancamentos]
+    .sort((a, b) => (b.data || "").localeCompare(a.data || ""))
+    .slice(0, 6);
   $("r-ultimos").innerHTML = ultimos.length
     ? ultimos.map(itemHTML).join("")
     : `<div class="vazio">Nenhum lançamento ainda. Vá em "Lançamentos" e adicione o primeiro!</div>`;
+}
+
+// "+12% vs. mês anterior" / "—"; ehReceita controla a cor (mais receita = bom; mais despesa = ruim)
+function textoVariacao(atual, anterior, ehReceita) {
+  if (!anterior) {
+    return atual ? `<span style="color:var(--cinza)">sem comparativo anterior</span>` : "";
+  }
+  const dif = atual - anterior;
+  const pct = Math.round((dif / anterior) * 100);
+  if (pct === 0) return `<span style="color:var(--cinza)">igual ao mês anterior</span>`;
+  const subiu = pct > 0;
+  const bom = ehReceita ? subiu : !subiu;
+  const cls = bom ? "var-up" : "var-down";
+  const seta = subiu ? "▲" : "▼";
+  return `<span class="${cls}">${seta} ${Math.abs(pct)}%</span> <span style="color:var(--cinza)">vs. mês anterior</span>`;
+}
+
+function renderContasResumo() {
+  if (!contas.length) {
+    $("r-contas").innerHTML = `<div class="vazio" style="padding:24px">Nenhuma conta cadastrada.</div>`;
+    return;
+  }
+  const linhas = [...contas]
+    .map((c) => ({ c, saldo: saldoDaConta(c.id) }))
+    .sort((a, b) => b.saldo - a.saldo)
+    .map(({ c, saldo }) => {
+      const cor = c.cor || "#475569";
+      return `<div class="conta-linha">
+        <span class="avatar" style="width:30px;height:30px;font-size:11px;border-radius:9px;background:${cor};color:${corTextoContraste(cor)}">${escapar(iniciais(c.nome))}</span>
+        <span class="nome" title="${escapar(c.nome)}">${escapar(c.nome)}</span>
+        <span class="saldo ${saldo >= 0 ? "pos" : "neg"}">${moeda(saldo)}</span>
+      </div>`;
+    }).join("");
+  $("r-contas").innerHTML = linhas;
+}
+
+function renderGraficoTendencia() {
+  const ctx = $("grafico-tendencia");
+  if (!ctx) return;
+  // últimos 6 meses terminando no mês selecionado
+  const meses = [];
+  let cursor = mesResumo;
+  for (let i = 0; i < 6; i++) { meses.unshift(cursor); cursor = mesAnterior(cursor); }
+  const recs = meses.map((m) => totalPagoNoMes(m, "receita"));
+  const desps = meses.map((m) => totalPagoNoMes(m, "despesa"));
+  const labels = meses.map(rotuloMes);
+
+  if (graficoTendencia) graficoTendencia.destroy();
+  graficoTendencia = new Chart(ctx, {
+    type: "bar",
+    data: {
+      labels,
+      datasets: [
+        { label: "Receitas", data: recs, backgroundColor: "#15a34a", borderRadius: 6, maxBarThickness: 22 },
+        { label: "Despesas", data: desps, backgroundColor: "#dc3545", borderRadius: 6, maxBarThickness: 22 },
+      ],
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { display: true, position: "bottom", labels: { boxWidth: 12, font: { size: 12 } } },
+        tooltip: { callbacks: { label: (c) => `${c.dataset.label}: ${moeda(c.parsed.y)}` } },
+      },
+      scales: {
+        x: { grid: { display: false } },
+        y: { beginAtZero: true, ticks: { callback: (v) => "R$ " + v } },
+      },
+    },
+  });
 }
 
 // ============================================================
@@ -801,6 +1172,26 @@ function corTextoContraste(hex) {
 }
 
 function itemHTML(l) {
+  // ---- Transferência ----
+  if (l.tipo === "transferencia") {
+    const origem = contaPorId(l.contaId);
+    const destino = contaPorId(l.contaDestinoId);
+    const meta = `${rotuloData(l.data)} · ${origem ? escapar(origem.nome) : "—"} → ${destino ? escapar(destino.nome) : "—"}`;
+    return `<div class="item">
+      <div class="bolinha" style="background:var(--azul-claro);color:var(--azul)">⇄</div>
+      <div class="info">
+        <div class="titulo">${escapar(l.descricao || "Transferência")}</div>
+        <div class="meta">${meta}</div>
+        <div><span class="selo pago">Transferência</span></div>
+      </div>
+      <div class="montante" style="color:var(--cinza)">${moeda(l.valor)}</div>
+      <div class="acoes">
+        <button onclick="editarLancamento('${l.id}')" title="Editar">Editar</button>
+        <button class="perigo" onclick="excluirLancamento('${l.id}')" title="Excluir">Excluir</button>
+      </div>
+    </div>`;
+  }
+
   const cat = categoriaPorId(l.categoriaId);
   const conta = l.contaId ? contaPorId(l.contaId) : null;
   const contato = l.contatoId ? contatoPorId(l.contatoId) : null;
@@ -849,7 +1240,9 @@ function renderLancamentos() {
   const contatoF = $("filtro-lanc-contato").value;
   const termo = ($("busca-lancamento").value || "").trim().toLowerCase();
 
-  let lista = lancamentos.filter((l) => mesDe(l.data) === mes);
+  let lista = (mes === "todos")
+    ? lancamentos.slice()
+    : lancamentos.filter((l) => mesDe(l.data) === mes);
   if (tipo !== "todos") lista = lista.filter((l) => l.tipo === tipo);
   if (statusF !== "todos") lista = lista.filter((l) => (l.status || "pago") === statusF);
   if (catF !== "todas") lista = lista.filter((l) => l.categoriaId === catF);
@@ -947,6 +1340,45 @@ window.ordenarPor = (col) => {
 };
 
 function linhaTabelaHTML(l) {
+  // ---- Linha de transferência (visual próprio) ----
+  if (l.tipo === "transferencia") {
+    const origem = contaPorId(l.contaId);
+    const destino = contaPorId(l.contaDestinoId);
+    const corO = (origem && origem.cor) || "#475569";
+    const corD = (destino && destino.cor) || "#475569";
+    const nomeO = origem ? escapar(origem.nome) : "—";
+    const nomeD = destino ? escapar(destino.nome) : "—";
+    return `<tr>
+      <td class="centro col-data">${rotuloData(l.data)}</td>
+      <td class="centro col-data">—</td>
+      <td>—</td>
+      <td>
+        <div class="cel-desc">
+          <div class="avatar" style="background:var(--azul-claro);color:var(--azul)">⇄</div>
+          <div class="txt"><div class="t">${escapar(l.descricao || "Transferência")}</div><div class="s">Transferência entre contas</div></div>
+        </div>
+      </td>
+      <td>—</td>
+      <td class="num col-valor" style="color:var(--cinza)">${moeda(l.valor)}</td>
+      <td class="col-conta">
+        <span class="cel-conta" style="gap:6px">
+          <span class="avatar" style="width:22px;height:22px;font-size:10px;background:${corO};color:${corTextoContraste(corO)}">${escapar(iniciais(origem ? origem.nome : "?"))}</span>
+          <span>${nomeO}</span>
+          <span style="color:var(--cinza)">→</span>
+          <span class="avatar" style="width:22px;height:22px;font-size:10px;background:${corD};color:${corTextoContraste(corD)}">${escapar(iniciais(destino ? destino.nome : "?"))}</span>
+          <span>${nomeD}</span>
+        </span>
+      </td>
+      <td class="centro"><span class="selo pago">Pago</span></td>
+      <td class="num">
+        <div class="acoes-tab">
+          <button class="btn-icone editar" onclick="editarLancamento('${l.id}')" title="Editar">Editar</button>
+          <button class="btn-icone perigo" onclick="excluirLancamento('${l.id}')" title="Excluir">Excluir</button>
+        </div>
+      </td>
+    </tr>`;
+  }
+
   const cat = categoriaPorId(l.categoriaId);
   const catPai = catPaiObj(cat);
   const sub = catSubNome(cat);
@@ -994,6 +1426,7 @@ function linhaTabelaHTML(l) {
 $("btn-novo-lancamento").onclick = () => abrirModalLanc();
 $("seg-receita").onclick = () => setTipoLanc("receita");
 $("seg-despesa").onclick = () => setTipoLanc("despesa");
+$("seg-transferencia").onclick = () => setTipoLanc("transferencia");
 $("lanc-cancelar").onclick = () => $("modal-lancamento").classList.add("oculto");
 $("lanc-fechar").onclick = () => $("modal-lancamento").classList.add("oculto");
 
@@ -1001,12 +1434,26 @@ function setTipoLanc(t) {
   tipoLancamentoAtual = t;
   $("seg-receita").className = t === "receita" ? "sel-rec" : "";
   $("seg-despesa").className = t === "despesa" ? "sel-desp" : "";
+  $("seg-transferencia").className = t === "transferencia" ? "sel-transf" : "";
   $("seg-receita").innerHTML = "Receita";
   $("seg-despesa").innerHTML = "Despesa";
-  preencherSelectsCategoria();
-  ajustarOpcoesRepeticao();
-  atualizarVisibilidadeRepeticao();
-  preencherSelectContatoModal();
+  $("seg-transferencia").innerHTML = "Transferência";
+
+  const transf = (t === "transferencia");
+  // Em transferência: mostra origem→destino; esconde contato, repetição e conta/categoria
+  $("bloco-transferencia").classList.toggle("oculto", !transf);
+  $("bloco-contato").classList.toggle("oculto", transf);
+  $("bloco-conta-categoria").classList.toggle("oculto", transf);
+
+  if (transf) {
+    preencherSelectsContaTransferencia();
+    $("campo-repeticao").classList.add("oculto");
+  } else {
+    preencherSelectsCategoria();
+    ajustarOpcoesRepeticao();
+    atualizarVisibilidadeRepeticao();
+    preencherSelectContatoModal();
+  }
 }
 
 function preencherSelectParcelas() {
@@ -1079,6 +1526,17 @@ function abrirModalLanc(lanc = null) {
   if (lanc) $("lanc-categoria").value = lanc.categoriaId;
   if (lanc && lanc.contaId) $("lanc-conta").value = lanc.contaId;
   if (lanc && lanc.contatoId) $("lanc-contato").value = lanc.contatoId;
+  if (lanc && lanc.tipo === "transferencia") {
+    preencherSelectsContaTransferencia();
+    if (lanc.contaId) $("lanc-conta-origem").value = lanc.contaId;
+    if (lanc.contaDestinoId) $("lanc-conta-destino").value = lanc.contaDestinoId;
+  }
+  // garante visibilidade correta dos blocos conforme o tipo atual
+  setTipoLanc(tipoLancamentoAtual);
+  if (lanc && lanc.tipo === "transferencia") {
+    if (lanc.contaId) $("lanc-conta-origem").value = lanc.contaId;
+    if (lanc.contaDestinoId) $("lanc-conta-destino").value = lanc.contaDestinoId;
+  }
   $("modal-lancamento").classList.remove("oculto");
 }
 $("lanc-repeticao").addEventListener("change", atualizarVisibilidadeRepeticao);
@@ -1098,6 +1556,43 @@ function somarMeses(dataStr, n) {
 }
 
 $("lanc-salvar").onclick = async () => {
+  // ---- Transferência entre contas (linha única, neutra) ----
+  if (tipoLancamentoAtual === "transferencia") {
+    const descT = $("lanc-desc").value.trim();
+    const valorT = parseFloat($("lanc-valor").value);
+    const dataT = $("lanc-data").value;
+    const origemId = $("lanc-conta-origem").value;
+    const destinoId = $("lanc-conta-destino").value;
+    if (!valorT || valorT <= 0 || !dataT) return alert("Preencha valor e data.");
+    if (!origemId || !destinoId) return alert("Selecione as contas de origem e destino.");
+    if (origemId === destinoId) return alert("A conta de origem e a de destino devem ser diferentes.");
+
+    const dados = {
+      descricao: descT || "Transferência",
+      valor: valorT,
+      data: dataT,
+      vencimento: "",
+      status: "pago",
+      tipo: "transferencia",
+      categoriaId: "",
+      contaId: origemId,        // conta de origem (de onde sai)
+      contaDestinoId: destinoId, // conta de destino (para onde vai)
+      contatoId: "",
+    };
+    if (editandoId.lanc) {
+      await col("lancamentos").doc(editandoId.lanc).update(dados);
+      const i = lancamentos.findIndex((l) => l.id === editandoId.lanc);
+      lancamentos[i] = { id: editandoId.lanc, ...lancamentos[i], ...dados };
+    } else {
+      const ref = await col("lancamentos").add(dados);
+      lancamentos.push({ id: ref.id, ...dados });
+    }
+    $("modal-lancamento").classList.add("oculto");
+    prepararFiltrosDeMes();
+    renderTudo();
+    return;
+  }
+
   const desc = $("lanc-desc").value.trim();
   const valor = parseFloat($("lanc-valor").value);
   const data = $("lanc-data").value;
@@ -1208,6 +1703,21 @@ function preencherSelectsConta() {
   $("filtro-conta").innerHTML =
     `<option value="todas">Todas contas</option>` +
     contas.map((c) => `<option value="${c.id}">${escapar(c.nome)}</option>`).join("");
+}
+
+function preencherSelectsContaTransferencia() {
+  const opts = contas.map((c) => `<option value="${c.id}">${escapar(c.nome)}</option>`).join("");
+  const origem = $("lanc-conta-origem"), destino = $("lanc-conta-destino");
+  const atualO = origem.value, atualD = destino.value;
+  origem.innerHTML = opts;
+  destino.innerHTML = opts;
+  if ([...origem.options].some((o) => o.value === atualO)) origem.value = atualO;
+  if ([...destino.options].some((o) => o.value === atualD)) destino.value = atualD;
+  // por padrão, destino diferente da origem quando há 2+ contas
+  if (contas.length > 1 && destino.value === origem.value) {
+    const outra = contas.find((c) => c.id !== origem.value);
+    if (outra) destino.value = outra.id;
+  }
 }
 
 function renderContas() {
@@ -1464,32 +1974,37 @@ function renderCategorias() {
     return;
   }
 
+  const icoEditar = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"></path></svg>`;
+  const icoExcluir = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"></path><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path></svg>`;
+
   $("grade-categorias").innerHTML = principais.map((c) => {
     const filhas = categorias
       .filter((s) => s.paiId === c.id)
       .sort((a, b) => a.nome.localeCompare(b.nome));
     const subsHTML = filhas.map((s) => `
         <div class="subcat-item">
-          <span class="seta">›</span>
-          <div class="avatar" style="width:28px;height:28px;font-size:11px;background:${s.cor || "#6b7280"};color:${corTextoContraste(s.cor)}">${escapar(iniciais(s.nome))}</div>
-          <div class="nome">${escapar(s.nome)}</div>
+          <div class="avatar" style="background:${s.cor || "#6b7280"};color:${corTextoContraste(s.cor)}">${escapar(iniciais(s.nome))}</div>
+          <div class="nome" title="${escapar(s.nome)}">${escapar(s.nome)}</div>
           <div class="acoes-cat">
-            <button onclick="editarCategoria('${s.id}')" title="Editar">Editar</button>
-            <button onclick="excluirCategoria('${s.id}')" title="Excluir">Excluir</button>
+            <button onclick="editarCategoria('${s.id}')" title="Editar">${icoEditar}</button>
+            <button class="perigo" onclick="excluirCategoria('${s.id}')" title="Excluir">${icoExcluir}</button>
           </div>
         </div>`).join("");
     return `
       <div class="cat-grupo">
         <div class="cat-card">
-          <div class="avatar" style="width:42px;height:42px;font-size:15px;border-radius:11px;background:${c.cor || "#6b7280"};color:${corTextoContraste(c.cor)}">${escapar(iniciais(c.nome))}</div>
-          <div class="nome">${escapar(c.nome)}<div style="font-size:11px;color:#6b7280;font-weight:400">${c.tipo}</div></div>
+          <div class="avatar" style="background:${c.cor || "#6b7280"};color:${corTextoContraste(c.cor)}">${escapar(iniciais(c.nome))}</div>
+          <div class="nome">
+            <span class="txt-nome" title="${escapar(c.nome)}">${escapar(c.nome)}</span>
+            <span class="cat-tag ${c.tipo}">${c.tipo === "receita" ? "Receita" : "Despesa"}</span>
+          </div>
           <div class="acoes-cat">
-            <button onclick="editarCategoria('${c.id}')" title="Editar">Editar</button>
-            <button onclick="excluirCategoria('${c.id}')" title="Excluir">Excluir</button>
+            <button onclick="editarCategoria('${c.id}')" title="Editar">${icoEditar}</button>
+            <button class="perigo" onclick="excluirCategoria('${c.id}')" title="Excluir">${icoExcluir}</button>
           </div>
         </div>
         ${filhas.length ? `<div class="subcats">${subsHTML}</div>` : ""}
-        <button class="btn-add-sub" onclick="novaSubcategoria('${c.id}')">+ Subcategoria</button>
+        <button class="btn-add-sub" onclick="novaSubcategoria('${c.id}')"><span class="mais">+</span> Adicionar subcategoria</button>
       </div>`;
   }).join("");
 }
@@ -1596,43 +2111,306 @@ window.excluirCategoria = async (id) => {
 // ============================================================
 //  RELATÓRIOS
 // ============================================================
-let graficoRD = null;
+let graficoEvolucao = null, graficoRoscaDesp = null, graficoRoscaRec = null;
+let relModo = "mes"; // mes | ano | custom
+
+// Define o intervalo [de, ate] (YYYY-MM-DD) conforme o modo selecionado
+function periodoRelatorio() {
+  if (relModo === "ano") {
+    const a = $("rel-ano").value || String(new Date().getFullYear());
+    return { de: `${a}-01-01`, ate: `${a}-12-31`, rotulo: `Ano de ${a}` };
+  }
+  if (relModo === "custom") {
+    const de = $("rel-de").value || "0000-01-01";
+    const ate = $("rel-ate").value || "9999-12-31";
+    return { de, ate, rotulo: `${rotuloData(de)} a ${rotuloData(ate)}` };
+  }
+  // mês
+  const m = $("rel-mes").value || mesDe(hoje());
+  const [a, mm] = m.split("-").map(Number);
+  const ultimo = new Date(a, mm, 0).getDate();
+  return { de: `${m}-01`, ate: `${m}-${String(ultimo).padStart(2, "0")}`, rotulo: rotuloMes(m) };
+}
+
+function lancamentosDoPeriodo() {
+  const { de, ate } = periodoRelatorio();
+  return lancamentos.filter((l) => l.data >= de && l.data <= ate && l.tipo !== "transferencia");
+}
 
 function renderRelatorios() {
-  const mes = $("rel-mes").value || mesDe(hoje());
-  const doMes = lancamentos.filter((l) => mesDe(l.data) === mes);
-  const rec = doMes.filter((l) => l.tipo === "receita").reduce((s, l) => s + Number(l.valor), 0);
-  const desp = doMes.filter((l) => l.tipo === "despesa").reduce((s, l) => s + Number(l.valor), 0);
+  const per = periodoRelatorio();
+  const doPer = lancamentosDoPeriodo();
 
-  const ctx = $("grafico-rd");
-  if (graficoRD) graficoRD.destroy();
-  graficoRD = new Chart(ctx, {
-    type: "bar",
-    data: { labels: ["Receitas", "Despesas"], datasets: [{ data: [rec, desp], backgroundColor: ["#119E3F", "#d83933"], borderRadius: 8 }] },
-    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } },
-      scales: { y: { beginAtZero: true, ticks: { callback: (v) => "R$ " + v } } } },
-  });
+  const recList = doPer.filter((l) => l.tipo === "receita");
+  const despList = doPer.filter((l) => l.tipo === "despesa");
+  const rec = recList.reduce((s, l) => s + Number(l.valor), 0);
+  const desp = despList.reduce((s, l) => s + Number(l.valor), 0);
+  const saldo = rec - desp;
+  const economia = rec > 0 ? Math.round((saldo / rec) * 100) : 0;
+  const ticket = despList.length ? desp / despList.length : 0;
 
-  const porCat = {};
-  doMes.filter((l) => l.tipo === "despesa").forEach((l) => {
+  // Cards
+  $("rel-c-rec").textContent = moeda(rec);
+  $("rel-c-desp").textContent = moeda(desp);
+  $("rel-c-rec-sub").textContent = `${recList.length} lançamento(s)`;
+  $("rel-c-desp-sub").textContent = `${despList.length} lançamento(s)`;
+  const elS = $("rel-c-saldo");
+  elS.textContent = moeda(saldo);
+  elS.className = "valor " + (saldo >= 0 ? "pos" : "neg");
+  const elE = $("rel-c-economia");
+  elE.textContent = `${economia}%`;
+  elE.className = "valor " + (economia >= 0 ? "pos" : "neg");
+  $("rel-c-ticket").textContent = moeda(ticket);
+  $("rel-c-ticket-sub").textContent = despList.length ? "por despesa" : "sem despesas";
+
+  // Gráfico de evolução (12 meses até o fim do período)
+  renderGraficoEvolucao(per.ate);
+
+  // Roscas por categoria
+  renderRoscaCategoria(despList, "rel-rosca-despesa", "rel-legenda-despesa", "graficoRoscaDesp");
+  renderRoscaCategoria(recList, "rel-rosca-receita", "rel-legenda-receita", "graficoRoscaRec");
+
+  // Top gastos e fornecedores
+  renderTopGastos(despList);
+  renderTopFornecedores(despList);
+
+  // Previsto x Realizado
+  renderPrevistoRealizado(doPer);
+}
+
+function agruparPorCategoriaPai(lista) {
+  const por = {};
+  lista.forEach((l) => {
     const c = categoriaPorId(l.categoriaId);
-    const chave = c && c.paiId ? c.paiId : l.categoriaId; // agrupa subcategorias na categoria-pai
-    porCat[chave] = (porCat[chave] || 0) + Number(l.valor);
+    const chave = c && c.paiId ? c.paiId : l.categoriaId;
+    por[chave] = (por[chave] || 0) + Number(l.valor);
   });
-  const entradas = Object.entries(porCat).sort((a, b) => b[1] - a[1]);
-  const max = entradas.length ? entradas[0][1] : 1;
+  return Object.entries(por).sort((a, b) => b[1] - a[1]);
+}
 
-  $("barras-categoria").innerHTML = entradas.length
-    ? entradas.map(([id, val]) => {
-        const c = categoriaPorId(id);
-        const pct = (val / max) * 100;
-        return `<div class="barra-cat">
-          <div class="topo"><span style="display:inline-flex;align-items:center;gap:7px"><span style="width:10px;height:10px;border-radius:3px;background:${c.cor};display:inline-block"></span>${escapar(c.nome)}</span><span><b>${moeda(val)}</b></span></div>
-          <div class="trilho"><div class="preench" style="width:${pct}%;background:${c.cor}"></div></div>
+function renderRoscaCategoria(lista, canvasId, legendaId, varName) {
+  const entradas = agruparPorCategoriaPai(lista);
+  const total = entradas.reduce((s, [, v]) => s + v, 0);
+  const ctx = $(canvasId);
+  if (window[varName]) { window[varName].destroy(); window[varName] = null; }
+
+  if (!entradas.length) {
+    $(legendaId).innerHTML = `<div class="rel-vazio">Sem dados no período.</div>`;
+    if (ctx) ctx.getContext("2d").clearRect(0, 0, ctx.width, ctx.height);
+    return;
+  }
+
+  const cores = entradas.map(([id]) => (categoriaPorId(id).cor || "#94a3b8"));
+  window[varName] = new Chart(ctx, {
+    type: "doughnut",
+    data: { labels: entradas.map(([id]) => categoriaPorId(id).nome),
+      datasets: [{ data: entradas.map(([, v]) => v), backgroundColor: cores, borderWidth: 2, borderColor: "#fff" }] },
+    options: { responsive: true, maintainAspectRatio: false, cutout: "62%",
+      plugins: { legend: { display: false },
+        tooltip: { callbacks: { label: (c) => `${c.label}: ${moeda(c.parsed)} (${Math.round((c.parsed / total) * 100)}%)` } } } },
+  });
+
+  $(legendaId).innerHTML = entradas.map(([id, val]) => {
+    const c = categoriaPorId(id);
+    const pct = Math.round((val / total) * 100);
+    return `<div class="leg-item">
+      <span class="leg-cor" style="background:${c.cor || "#94a3b8"}"></span>
+      <span class="leg-nome" title="${escapar(c.nome)}">${escapar(c.nome)}</span>
+      <span class="leg-val">${moeda(val)}</span>
+      <span class="leg-pct">${pct}%</span>
+    </div>`;
+  }).join("");
+}
+
+function renderTopGastos(despList) {
+  const top = [...despList].sort((a, b) => Number(b.valor) - Number(a.valor)).slice(0, 5);
+  $("rel-top-gastos").innerHTML = top.length
+    ? top.map((l, i) => {
+        const cat = categoriaPorId(l.categoriaId);
+        const cont = l.contatoId ? contatoPorId(l.contatoId) : null;
+        const sub = [nomeCategoriaCompletoTexto(cat), cont ? cont.nome : null, rotuloData(l.data)].filter(Boolean).join(" · ");
+        return `<div class="rel-top-linha">
+          <span class="pos-num">${i + 1}</span>
+          <div class="nome"><div class="t">${escapar(l.descricao || "(sem descrição)")}</div><div class="s">${escapar(sub)}</div></div>
+          <span class="val">${moeda(l.valor)}</span>
         </div>`;
       }).join("")
-    : `<div class="vazio">Sem despesas neste mês.</div>`;
+    : `<div class="rel-vazio">Sem despesas no período.</div>`;
 }
+
+function renderTopFornecedores(despList) {
+  const por = {};
+  despList.forEach((l) => {
+    const chave = l.contatoId || "_sem";
+    por[chave] = (por[chave] || 0) + Number(l.valor);
+  });
+  const top = Object.entries(por).sort((a, b) => b[1] - a[1]).slice(0, 5);
+  const totalDesp = despList.reduce((s, l) => s + Number(l.valor), 0) || 1;
+  $("rel-top-fornecedores").innerHTML = top.length
+    ? top.map(([id, val], i) => {
+        const nome = id === "_sem" ? "Sem fornecedor" : (contatoPorId(id)?.nome || "Desconhecido");
+        const pct = Math.round((val / totalDesp) * 100);
+        return `<div class="rel-top-linha">
+          <span class="pos-num">${i + 1}</span>
+          <div class="nome"><div class="t">${escapar(nome)}</div><div class="s">${pct}% das despesas</div></div>
+          <span class="val">${moeda(val)}</span>
+        </div>`;
+      }).join("")
+    : `<div class="rel-vazio">Sem despesas no período.</div>`;
+}
+
+function renderPrevistoRealizado(doPer) {
+  const recPago = doPer.filter((l) => l.tipo === "receita" && l.status === "pago").reduce((s, l) => s + Number(l.valor), 0);
+  const recPend = doPer.filter((l) => l.tipo === "receita" && l.status !== "pago").reduce((s, l) => s + Number(l.valor), 0);
+  const despPago = doPer.filter((l) => l.tipo === "despesa" && l.status === "pago").reduce((s, l) => s + Number(l.valor), 0);
+  const despPend = doPer.filter((l) => l.tipo === "despesa" && l.status !== "pago").reduce((s, l) => s + Number(l.valor), 0);
+  const recTot = recPago + recPend, despTot = despPago + despPend;
+  const escala = Math.max(recTot, despTot, 1);
+
+  const barra = (realizado, total, cor) => {
+    const pr = Math.round((realizado / escala) * 100);
+    const pt = Math.round((total / escala) * 100);
+    return `<div class="barras">
+      <div class="bar-row"><span style="width:64px;color:var(--cinza)">Realizado</span><span class="trk"><span class="fill" style="width:${pr}%;background:${cor}"></span></span><span class="lbl">${moeda(realizado)}</span></div>
+      <div class="bar-row"><span style="width:64px;color:var(--cinza)">Previsto</span><span class="trk"><span class="fill" style="width:${pt}%;background:${cor};opacity:.4"></span></span><span class="lbl">${moeda(total)}</span></div>
+    </div>`;
+  };
+
+  if (!recTot && !despTot) {
+    $("rel-prev-real").innerHTML = `<div class="rel-vazio">Sem lançamentos no período.</div>`;
+    return;
+  }
+  $("rel-prev-real").innerHTML =
+    `<div class="rel-pr-linha"><div class="rot pos" style="color:var(--positivo)">Receitas</div>${barra(recPago, recTot, "#15a34a")}</div>
+     <div class="rel-pr-linha"><div class="rot" style="color:var(--vermelho)">Despesas</div>${barra(despPago, despTot, "#dc3545")}</div>`;
+}
+
+function renderGraficoEvolucao(ateData) {
+  const ctx = $("grafico-evolucao");
+  if (!ctx) return;
+  // 12 meses terminando no mês de ateData
+  const mesFim = ateData.slice(0, 7);
+  const meses = [];
+  let cursor = mesFim;
+  for (let i = 0; i < 12; i++) { meses.unshift(cursor); cursor = mesAnterior(cursor); }
+  const recs = meses.map((m) => totalPagoNoMes(m, "receita"));
+  const desps = meses.map((m) => totalPagoNoMes(m, "despesa"));
+  // saldo acumulado do período (soma corrente de receitas - despesas)
+  let acc = 0;
+  const saldoAcc = meses.map((m, i) => { acc += recs[i] - desps[i]; return acc; });
+  const labels = meses.map(rotuloMes);
+
+  if (graficoEvolucao) graficoEvolucao.destroy();
+  graficoEvolucao = new Chart(ctx, {
+    data: {
+      labels,
+      datasets: [
+        { type: "bar", label: "Receitas", data: recs, backgroundColor: "#15a34a", borderRadius: 5, maxBarThickness: 18, order: 2 },
+        { type: "bar", label: "Despesas", data: desps, backgroundColor: "#dc3545", borderRadius: 5, maxBarThickness: 18, order: 2 },
+        { type: "line", label: "Saldo acumulado", data: saldoAcc, borderColor: "#2563eb", backgroundColor: "#2563eb", tension: .3, pointRadius: 3, borderWidth: 2, order: 1, yAxisID: "y" },
+      ],
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      interaction: { mode: "index", intersect: false },
+      plugins: {
+        legend: { position: "bottom", labels: { boxWidth: 12, font: { size: 12 } } },
+        tooltip: { callbacks: { label: (c) => `${c.dataset.label}: ${moeda(c.parsed.y)}` } },
+      },
+      scales: { x: { grid: { display: false } }, y: { beginAtZero: true, ticks: { callback: (v) => "R$ " + v } } },
+    },
+  });
+}
+
+// ---- Interações do seletor de período ----
+document.querySelectorAll(".seg-periodo button").forEach((b) => {
+  b.onclick = () => {
+    document.querySelectorAll(".seg-periodo button").forEach((x) => x.classList.remove("ativo"));
+    b.classList.add("ativo");
+    relModo = b.dataset.modo;
+    $("rel-ctrl-mes").classList.toggle("oculto", relModo !== "mes");
+    $("rel-ctrl-ano").classList.toggle("oculto", relModo !== "ano");
+    $("rel-ctrl-custom").classList.toggle("oculto", relModo !== "custom");
+    // valores padrão para o custom
+    if (relModo === "custom" && !$("rel-de").value) {
+      const m = $("rel-mes").value || mesDe(hoje());
+      $("rel-de").value = `${m}-01`;
+      $("rel-ate").value = hoje();
+    }
+    renderRelatorios();
+  };
+});
+["rel-ano", "rel-de", "rel-ate"].forEach((id) => {
+  const el = $(id); if (el) el.onchange = renderRelatorios;
+});
+
+// ============================================================
+//  EXPORTAÇÃO DE RELATÓRIOS
+// ============================================================
+function dadosExport() {
+  const per = periodoRelatorio();
+  const doPer = lancamentosDoPeriodo();
+  const rec = doPer.filter((l) => l.tipo === "receita").reduce((s, l) => s + Number(l.valor), 0);
+  const desp = doPer.filter((l) => l.tipo === "despesa").reduce((s, l) => s + Number(l.valor), 0);
+  const linhas = [...doPer].sort((a, b) => (a.data || "").localeCompare(b.data || "")).map((l) => {
+    const cat = categoriaPorId(l.categoriaId);
+    const conta = l.contaId ? contaPorId(l.contaId) : null;
+    const cont = l.contatoId ? contatoPorId(l.contatoId) : null;
+    return {
+      Data: rotuloDataLonga(l.data),
+      Tipo: l.tipo === "receita" ? "Receita" : "Despesa",
+      Descrição: l.descricao || "",
+      Categoria: nomeCategoriaCompletoTexto(cat),
+      Conta: conta ? conta.nome : "",
+      Contato: cont ? cont.nome : "",
+      Situação: l.status === "pago" ? "Pago" : "Pendente",
+      Valor: Number(l.valor),
+    };
+  });
+  return { per, rec, desp, saldo: rec - desp, linhas };
+}
+function rotuloDataLonga(d) { if (!d) return ""; const [a, m, dia] = d.split("-"); return `${dia}/${m}/${a}`; }
+
+function exportarPDF() {
+  if (!window.jspdf) { alert("Biblioteca de PDF ainda carregando. Tente novamente em instantes."); return; }
+  const { per, rec, desp, saldo, linhas } = dadosExport();
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+  doc.setFontSize(16); doc.text("Relatório Financeiro", 14, 18);
+  doc.setFontSize(10); doc.setTextColor(100);
+  doc.text(`Período: ${per.rotulo}`, 14, 25);
+  doc.setTextColor(20); doc.setFontSize(11);
+  doc.text(`Receitas: ${moeda(rec)}    Despesas: ${moeda(desp)}    Saldo: ${moeda(saldo)}`, 14, 33);
+  doc.autoTable({
+    startY: 40,
+    head: [["Data", "Tipo", "Descrição", "Categoria", "Conta", "Situação", "Valor"]],
+    body: linhas.map((r) => [r.Data, r.Tipo, r.Descrição, r.Categoria, r.Conta, r.Situação, moeda(r.Valor)]),
+    styles: { fontSize: 8, cellPadding: 2 },
+    headStyles: { fillColor: [37, 99, 235] },
+    columnStyles: { 6: { halign: "right" } },
+  });
+  doc.save(`relatorio_${per.rotulo.replace(/[^\w]+/g, "_")}.pdf`);
+}
+
+function exportarExcel() {
+  if (!window.XLSX) { alert("Biblioteca de Excel ainda carregando. Tente novamente em instantes."); return; }
+  const { per, rec, desp, saldo, linhas } = dadosExport();
+  const wb = XLSX.utils.book_new();
+  const resumo = [
+    ["Relatório Financeiro"],
+    ["Período", per.rotulo],
+    [],
+    ["Receitas", rec],
+    ["Despesas", desp],
+    ["Saldo", saldo],
+  ];
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(resumo), "Resumo");
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(linhas), "Lançamentos");
+  XLSX.writeFile(wb, `relatorio_${per.rotulo.replace(/[^\w]+/g, "_")}.xlsx`);
+}
+
+$("rel-export-pdf").onclick = exportarPDF;
+$("rel-export-xls").onclick = exportarExcel;
 
 // ============================================================
 //  UTIL
