@@ -164,6 +164,39 @@
   .rel-pr-linha .bar-row .fill{height:100%;border-radius:5px}
   .rel-pr-linha .bar-row .lbl{width:120px;text-align:right;font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap}
   .rel-vazio{padding:40px 20px;text-align:center;color:var(--cinza);font-size:14px}
+  /* ---- DRE ---- */
+  table.dre{width:100%;border-collapse:collapse;font-size:14px}
+  table.dre td{padding:9px 8px;border-bottom:1px solid var(--borda);font-variant-numeric:tabular-nums}
+  table.dre td.dre-val{text-align:right;white-space:nowrap;font-weight:600}
+  table.dre tr.dre-grupo>td{font-weight:700;background:#fafbfc}
+  table.dre tr.dre-sub>td:first-child{padding-left:26px;color:var(--cinza);font-weight:500}
+  table.dre tr.dre-sub>td.dre-val{font-weight:500;color:var(--texto)}
+  table.dre tr.dre-resultado>td{font-weight:800;border-top:2px solid var(--texto);border-bottom:none;font-size:15px}
+  table.dre .dre-pct{color:var(--cinza);font-size:12px;font-weight:600;width:60px;text-align:right;white-space:nowrap}
+  table.dre td.dre-pos{color:var(--positivo)}
+  table.dre td.dre-neg{color:var(--vermelho)}
+  .dre-toggle{cursor:pointer;user-select:none}
+  .dre-toggle .seta{display:inline-block;width:14px;color:var(--cinza);transition:transform .15s}
+  tr.dre-colapsado .seta{transform:rotate(-90deg)}
+  /* DRE mensal (modo Ano) */
+  .dre-mensal-wrap{overflow-x:auto}
+  table.dre-mensal{border-collapse:collapse;font-size:13px;min-width:900px;width:100%}
+  table.dre-mensal th,table.dre-mensal td{padding:8px 10px;border-bottom:1px solid var(--borda);font-variant-numeric:tabular-nums;white-space:nowrap}
+  table.dre-mensal thead th{position:sticky;top:0;background:#fafbfc;font-size:11px;font-weight:700;color:var(--cinza);text-transform:uppercase;letter-spacing:.02em;text-align:right}
+  table.dre-mensal thead th:first-child{text-align:left}
+  table.dre-mensal th.dre-conta,table.dre-mensal td.dre-conta{position:sticky;left:0;background:#fff;text-align:left;min-width:170px;z-index:1}
+  table.dre-mensal thead th.dre-conta{background:#fafbfc;z-index:2}
+  table.dre-mensal td{text-align:right}
+  table.dre-mensal td.zero{color:#cbd5e1}
+  table.dre-mensal td.col-total{font-weight:700;border-left:2px solid var(--borda);background:#fafbfc}
+  table.dre-mensal th.col-total{border-left:2px solid var(--borda)}
+  table.dre-mensal tr.dre-grupo>td{font-weight:700}
+  table.dre-mensal tr.dre-grupo>td.dre-conta{background:#fafbfc}
+  table.dre-mensal tr.dre-sub>td.dre-conta{padding-left:26px;color:var(--cinza);font-weight:500}
+  table.dre-mensal tr.dre-resultado>td{font-weight:800;border-top:2px solid var(--texto);border-bottom:none}
+  table.dre-mensal tr.dre-resultado>td.dre-conta{background:#fff}
+  table.dre-mensal td.dre-pos{color:var(--positivo)}
+  table.dre-mensal td.dre-neg{color:var(--vermelho)}
   .secao-titulo{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;margin-top:8px}
   .secao-titulo h2{font-size:20px;font-weight:700;letter-spacing:-.02em}
   .btn-add{background:var(--azul);color:#fff;padding:10px 18px;font-weight:600;display:flex;align-items:center;gap:6px;box-shadow:0 1px 3px rgba(37,99,235,.35)}
@@ -535,6 +568,16 @@
       <div class="painel-grafico" style="margin-top:18px">
         <div class="painel-cab"><h3>Previsto x Realizado no período</h3></div>
         <div id="rel-prev-real"></div>
+      </div>
+
+      <div class="painel-grafico" style="margin-top:18px">
+        <div class="painel-cab" style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+          <h3>DRE — Demonstração de Resultado</h3>
+          <label style="display:flex;align-items:center;gap:7px;font-size:13px;color:var(--cinza);font-weight:600;cursor:pointer">
+            <input type="checkbox" id="dre-so-pago" style="width:auto"> Considerar só o que foi pago/recebido
+          </label>
+        </div>
+        <div id="rel-dre"></div>
       </div>
     </div>
   </main>
@@ -2207,6 +2250,9 @@ function renderRelatorios() {
 
   // Previsto x Realizado
   renderPrevistoRealizado(doPer);
+
+  // DRE
+  renderDRE(doPer);
 }
 
 function agruparPorCategoriaPai(lista) {
@@ -2315,6 +2361,203 @@ function renderPrevistoRealizado(doPer) {
     `<div class="rel-pr-linha"><div class="rot pos" style="color:var(--positivo)">Receitas</div>${barra(recPago, recTot, "#15a34a")}</div>
      <div class="rel-pr-linha"><div class="rot" style="color:var(--vermelho)">Despesas</div>${barra(despPago, despTot, "#dc3545")}</div>`;
 }
+
+// ----- DRE (Demonstração de Resultado) -----
+let dreSoPago = false;
+function agruparDREporTipo(lista, tipo) {
+  // retorna [{pai, total, filhas:[{cat,total}]}] ordenado por total desc
+  const grupos = {};
+  lista.filter((l) => l.tipo === tipo).forEach((l) => {
+    const c = categoriaPorId(l.categoriaId);
+    const paiId = (c && c.paiId) ? c.paiId : l.categoriaId;
+    const filhoId = (c && c.paiId) ? l.categoriaId : null;
+    if (!grupos[paiId]) grupos[paiId] = { total: 0, filhas: {} };
+    grupos[paiId].total += Number(l.valor);
+    if (filhoId) grupos[paiId].filhas[filhoId] = (grupos[paiId].filhas[filhoId] || 0) + Number(l.valor);
+  });
+  return Object.entries(grupos)
+    .map(([paiId, g]) => ({
+      paiId,
+      nome: categoriaPorId(paiId).nome,
+      total: g.total,
+      filhas: Object.entries(g.filhas)
+        .map(([id, v]) => ({ id, nome: categoriaPorId(id).nome, total: v }))
+        .sort((a, b) => b.total - a.total),
+    }))
+    .sort((a, b) => b.total - a.total);
+}
+
+function renderDRE(doPer) {
+  let lista = doPer;
+  if (dreSoPago) lista = lista.filter((l) => l.status === "pago");
+  if (relModo === "ano") {
+    const elAno = $("rel-ano");
+    const ano = (elAno && elAno.value) || String(new Date().getFullYear());
+    renderDREmensal(lista, ano);
+  } else {
+    renderDREunica(lista);
+  }
+}
+
+function renderDREunica(lista) {
+  const gruposRec = agruparDREporTipo(lista, "receita");
+  const gruposDesp = agruparDREporTipo(lista, "despesa");
+  const totalRec = gruposRec.reduce((s, g) => s + g.total, 0);
+  const totalDesp = gruposDesp.reduce((s, g) => s + g.total, 0);
+  const resultado = totalRec - totalDesp;
+  const base = totalRec || 1; // base da análise vertical = receita
+
+  if (!totalRec && !totalDesp) {
+    $("rel-dre").innerHTML = `<div class="rel-vazio">Sem lançamentos no período.</div>`;
+    return;
+  }
+
+  const pct = (v) => `${Math.round((v / base) * 100)}%`;
+
+  const linhasGrupo = (grupos, sinalNeg) => grupos.map((g) => {
+    const temFilhas = g.filhas.length > 0;
+    const id = `dre-${g.paiId}`;
+    const seta = temFilhas ? `<span class="seta">▾</span> ` : `<span class="seta" style="opacity:0">▾</span> `;
+    const cabec = `<tr class="dre-grupo${temFilhas ? " dre-toggle" : ""}" ${temFilhas ? `data-dre="${id}"` : ""}>
+        <td>${seta}${escapar(g.nome)}</td>
+        <td class="dre-pct">${pct(g.total)}</td>
+        <td class="dre-val ${sinalNeg ? "dre-neg" : "dre-pos"}">${sinalNeg ? "−" : ""}${moeda(g.total)}</td>
+      </tr>`;
+    const filhas = g.filhas.map((f) => `<tr class="dre-sub" data-dre-pai="${id}">
+        <td>${escapar(f.nome)}</td>
+        <td class="dre-pct">${pct(f.total)}</td>
+        <td class="dre-val">${sinalNeg ? "−" : ""}${moeda(f.total)}</td>
+      </tr>`).join("");
+    return cabec + filhas;
+  }).join("");
+
+  $("rel-dre").innerHTML = `<table class="dre">
+    <tr class="dre-resultado"><td>Receita bruta</td><td class="dre-pct">100%</td><td class="dre-val dre-pos">${moeda(totalRec)}</td></tr>
+    ${linhasGrupo(gruposRec, false)}
+    <tr class="dre-resultado"><td>(−) Despesas totais</td><td class="dre-pct">${pct(totalDesp)}</td><td class="dre-val dre-neg">−${moeda(totalDesp)}</td></tr>
+    ${linhasGrupo(gruposDesp, true)}
+    <tr class="dre-resultado"><td>Resultado do período</td><td class="dre-pct">${pct(resultado)}</td><td class="dre-val ${resultado >= 0 ? "dre-pos" : "dre-neg"}">${moeda(resultado)}</td></tr>
+  </table>`;
+
+  // toggle de subcategorias
+  $("rel-dre").querySelectorAll(".dre-toggle").forEach((tr) => {
+    tr.onclick = () => {
+      const id = tr.dataset.dre;
+      tr.classList.toggle("dre-colapsado");
+      const escondido = tr.classList.contains("dre-colapsado");
+      $("rel-dre").querySelectorAll(`tr[data-dre-pai="${id}"]`).forEach((f) => {
+        f.style.display = escondido ? "none" : "";
+      });
+    };
+  });
+}
+
+// agrupa por categoria-pai com um vetor de 12 meses (jan..dez) + total
+function agruparDREmensal(lista, ano, tipo) {
+  const grupos = {};
+  lista.filter((l) => l.tipo === tipo && mesDe(l.data).startsWith(ano)).forEach((l) => {
+    const c = categoriaPorId(l.categoriaId);
+    const paiId = (c && c.paiId) ? c.paiId : l.categoriaId;
+    const filhoId = (c && c.paiId) ? l.categoriaId : null;
+    const mi = Number(mesDe(l.data).slice(5, 7)) - 1; // 0..11
+    if (!grupos[paiId]) grupos[paiId] = { meses: new Array(12).fill(0), total: 0, filhas: {} };
+    grupos[paiId].meses[mi] += Number(l.valor);
+    grupos[paiId].total += Number(l.valor);
+    if (filhoId) {
+      if (!grupos[paiId].filhas[filhoId]) grupos[paiId].filhas[filhoId] = { meses: new Array(12).fill(0), total: 0 };
+      grupos[paiId].filhas[filhoId].meses[mi] += Number(l.valor);
+      grupos[paiId].filhas[filhoId].total += Number(l.valor);
+    }
+  });
+  return Object.entries(grupos)
+    .map(([paiId, g]) => ({
+      paiId, nome: categoriaPorId(paiId).nome, meses: g.meses, total: g.total,
+      filhas: Object.entries(g.filhas)
+        .map(([id, f]) => ({ id, nome: categoriaPorId(id).nome, meses: f.meses, total: f.total }))
+        .sort((a, b) => b.total - a.total),
+    }))
+    .sort((a, b) => b.total - a.total);
+}
+
+function renderDREmensal(lista, ano) {
+  const gruposRec = agruparDREmensal(lista, ano, "receita");
+  const gruposDesp = agruparDREmensal(lista, ano, "despesa");
+  const totalRecGeral = gruposRec.reduce((s, g) => s + g.total, 0);
+  const totalDespGeral = gruposDesp.reduce((s, g) => s + g.total, 0);
+
+  if (!totalRecGeral && !totalDespGeral) {
+    $("rel-dre").innerHTML = `<div class="rel-vazio">Sem lançamentos no período.</div>`;
+    return;
+  }
+
+  const MESES = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
+  const cel = (v, neg) => v === 0
+    ? `<td class="zero">—</td>`
+    : `<td class="${neg ? "dre-neg" : "dre-pos"}">${neg ? "−" : ""}${moeda(v)}</td>`;
+  const celTotal = (v, neg) => `<td class="col-total ${neg ? "dre-neg" : "dre-pos"}">${v === 0 ? "—" : (neg ? "−" : "") + moeda(v)}</td>`;
+
+  // soma mensal de um conjunto de grupos
+  const somaMeses = (grupos) => {
+    const arr = new Array(12).fill(0);
+    grupos.forEach((g) => g.meses.forEach((v, i) => arr[i] += v));
+    return arr;
+  };
+  const recMes = somaMeses(gruposRec);
+  const despMes = somaMeses(gruposDesp);
+  const resMes = recMes.map((v, i) => v - despMes[i]);
+
+  const linhaResultado = (rotulo, meses, total, neg) =>
+    `<tr class="dre-resultado"><td class="dre-conta">${rotulo}</td>${meses.map((v) => celTotal(v, neg)).join("")}${celTotal(total, neg)}</tr>`;
+
+  const linhasGrupo = (grupos, neg) => grupos.map((g) => {
+    const temFilhas = g.filhas.length > 0;
+    const id = `drem-${g.paiId}`;
+    const seta = temFilhas ? `<span class="seta">▾</span> ` : `<span class="seta" style="opacity:0">▾</span> `;
+    const cabec = `<tr class="dre-grupo${temFilhas ? " dre-toggle" : ""}" ${temFilhas ? `data-dre="${id}"` : ""}>
+        <td class="dre-conta">${seta}${escapar(g.nome)}</td>
+        ${g.meses.map((v) => cel(v, neg)).join("")}
+        ${celTotal(g.total, neg)}
+      </tr>`;
+    const filhas = g.filhas.map((f) => `<tr class="dre-sub" data-dre-pai="${id}">
+        <td class="dre-conta">${escapar(f.nome)}</td>
+        ${f.meses.map((v) => cel(v, neg)).join("")}
+        ${celTotal(f.total, neg)}
+      </tr>`).join("");
+    return cabec + filhas;
+  }).join("");
+
+  const cabecalho = `<thead><tr>
+      <th class="dre-conta">Conta</th>
+      ${MESES.map((m) => `<th>${m}</th>`).join("")}
+      <th class="col-total">Total</th>
+    </tr></thead>`;
+
+  $("rel-dre").innerHTML = `<div class="dre-mensal-wrap"><table class="dre-mensal">
+    ${cabecalho}
+    <tbody>
+      ${linhaResultado("Receita bruta", recMes, totalRecGeral, false)}
+      ${linhasGrupo(gruposRec, false)}
+      ${linhaResultado("(−) Despesas totais", despMes, totalDespGeral, true)}
+      ${linhasGrupo(gruposDesp, true)}
+      <tr class="dre-resultado"><td class="dre-conta">Resultado</td>${resMes.map((v) => `<td class="col-total ${v >= 0 ? "dre-pos" : "dre-neg"}">${moeda(v)}</td>`).join("")}<td class="col-total ${(totalRecGeral - totalDespGeral) >= 0 ? "dre-pos" : "dre-neg"}">${moeda(totalRecGeral - totalDespGeral)}</td></tr>
+    </tbody>
+  </table></div>`;
+
+  // toggle de subcategorias
+  $("rel-dre").querySelectorAll(".dre-toggle").forEach((tr) => {
+    tr.onclick = () => {
+      const id = tr.dataset.dre;
+      tr.classList.toggle("dre-colapsado");
+      const escondido = tr.classList.contains("dre-colapsado");
+      $("rel-dre").querySelectorAll(`tr[data-dre-pai="${id}"]`).forEach((f) => {
+        f.style.display = escondido ? "none" : "";
+      });
+    };
+  });
+}
+
+const dreChk = $("dre-so-pago");
+if (dreChk) dreChk.onchange = () => { dreSoPago = dreChk.checked; renderRelatorios(); };
 
 function renderGraficoEvolucao(ateData) {
   const ctx = $("grafico-evolucao");
@@ -2448,6 +2691,22 @@ function dadosExport() {
   });
   return { per, rec, desp, saldo: rec - desp, linhas };
 }
+
+function dreParaExport() {
+  let lista = lancamentosDoPeriodo();
+  if (typeof dreSoPago !== "undefined" && dreSoPago) lista = lista.filter((l) => l.status === "pago");
+  const gRec = agruparDREporTipo(lista, "receita");
+  const gDesp = agruparDREporTipo(lista, "despesa");
+  const totalRec = gRec.reduce((s, g) => s + g.total, 0);
+  const totalDesp = gDesp.reduce((s, g) => s + g.total, 0);
+  const rows = [];
+  rows.push(["Receita bruta", totalRec]);
+  gRec.forEach((g) => { rows.push(["  " + g.nome, g.total]); g.filhas.forEach((f) => rows.push(["    " + f.nome, f.total])); });
+  rows.push(["(-) Despesas totais", -totalDesp]);
+  gDesp.forEach((g) => { rows.push(["  " + g.nome, -g.total]); g.filhas.forEach((f) => rows.push(["    " + f.nome, -f.total])); });
+  rows.push(["Resultado do período", totalRec - totalDesp]);
+  return rows;
+}
 function rotuloDataLonga(d) { if (!d) return ""; const [a, m, dia] = d.split("-"); return `${dia}/${m}/${a}`; }
 
 function exportarPDF() {
@@ -2468,6 +2727,19 @@ function exportarPDF() {
     headStyles: { fillColor: [37, 99, 235] },
     columnStyles: { 6: { halign: "right" } },
   });
+  // DRE
+  const dre = dreParaExport();
+  doc.addPage();
+  doc.setFontSize(14); doc.setTextColor(20); doc.text("DRE — Demonstração de Resultado", 14, 18);
+  doc.setFontSize(10); doc.setTextColor(100); doc.text(`Período: ${per.rotulo}`, 14, 25);
+  doc.autoTable({
+    startY: 32,
+    head: [["Conta", "Valor"]],
+    body: dre.map((r) => [r[0], moeda(r[1])]),
+    styles: { fontSize: 9, cellPadding: 2.5 },
+    headStyles: { fillColor: [37, 99, 235] },
+    columnStyles: { 1: { halign: "right" } },
+  });
   doc.save(`relatorio_${per.rotulo.replace(/[^\w]+/g, "_")}.pdf`);
 }
 
@@ -2485,6 +2757,8 @@ function exportarExcel() {
   ];
   XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(resumo), "Resumo");
   XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(linhas), "Lançamentos");
+  const dre = [["DRE — Demonstração de Resultado"], ["Período", per.rotulo], [], ["Conta", "Valor"], ...dreParaExport()];
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(dre), "DRE");
   XLSX.writeFile(wb, `relatorio_${per.rotulo.replace(/[^\w]+/g, "_")}.xlsx`);
 }
 
