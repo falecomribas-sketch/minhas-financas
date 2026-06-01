@@ -503,6 +503,11 @@
         <div style="position:relative;height:280px"><canvas id="grafico-evolucao"></canvas></div>
       </div>
 
+      <div class="painel-grafico" style="margin-bottom:18px">
+        <div class="painel-cab"><h3>Fluxo de caixa (12 meses · realizado + previsto)</h3></div>
+        <div style="position:relative;height:300px"><canvas id="grafico-fluxo"></canvas></div>
+      </div>
+
       <div class="rel-2col">
         <div class="painel-grafico">
           <div class="painel-cab"><h3>Despesas por categoria</h3></div>
@@ -828,10 +833,12 @@ function renderTudo() {
 // ---- Interações da tela de Resumo ----
 $("resumo-mes").addEventListener("change", (e) => { mesResumo = e.target.value; renderResumo(); });
 function pularMesResumo(passo) {
-  const opts = [...$("resumo-mes").options].map((o) => o.value); // do mais recente p/ antigo
-  const i = opts.indexOf(mesResumo);
+  const opts = [...$("resumo-mes").options].map((o) => o.value).filter((v) => v !== "todos"); // do mais recente p/ antigo
+  // se estamos em "todos", começa do mês atual
+  let base = mesResumo === "todos" ? (opts.includes(mesDe(hoje())) ? mesDe(hoje()) : opts[0]) : mesResumo;
+  const i = opts.indexOf(base);
   // passo +1 = mês mais novo (índice menor); passo -1 = mais antigo (índice maior)
-  const novo = opts[i - passo];
+  const novo = mesResumo === "todos" ? base : opts[i - passo];
   if (novo) { mesResumo = novo; renderResumo(); }
 }
 $("resumo-mes-prox").onclick = () => pularMesResumo(1);
@@ -971,37 +978,58 @@ function totalPagoNoMes(mes, tipo) {
     .filter((l) => l.tipo === tipo && l.status === "pago" && mesDe(l.data) === mes)
     .reduce((s, l) => s + Number(l.valor), 0);
 }
+// soma de despesas/receitas PAGAS de TODOS os meses
+function totalPagoTotal(tipo) {
+  return lancamentos
+    .filter((l) => l.tipo === tipo && l.status === "pago")
+    .reduce((s, l) => s + Number(l.valor), 0);
+}
+// soma de um mês por tipo, com filtro opcional de status ("pago" | "pendente" | null=todos)
+function totalNoMes(mes, tipo, status) {
+  return lancamentos
+    .filter((l) => l.tipo === tipo && mesDe(l.data) === mes
+      && (status == null
+          || (status === "pago" ? l.status === "pago" : l.status !== "pago")))
+    .reduce((s, l) => s + Number(l.valor), 0);
+}
 
 function prepararSeletorMesResumo() {
   const meses = listaMeses(); // já vem do mais recente para o mais antigo
-  if (!mesResumo || !meses.includes(mesResumo)) mesResumo = mesDe(hoje());
-  if (!meses.includes(mesResumo)) meses.unshift(mesResumo);
-  $("resumo-mes").innerHTML = meses
-    .map((m) => `<option value="${m}">${rotuloMes(m)}</option>`)
-    .join("");
+  if (!mesResumo || (mesResumo !== "todos" && !meses.includes(mesResumo))) mesResumo = mesDe(hoje());
+  if (mesResumo !== "todos" && !meses.includes(mesResumo)) meses.unshift(mesResumo);
+  $("resumo-mes").innerHTML = `<option value="todos">Todos os meses</option>`
+    + meses
+      .map((m) => `<option value="${m}">${rotuloMes(m)}</option>`)
+      .join("");
   $("resumo-mes").value = mesResumo;
 }
 
 function renderResumo() {
   prepararSeletorMesResumo();
   const mes = mesResumo;
-  const mesAnt = mesAnterior(mes);
+  const ehTodos = mes === "todos";
+  const mesAnt = ehTodos ? null : mesAnterior(mes);
 
   // Patrimônio (realizado) e projeção considerando pendências do mês
   const patrim = patrimonioTotal();
   $("r-patrimonio").textContent = moeda(patrim);
 
-  // Realizado do mês (pago)
-  const rec = totalPagoNoMes(mes, "receita");
-  const desp = totalPagoNoMes(mes, "despesa");
+  // Realizado do mês (pago) — ou de todos os meses
+  const rec = ehTodos ? totalPagoTotal("receita") : totalPagoNoMes(mes, "receita");
+  const desp = ehTodos ? totalPagoTotal("despesa") : totalPagoNoMes(mes, "despesa");
   $("r-receitas").textContent = moeda(rec);
   $("r-despesas").textContent = moeda(desp);
 
-  // Variação vs. mês anterior
-  const recAnt = totalPagoNoMes(mesAnt, "receita");
-  const despAnt = totalPagoNoMes(mesAnt, "despesa");
-  $("r-receitas-var").innerHTML = textoVariacao(rec, recAnt, true);
-  $("r-despesas-var").innerHTML = textoVariacao(desp, despAnt, false);
+  // Variação vs. mês anterior (não se aplica em "Todos")
+  if (ehTodos) {
+    $("r-receitas-var").innerHTML = `<span style="color:var(--cinza)">acumulado de todos os meses</span>`;
+    $("r-despesas-var").innerHTML = `<span style="color:var(--cinza)">acumulado de todos os meses</span>`;
+  } else {
+    const recAnt = totalPagoNoMes(mesAnt, "receita");
+    const despAnt = totalPagoNoMes(mesAnt, "despesa");
+    $("r-receitas-var").innerHTML = textoVariacao(rec, recAnt, true);
+    $("r-despesas-var").innerHTML = textoVariacao(desp, despAnt, false);
+  }
 
   // Saldo realizado do mês
   const saldo = rec - desp;
@@ -1010,8 +1038,8 @@ function renderResumo() {
   elSaldo.className = "valor " + (saldo >= 0 ? "pos" : "neg");
   $("r-saldo-sub").textContent = "receitas − despesas (já pagas)";
 
-  // Pendentes do mês (por competência)
-  const doMes = lancamentos.filter((l) => mesDe(l.data) === mes);
+  // Pendentes do mês (por competência) — ou de todos os meses
+  const doMes = ehTodos ? lancamentos : lancamentos.filter((l) => mesDe(l.data) === mes);
   const apagar = doMes
     .filter((l) => l.status !== "pago" && l.tipo === "despesa")
     .reduce((s, l) => s + Number(l.valor), 0);
@@ -1088,9 +1116,9 @@ function renderContasResumo() {
 function renderGraficoTendencia() {
   const ctx = $("grafico-tendencia");
   if (!ctx) return;
-  // últimos 6 meses terminando no mês selecionado
+  // últimos 6 meses terminando no mês selecionado (ou no mês atual quando "Todos")
   const meses = [];
-  let cursor = mesResumo;
+  let cursor = mesResumo === "todos" ? mesDe(hoje()) : mesResumo;
   for (let i = 0; i < 6; i++) { meses.unshift(cursor); cursor = mesAnterior(cursor); }
   const recs = meses.map((m) => totalPagoNoMes(m, "receita"));
   const desps = meses.map((m) => totalPagoNoMes(m, "despesa"));
@@ -2111,7 +2139,7 @@ window.excluirCategoria = async (id) => {
 // ============================================================
 //  RELATÓRIOS
 // ============================================================
-let graficoEvolucao = null, graficoRoscaDesp = null, graficoRoscaRec = null;
+let graficoEvolucao = null, graficoFluxo = null, graficoRoscaDesp = null, graficoRoscaRec = null;
 let relModo = "mes"; // mes | ano | custom
 
 // Define o intervalo [de, ate] (YYYY-MM-DD) conforme o modo selecionado
@@ -2165,6 +2193,9 @@ function renderRelatorios() {
 
   // Gráfico de evolução (12 meses até o fim do período)
   renderGraficoEvolucao(per.ate);
+
+  // Gráfico de fluxo de caixa (12 meses, realizado + previsto)
+  renderGraficoFluxo(per.ate);
 
   // Roscas por categoria
   renderRoscaCategoria(despList, "rel-rosca-despesa", "rel-legenda-despesa", "graficoRoscaDesp");
@@ -2322,7 +2353,55 @@ function renderGraficoEvolucao(ateData) {
   });
 }
 
-// ---- Interações do seletor de período ----
+function renderGraficoFluxo(ateData) {
+  const ctx = $("grafico-fluxo");
+  if (!ctx) return;
+  // 12 meses terminando no mês de ateData
+  const mesFim = ateData.slice(0, 7);
+  const meses = [];
+  let cursor = mesFim;
+  for (let i = 0; i < 12; i++) { meses.unshift(cursor); cursor = mesAnterior(cursor); }
+
+  // entradas/saídas = realizado (pago) + previsto (pendente) por competência
+  const entradasReal = meses.map((m) => totalNoMes(m, "receita", "pago"));
+  const entradasPrev = meses.map((m) => totalNoMes(m, "receita", "pendente"));
+  const saidasReal   = meses.map((m) => totalNoMes(m, "despesa", "pago"));
+  const saidasPrev   = meses.map((m) => totalNoMes(m, "despesa", "pendente"));
+
+  // saldo acumulado considerando tudo (realizado + previsto)
+  let acc = 0;
+  const saldoAcc = meses.map((m, i) => {
+    acc += (entradasReal[i] + entradasPrev[i]) - (saidasReal[i] + saidasPrev[i]);
+    return acc;
+  });
+  const labels = meses.map(rotuloMes);
+
+  if (graficoFluxo) graficoFluxo.destroy();
+  graficoFluxo = new Chart(ctx, {
+    data: {
+      labels,
+      datasets: [
+        { type: "bar", label: "Entradas (pago)",    data: entradasReal, backgroundColor: "#15a34a", stack: "ent", borderRadius: 4, maxBarThickness: 22, order: 2 },
+        { type: "bar", label: "Entradas (previsto)", data: entradasPrev, backgroundColor: "rgba(21,163,74,.42)", stack: "ent", borderRadius: 4, maxBarThickness: 22, order: 2 },
+        { type: "bar", label: "Saídas (pago)",       data: saidasReal,   backgroundColor: "#dc3545", stack: "sai", borderRadius: 4, maxBarThickness: 22, order: 2 },
+        { type: "bar", label: "Saídas (previsto)",   data: saidasPrev,   backgroundColor: "rgba(220,53,69,.42)", stack: "sai", borderRadius: 4, maxBarThickness: 22, order: 2 },
+        { type: "line", label: "Saldo acumulado",    data: saldoAcc, borderColor: "#2563eb", backgroundColor: "#2563eb", tension: .3, pointRadius: 3, borderWidth: 2, order: 1 },
+      ],
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      interaction: { mode: "index", intersect: false },
+      plugins: {
+        legend: { position: "bottom", labels: { boxWidth: 12, font: { size: 12 } } },
+        tooltip: { callbacks: { label: (c) => `${c.dataset.label}: ${moeda(c.parsed.y)}` } },
+      },
+      scales: {
+        x: { stacked: true, grid: { display: false } },
+        y: { stacked: true, ticks: { callback: (v) => "R$ " + v } },
+      },
+    },
+  });
+}
 document.querySelectorAll(".seg-periodo button").forEach((b) => {
   b.onclick = () => {
     document.querySelectorAll(".seg-periodo button").forEach((x) => x.classList.remove("ativo"));
