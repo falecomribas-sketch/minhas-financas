@@ -630,6 +630,10 @@
         </div>
       </div>
 
+      <div class="bloco oculto" id="bloco-dataquit">
+        <div class="campo"><label>Data da quitação</label><input id="lanc-dataquit" type="date"></div>
+      </div>
+
       <div class="bloco campo" id="campo-repeticao"><label>Repetição</label>
         <select id="lanc-repeticao">
           <option value="unico">Lançamento único</option>
@@ -689,6 +693,15 @@
     <input id="cat-icone" type="hidden" value="">
     <div class="campo"><label>Cor</label><input id="cat-cor" type="color" value="#119E3F" style="height:46px;padding:4px"></div>
     <div class="linha-botoes"><button class="btn-sec" id="cat-cancelar">Cancelar</button><button class="btn-principal" id="cat-salvar">Salvar</button></div>
+  </div>
+</div>
+
+<div id="modal-quitar" class="modal-fundo oculto" style="z-index:60">
+  <div class="modal">
+    <h3>Quitar lançamento</h3>
+    <div id="quitar-resumo" style="font-size:13.5px;color:var(--cinza);margin-bottom:16px"></div>
+    <div class="campo"><label>Data da quitação</label><input id="quitar-data" type="date"></div>
+    <div class="linha-botoes"><button class="btn-sec" id="quitar-cancelar">Cancelar</button><button class="btn-principal" id="quitar-confirmar">Confirmar quitação</button></div>
   </div>
 </div>
 
@@ -1274,6 +1287,7 @@ function itemHTML(l) {
   const meta = [
     rotuloData(l.data),
     l.vencimento ? "vence " + rotuloData(l.vencimento) : null,
+    pago && l.dataQuitacao ? "quitado " + rotuloData(l.dataQuitacao) : null,
     cat.paiId ? nomeCategoriaCompletoTexto(cat) : cat.nome,
     conta ? conta.nome : null,
     contato ? contato.nome : null,
@@ -1350,6 +1364,7 @@ function renderLancamentos() {
       case "fornecedor": { const c = contatoPorId(l.contatoId); return (c ? c.nome : "").toLowerCase(); }
       case "valor": return Number(l.valor) || 0;
       case "conta": { const c = contaPorId(l.contaId); return (c ? c.nome : "").toLowerCase(); }
+      case "dataquit": return l.dataQuitacao || "";
       case "status": return statusPeso(l);
       case "data":
       default: return l.data || "";
@@ -1387,6 +1402,7 @@ function renderLancamentos() {
     { id: "subcategoria", rotulo: "Sub-categoria", cls: "" },
     { id: "valor", rotulo: "Valor", cls: "num" },
     { id: "conta", rotulo: "Conta", cls: "" },
+    { id: "dataquit", rotulo: "Data quitação", cls: "centro" },
     { id: "status", rotulo: "Situação", cls: "centro" },
   ];
   const thead = cols.map((c) => {
@@ -1443,6 +1459,7 @@ function linhaTabelaHTML(l) {
           <span>${nomeD}</span>
         </span>
       </td>
+      <td class="centro col-data">—</td>
       <td class="centro"><span class="selo pago">Pago</span></td>
       <td class="num">
         <div class="acoes-tab">
@@ -1486,6 +1503,7 @@ function linhaTabelaHTML(l) {
     <td class="col-conta">${conta
       ? `<span class="cel-conta"><span class="avatar" style="width:24px;height:24px;font-size:10.5px;background:${corConta};color:${corTextoContraste(corConta)}">${escapar(iniciais(conta.nome))}</span><span>${escapar(conta.nome)}</span></span>`
       : "—"}</td>
+    <td class="centro col-data">${pago && l.dataQuitacao ? rotuloData(l.dataQuitacao) : "—"}</td>
     <td class="centro">${selo}</td>
     <td class="num">
       <div class="acoes-tab">
@@ -1589,6 +1607,8 @@ function abrirModalLanc(lanc = null) {
   $("lanc-data").value = lanc ? lanc.data : hoje();
   $("lanc-vencimento").value = lanc ? (lanc.vencimento || "") : "";
   $("lanc-status").value = lanc ? (lanc.status || "pago") : "pendente";
+  $("lanc-dataquit").value = lanc ? (lanc.dataQuitacao || "") : "";
+  atualizarVisibilidadeQuitacao();
   preencherSelectParcelas();
   $("lanc-repeticao").value = "unico";
   $("lanc-parcelas").value = "2";
@@ -1617,6 +1637,15 @@ function abrirModalLanc(lanc = null) {
 $("lanc-repeticao").addEventListener("change", atualizarVisibilidadeRepeticao);
 $("lanc-parcelas").addEventListener("change", atualizarInfoRepeticao);
 $("lanc-valor").addEventListener("input", atualizarInfoRepeticao);
+
+// Mostra o campo "Data da quitação" só quando a situação for Pago.
+// Se ficar pago e não houver data, sugere hoje.
+function atualizarVisibilidadeQuitacao() {
+  const pago = $("lanc-status").value === "pago";
+  $("bloco-dataquit").classList.toggle("oculto", !pago);
+  if (pago && !$("lanc-dataquit").value) $("lanc-dataquit").value = hoje();
+}
+$("lanc-status").addEventListener("change", atualizarVisibilidadeQuitacao);
 
 // Avança uma data (YYYY-MM-DD) em n meses, preservando o dia (ajustando p/ fim de mês)
 function somarMeses(dataStr, n) {
@@ -1673,6 +1702,7 @@ $("lanc-salvar").onclick = async () => {
   const data = $("lanc-data").value;
   const vencimento = $("lanc-vencimento").value || "";
   const status = $("lanc-status").value;
+  const dataQuitacao = status === "pago" ? ($("lanc-dataquit").value || hoje()) : "";
   const categoriaId = $("lanc-categoria").value;
   const contaId = $("lanc-conta").value;
   const contatoId = $("lanc-contato").value || "";
@@ -1683,7 +1713,7 @@ $("lanc-salvar").onclick = async () => {
   const n = parseInt($("lanc-parcelas").value || "0", 10);
 
   if (editandoId.lanc) {
-    const dados = { descricao: desc, valor, data, vencimento, status, tipo: tipoLancamentoAtual, categoriaId, contaId, contatoId };
+    const dados = { descricao: desc, valor, data, vencimento, status, dataQuitacao, tipo: tipoLancamentoAtual, categoriaId, contaId, contatoId };
     await col("lancamentos").doc(editandoId.lanc).update(dados);
     const i = lancamentos.findIndex((l) => l.id === editandoId.lanc);
     lancamentos[i] = { id: editandoId.lanc, ...lancamentos[i], ...dados };
@@ -1702,6 +1732,7 @@ $("lanc-salvar").onclick = async () => {
         data: somarMeses(data, i),
         vencimento: vencimento ? somarMeses(vencimento, i) : "",
         status: i === 0 ? status : "pendente",
+        dataQuitacao: i === 0 ? dataQuitacao : "",
         tipo: "despesa", categoriaId, contaId, contatoId,
         grupoId, grupoTipo: "parcelado", parcelaNum: i + 1, parcelasTotal: n,
       };
@@ -1719,6 +1750,7 @@ $("lanc-salvar").onclick = async () => {
         data: somarMeses(data, i),
         vencimento: vencimento ? somarMeses(vencimento, i) : "",
         status: i === 0 ? status : "pendente",
+        dataQuitacao: i === 0 ? dataQuitacao : "",
         tipo: tipoLancamentoAtual, categoriaId, contaId, contatoId,
         grupoId, grupoTipo: "recorrente", parcelaNum: i + 1, parcelasTotal: n,
       };
@@ -1727,7 +1759,7 @@ $("lanc-salvar").onclick = async () => {
     }
 
   } else {
-    const dados = { descricao: desc, valor, data, vencimento, status, tipo: tipoLancamentoAtual, categoriaId, contaId, contatoId };
+    const dados = { descricao: desc, valor, data, vencimento, status, dataQuitacao, tipo: tipoLancamentoAtual, categoriaId, contaId, contatoId };
     const ref = await col("lancamentos").add(dados);
     lancamentos.push({ id: ref.id, ...dados });
   }
@@ -1737,7 +1769,46 @@ $("lanc-salvar").onclick = async () => {
 };
 
 window.editarLancamento = (id) => abrirModalLanc(lancamentos.find((l) => l.id === id));
+
+let quitarAlvoId = null;
 window.alternarQuitar = async (id) => {
+  const l = lancamentos.find((x) => x.id === id);
+  if (!l) return;
+  // Já está pago -> estorna direto (volta a pendente e limpa a data de quitação)
+  if (l.status === "pago") {
+    await col("lancamentos").doc(id).update({ status: "pendente", dataQuitacao: "" });
+    l.status = "pendente";
+    l.dataQuitacao = "";
+    renderTudo();
+    return;
+  }
+  // Está pendente -> abre o modal pedindo a data da quitação (editável)
+  quitarAlvoId = id;
+  $("quitar-resumo").textContent =
+    `${l.descricao || "Lançamento"} · ${moeda(l.valor)}` +
+    (l.vencimento ? ` · vence ${rotuloData(l.vencimento)}` : "");
+  $("quitar-data").value = hoje();
+  $("modal-quitar").classList.remove("oculto");
+};
+
+$("quitar-cancelar").onclick = () => {
+  quitarAlvoId = null;
+  $("modal-quitar").classList.add("oculto");
+};
+$("quitar-confirmar").onclick = async () => {
+  if (!quitarAlvoId) return;
+  const l = lancamentos.find((x) => x.id === quitarAlvoId);
+  const dataQuitacao = $("quitar-data").value || hoje();
+  if (l) {
+    await col("lancamentos").doc(quitarAlvoId).update({ status: "pago", dataQuitacao });
+    l.status = "pago";
+    l.dataQuitacao = dataQuitacao;
+  }
+  quitarAlvoId = null;
+  $("modal-quitar").classList.add("oculto");
+  renderTudo();
+};
+window.alternarQuitarOLD = async (id) => {
   const l = lancamentos.find((x) => x.id === id);
   if (!l) return;
   const novo = l.status === "pago" ? "pendente" : "pago";
