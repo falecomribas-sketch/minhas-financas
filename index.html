@@ -1303,7 +1303,7 @@ function itemHTML(l) {
     </div>
   </div>`;
 }
-function rotuloData(d) { const [a, m, dia] = d.split("-"); return `${dia}/${m}`; }
+function rotuloData(d) { const [a, m, dia] = d.split("-"); return `${Number(dia)}/${Number(m)}/${String(a).slice(-2)}`; }
 
 function renderLancamentos() {
   const mes = $("filtro-mes").value;
