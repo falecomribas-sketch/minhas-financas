@@ -1594,10 +1594,8 @@ function abrirModalLanc(lanc = null) {
   $("lanc-parcelas").value = "2";
   ajustarOpcoesRepeticao();
   atualizarVisibilidadeRepeticao();
-  preencherSelectsCategoria();
   preencherSelectsConta();
   preencherSelectContatoModal();
-  if (lanc) $("lanc-categoria").value = lanc.categoriaId;
   if (lanc && lanc.contaId) $("lanc-conta").value = lanc.contaId;
   if (lanc && lanc.contatoId) $("lanc-contato").value = lanc.contatoId;
   if (lanc && lanc.tipo === "transferencia") {
@@ -1606,7 +1604,10 @@ function abrirModalLanc(lanc = null) {
     if (lanc.contaDestinoId) $("lanc-conta-destino").value = lanc.contaDestinoId;
   }
   // garante visibilidade correta dos blocos conforme o tipo atual
+  // (setTipoLanc reconstrói o select de categoria, então a categoria precisa
+  //  ser definida DEPOIS desta chamada, senão a subcategoria é perdida)
   setTipoLanc(tipoLancamentoAtual);
+  if (lanc) $("lanc-categoria").value = lanc.categoriaId;
   if (lanc && lanc.tipo === "transferencia") {
     if (lanc.contaId) $("lanc-conta-origem").value = lanc.contaId;
     if (lanc.contaDestinoId) $("lanc-conta-destino").value = lanc.contaDestinoId;
