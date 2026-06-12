@@ -43,6 +43,14 @@
   .link-troca{text-align:center;margin-top:18px;font-size:14px;color:var(--cinza)}
   .link-troca a{color:var(--verde);cursor:pointer;font-weight:600;text-decoration:none}
   .erro{background:var(--vermelho-claro);color:var(--vermelho);padding:10px 12px;border-radius:8px;font-size:13px;margin-bottom:16px;text-align:center}
+  /* ---- Divisão de lançamento entre categorias ---- */
+  .link-dividir{font-size:12.5px;color:var(--azul);cursor:pointer;font-weight:600;text-decoration:none}
+  .link-dividir:hover{text-decoration:underline}
+  .divisao-linha{display:flex;gap:8px;margin-bottom:8px;align-items:center}
+  .divisao-linha select{flex:1;min-width:0}
+  .divisao-linha .valor-div{flex:0 0 120px;width:120px}
+  .divisao-linha .remover-div{flex:0 0 auto;background:var(--vermelho-claro);color:var(--vermelho);width:36px;height:40px;border-radius:9px;font-size:14px}
+  .divisao-linha .remover-div:hover{background:#f8d7da}
   /* ===================== LAYOUT COM SIDEBAR ===================== */
   #tela-app{min-height:100vh;display:flex}
   /* ---- Sidebar escura ---- */
@@ -669,7 +677,17 @@
       <div class="bloco" id="bloco-conta-categoria" style="margin-bottom:0">
         <div class="linha-2col">
           <div class="campo"><label>Conta</label><select id="lanc-conta"></select></div>
-          <div class="campo"><label>Categoria</label><select id="lanc-categoria"></select></div>
+          <div class="campo" id="campo-categoria-unica"><label>Categoria</label><select id="lanc-categoria"></select></div>
+        </div>
+        <div style="margin-top:6px"><a id="lanc-dividir" class="link-dividir">Dividir entre mais de uma categoria</a></div>
+        <div id="bloco-divisao" class="oculto" style="margin-top:10px">
+          <label style="display:block;font-size:13px;color:var(--cinza);margin-bottom:8px;font-weight:600">Divisão por categoria</label>
+          <div id="divisao-linhas"></div>
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:4px">
+            <button type="button" class="btn-sec" id="divisao-add" style="width:auto;padding:8px 12px;font-size:13px">+ Adicionar categoria</button>
+            <a id="lanc-remover-divisao" class="link-dividir">Voltar para categoria única</a>
+          </div>
+          <div id="divisao-info" style="font-size:12.5px;margin-top:8px;color:var(--cinza)"></div>
         </div>
       </div>
     </div>
@@ -1561,6 +1579,7 @@ function setTipoLanc(t) {
     $("campo-repeticao").classList.add("oculto");
   } else {
     preencherSelectsCategoria();
+    atualizarSelectsDivisaoTipo();
     ajustarOpcoesRepeticao();
     atualizarVisibilidadeRepeticao();
     preencherSelectContatoModal();
@@ -1586,10 +1605,10 @@ function ajustarOpcoesRepeticao() {
 }
 
 function atualizarVisibilidadeRepeticao() {
-  // Repetição só ao criar (não em edição)
+  // Repetição só ao criar (não em edição) e não combina com divisão por categorias
   const emEdicao = !!editandoId.lanc;
-  $("campo-repeticao").classList.toggle("oculto", emEdicao);
-  if (emEdicao) { $("lanc-repeticao").value = "unico"; }
+  $("campo-repeticao").classList.toggle("oculto", emEdicao || divisaoAtiva);
+  if (emEdicao || divisaoAtiva) { $("lanc-repeticao").value = "unico"; }
 
   const modo = $("lanc-repeticao").value;
   const precisaMeses = !emEdicao && (modo === "recorrente" || modo === "parcelado");
@@ -1616,10 +1635,106 @@ function atualizarInfoRepeticao() {
   }
 }
 
+// ============================================================
+//  DIVISÃO DE UM LANÇAMENTO ENTRE VÁRIAS CATEGORIAS
+//  (cria vários lançamentos ligados por grupoId / grupoTipo "dividido")
+// ============================================================
+let divisaoAtiva = false;
+
+function adicionarLinhaDivisao(categoriaId = "", valor = "") {
+  const linha = document.createElement("div");
+  linha.className = "divisao-linha";
+  const sel = document.createElement("select");
+  sel.innerHTML = `<option value="">Selecione a categoria…</option>` + opcoesCategoriaAgrupadas(tipoLancamentoAtual);
+  if (categoriaId && [...sel.options].some((o) => o.value === categoriaId)) sel.value = categoriaId;
+  const inp = document.createElement("input");
+  inp.type = "number"; inp.step = "0.01"; inp.min = "0"; inp.placeholder = "0,00";
+  inp.className = "valor-div";
+  if (valor !== "") inp.value = valor;
+  inp.addEventListener("input", atualizarInfoDivisao);
+  const btn = document.createElement("button");
+  btn.type = "button"; btn.className = "remover-div"; btn.title = "Remover linha"; btn.textContent = "✕";
+  btn.onclick = () => { linha.remove(); atualizarInfoDivisao(); };
+  linha.append(sel, inp, btn);
+  $("divisao-linhas").appendChild(linha);
+}
+
+function lerLinhasDivisao() {
+  return [...$("divisao-linhas").querySelectorAll(".divisao-linha")].map((ln) => ({
+    categoriaId: ln.querySelector("select").value,
+    valor: parseFloat(ln.querySelector("input").value),
+  }));
+}
+
+// Quando o tipo (receita/despesa) muda, as opções dos selects da divisão
+// precisam ser refeitas, preservando a escolha se ela ainda for válida.
+function atualizarSelectsDivisaoTipo() {
+  const opts = opcoesCategoriaAgrupadas(tipoLancamentoAtual);
+  $("divisao-linhas").querySelectorAll("select").forEach((sel) => {
+    const atual = sel.value;
+    sel.innerHTML = `<option value="">Selecione a categoria…</option>` + opts;
+    if ([...sel.options].some((o) => o.value === atual)) sel.value = atual;
+  });
+}
+
+function atualizarInfoDivisao() {
+  if (!divisaoAtiva) return;
+  const total = parseFloat($("lanc-valor").value) || 0;
+  const soma = lerLinhasDivisao().reduce((s, ln) => s + (ln.valor > 0 ? ln.valor : 0), 0);
+  const dif = Math.round(total * 100) - Math.round(soma * 100);
+  const info = $("divisao-info");
+  if (!total) {
+    info.textContent = "Informe o valor total acima e distribua entre as categorias.";
+    info.style.color = "var(--cinza)";
+  } else if (dif === 0 && soma > 0) {
+    info.textContent = `✓ Divisão completa: ${moeda(soma)} de ${moeda(total)}.`;
+    info.style.color = "var(--positivo)";
+  } else if (dif > 0) {
+    info.textContent = `Distribuído ${moeda(soma)} de ${moeda(total)} — falta ${moeda(dif / 100)}.`;
+    info.style.color = "var(--cinza)";
+  } else {
+    info.textContent = `Distribuído ${moeda(soma)} de ${moeda(total)} — ${moeda(-dif / 100)} acima do total.`;
+    info.style.color = "var(--vermelho)";
+  }
+}
+
+function ativarDivisao() {
+  divisaoAtiva = true;
+  $("campo-categoria-unica").classList.add("oculto");
+  $("lanc-dividir").classList.add("oculto");
+  $("bloco-divisao").classList.remove("oculto");
+  // Divisão só funciona em lançamento único (sem repetição/parcelamento)
+  $("lanc-repeticao").value = "unico";
+  $("campo-repeticao").classList.add("oculto");
+  $("campo-qtd-meses").classList.add("oculto");
+  $("parcelas-info").textContent = "";
+  if (!$("divisao-linhas").children.length) {
+    adicionarLinhaDivisao($("lanc-categoria").value, "");
+    adicionarLinhaDivisao("", "");
+  }
+  atualizarInfoDivisao();
+}
+
+function desativarDivisao() {
+  divisaoAtiva = false;
+  $("divisao-linhas").innerHTML = "";
+  $("bloco-divisao").classList.add("oculto");
+  $("campo-categoria-unica").classList.remove("oculto");
+  // Em edição não oferecemos divisão (o lançamento editado é uma linha só)
+  $("lanc-dividir").classList.toggle("oculto", !!editandoId.lanc);
+  atualizarVisibilidadeRepeticao();
+}
+
+$("lanc-dividir").onclick = ativarDivisao;
+$("lanc-remover-divisao").onclick = desativarDivisao;
+$("divisao-add").onclick = () => { adicionarLinhaDivisao(); atualizarInfoDivisao(); };
+$("lanc-valor").addEventListener("input", atualizarInfoDivisao);
+
 function abrirModalLanc(lanc = null) {
   if (contas.length === 0) { alert("Cadastre ao menos uma conta antes de lançar."); return; }
   editandoId.lanc = lanc ? lanc.id : null;
   $("titulo-modal-lanc").textContent = lanc ? "Editar lançamento" : "Novo lançamento";
+  desativarDivisao();
   setTipoLanc(lanc ? lanc.tipo : "despesa");
   $("lanc-desc").value = lanc ? lanc.descricao : "";
   $("lanc-valor").value = lanc ? lanc.valor : "";
@@ -1727,6 +1842,42 @@ $("lanc-salvar").onclick = async () => {
   const contatoId = $("lanc-contato").value || "";
   if (!desc || !valor || valor <= 0 || !data) return alert("Preencha descrição, valor e data de competência.");
   if (!contaId) return alert("Selecione a conta.");
+
+  // ---- Lançamento dividido entre várias categorias ----
+  if (divisaoAtiva && !editandoId.lanc) {
+    const linhas = lerLinhasDivisao();
+    if (linhas.length < 2) return alert("Adicione pelo menos duas categorias na divisão, ou volte para categoria única.");
+    for (const ln of linhas) {
+      if (!ln.categoriaId) return alert("Selecione a categoria em todas as linhas da divisão.");
+      if (!(ln.valor > 0)) return alert("Informe um valor maior que zero em todas as linhas da divisão.");
+    }
+    const idsCat = linhas.map((ln) => ln.categoriaId);
+    if (new Set(idsCat).size !== idsCat.length) return alert("Há categorias repetidas na divisão. Use cada categoria apenas uma vez.");
+    const somaCent = linhas.reduce((s, ln) => s + Math.round(ln.valor * 100), 0);
+    const totalCent = Math.round(valor * 100);
+    if (somaCent !== totalCent) {
+      return alert(`A soma das categorias (${moeda(somaCent / 100)}) está diferente do valor total (${moeda(valor)}). Ajuste os valores antes de salvar.`);
+    }
+    const grupoId = "g_" + Date.now() + "_" + Math.random().toString(36).slice(2, 8);
+    for (let i = 0; i < linhas.length; i++) {
+      const ln = linhas[i];
+      const dados = {
+        descricao: desc,
+        valor: Math.round(ln.valor * 100) / 100,
+        data, vencimento, status, dataQuitacao,
+        tipo: tipoLancamentoAtual,
+        categoriaId: ln.categoriaId,
+        contaId, contatoId,
+        grupoId, grupoTipo: "dividido", parcelaNum: i + 1, parcelasTotal: linhas.length,
+      };
+      const ref = await col("lancamentos").add(dados);
+      lancamentos.push({ id: ref.id, ...dados });
+    }
+    $("modal-lancamento").classList.add("oculto");
+    prepararFiltrosDeMes();
+    renderTudo();
+    return;
+  }
 
   const modo = (!editandoId.lanc) ? $("lanc-repeticao").value : "unico";
   const n = parseInt($("lanc-parcelas").value || "0", 10);
@@ -1840,7 +1991,9 @@ window.excluirLancamento = async (id) => {
   if (!l) return;
   if (l.grupoId) {
     const grupo = lancamentos.filter((x) => x.grupoId === l.grupoId);
-    const nome = l.grupoTipo === "recorrente" ? "recorrência" : "parcelamento";
+    const nome = l.grupoTipo === "recorrente" ? "recorrência"
+      : l.grupoTipo === "dividido" ? "divisão entre categorias"
+      : "parcelamento";
     const todas = confirm(
       `Este lançamento faz parte de um ${nome} (${grupo.length} lançamentos).\n\n` +
       `OK = excluir TODOS\nCancelar = excluir só este`
