@@ -218,6 +218,14 @@
   .item .acoes button.perigo:hover{color:var(--vermelho);background:var(--vermelho-claro);border-color:#f3c2c7}
   .vazio{padding:48px 20px;text-align:center;color:var(--cinza);font-size:14px}
   .filtros{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;align-items:center}
+  /* combobox de contato (busca + lista suspensa) no modal de lançamento */
+  .combo-lista{position:absolute;top:calc(100% + 4px);left:0;right:0;background:#fff;border:1px solid var(--borda);
+    border-radius:9px;box-shadow:var(--sombra-md);max-height:228px;overflow-y:auto;z-index:30}
+  .combo-lista .op{padding:10px 12px;font-size:14px;cursor:pointer;display:flex;align-items:center;
+    justify-content:space-between;gap:10px}
+  .combo-lista .op:hover{background:var(--azul-claro)}
+  .combo-lista .op .doc{color:var(--cinza);font-size:12.5px;flex-shrink:0}
+  .combo-lista .vazio-combo{padding:10px 12px;font-size:13px;color:var(--cinza)}
   .filtros select,.filtros input{width:auto;flex:1;min-width:130px;border-radius:999px;padding:9px 16px;background:#fff;font-weight:600;color:var(--texto)}
   .filtros select:hover{border-color:#cbd5e1}
   /* ---- Busca e ordenação ---- */
@@ -486,6 +494,13 @@
 
     <div class="pagina" id="pagina-contatos">
       <div class="secao-titulo"><h2>Fornecedores e clientes</h2><button class="btn-add" id="btn-novo-contato">+ Novo contato</button></div>
+      <div class="barra-busca">
+        <div class="campo-busca">
+          <span class="lupa"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.5" y2="16.5"></line></svg></span>
+          <input id="busca-contato" type="text" placeholder="Buscar por nome ou CNPJ/CPF…" autocomplete="off">
+          <button class="limpar oculto" id="limpar-busca-contato" title="Limpar">✕</button>
+        </div>
+      </div>
       <div class="filtros">
         <select id="filtro-contato-tipo">
           <option value="todos">Todos</option>
@@ -598,7 +613,11 @@
 
       <div class="bloco campo" id="bloco-contato"><label id="lanc-contato-label">Fornecedor / Cliente <span style="font-weight:400">(opcional)</span></label>
         <div style="display:flex;gap:8px">
-          <select id="lanc-contato" style="flex:1"></select>
+          <div class="combo-contato" style="flex:1;position:relative">
+            <input id="lanc-contato-busca" type="text" placeholder="Buscar por nome ou CNPJ/CPF…" autocomplete="off">
+            <input type="hidden" id="lanc-contato" value="">
+            <div class="combo-lista oculto" id="lanc-contato-lista"></div>
+          </div>
           <button type="button" class="btn-sec" id="lanc-novo-contato" style="flex:0 0 auto;width:auto;padding:10px 14px">+ Novo</button>
         </div>
       </div>
@@ -1617,7 +1636,7 @@ function abrirModalLanc(lanc = null) {
   preencherSelectsConta();
   preencherSelectContatoModal();
   if (lanc && lanc.contaId) $("lanc-conta").value = lanc.contaId;
-  if (lanc && lanc.contatoId) $("lanc-contato").value = lanc.contatoId;
+  definirContatoLanc(lanc && lanc.contatoId ? lanc.contatoId : "");
   if (lanc && lanc.tipo === "transferencia") {
     preencherSelectsContaTransferencia();
     if (lanc.contaId) $("lanc-conta-origem").value = lanc.contaId;
@@ -1945,17 +1964,83 @@ function tipoContatoDoLancamento() {
   return tipoLancamentoAtual === "receita" ? "cliente" : "fornecedor";
 }
 
+// helpers de busca: ignora acentos/maiúsculas no nome e pontuação no documento
+function buscaSemAcento(s) { return (s || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""); }
+function buscaSoDigitos(s) { return (s || "").replace(/\D/g, ""); }
+
+// contatos válidos para o tipo de lançamento atual (despesa→fornecedores, receita→clientes)
+function contatosDoTipoAtual() {
+  const tipoC = tipoContatoDoLancamento();
+  return contatos.filter((c) => c.tipo === tipoC || c.tipo === "ambos").sort((a, b) => a.nome.localeCompare(b.nome));
+}
+
+// define o contato selecionado no modal (id no campo oculto, nome no campo visível)
+function definirContatoLanc(id) {
+  const c = id ? contatoPorId(id) : null;
+  $("lanc-contato").value = c ? c.id : "";
+  $("lanc-contato-busca").value = c ? c.nome : "";
+}
+
+function fecharListaContato() { $("lanc-contato-lista").classList.add("oculto"); }
+
+function renderListaContato() {
+  const termo = $("lanc-contato-busca").value.trim();
+  let lista = contatosDoTipoAtual();
+  if (termo) {
+    const termoNome = buscaSemAcento(termo);
+    const termoDoc = buscaSoDigitos(termo);
+    lista = lista.filter((c) =>
+      buscaSemAcento(c.nome).includes(termoNome) ||
+      (termoDoc && buscaSoDigitos(c.doc).includes(termoDoc))
+    );
+  }
+  $("lanc-contato-lista").innerHTML =
+    `<div class="op" data-id=""><span style="color:var(--cinza)">— Nenhum —</span></div>` +
+    (lista.length
+      ? lista.map((c) => `<div class="op" data-id="${c.id}"><span>${escapar(c.nome)}</span>${c.doc ? `<span class="doc">${escapar(c.doc)}</span>` : ""}</div>`).join("")
+      : `<div class="vazio-combo">Nenhum contato encontrado. Use "+ Novo" para cadastrar.</div>`);
+  $("lanc-contato-lista").classList.remove("oculto");
+}
+
+$("lanc-contato-busca").addEventListener("focus", renderListaContato);
+$("lanc-contato-busca").addEventListener("input", () => {
+  // texto alterado: a seleção anterior deixa de valer até escolher de novo
+  $("lanc-contato").value = "";
+  renderListaContato();
+});
+$("lanc-contato-busca").addEventListener("keydown", (e) => {
+  if (e.key === "Escape") { fecharListaContato(); }
+  if (e.key === "Enter") {
+    e.preventDefault();
+    // Enter seleciona o primeiro resultado da lista filtrada
+    const primeiro = $("lanc-contato-lista").querySelector('.op[data-id]:not([data-id=""])');
+    if (primeiro) { definirContatoLanc(primeiro.dataset.id); fecharListaContato(); }
+  }
+});
+// mousedown (antes do blur) para o clique na opção funcionar
+$("lanc-contato-lista").addEventListener("mousedown", (e) => {
+  const op = e.target.closest(".op");
+  if (!op) return;
+  e.preventDefault();
+  definirContatoLanc(op.dataset.id);
+  fecharListaContato();
+});
+$("lanc-contato-busca").addEventListener("blur", () => {
+  fecharListaContato();
+  // ao sair do campo: restaura o nome do selecionado ou limpa se nada foi escolhido
+  const c = contatoPorId($("lanc-contato").value);
+  $("lanc-contato-busca").value = c ? c.nome : "";
+});
+
 function preencherSelectContatoModal() {
   const tipoC = tipoContatoDoLancamento();
-  // contatos do tipo certo OU marcados como "ambos" aparecem aqui
-  const lista = contatos.filter((c) => c.tipo === tipoC || c.tipo === "ambos").sort((a, b) => a.nome.localeCompare(b.nome));
-  const atual = $("lanc-contato").value;
   $("lanc-contato-label").innerHTML =
     (tipoC === "cliente" ? "Cliente" : "Fornecedor") + ` <span style="font-weight:400">(opcional)</span>`;
-  $("lanc-contato").innerHTML =
-    `<option value="">— Nenhum —</option>` +
-    lista.map((c) => `<option value="${c.id}">${escapar(c.nome)}${c.doc ? " · " + escapar(c.doc) : ""}</option>`).join("");
-  if ([...$("lanc-contato").options].some((o) => o.value === atual)) $("lanc-contato").value = atual;
+  // mantém a seleção se o contato ainda vale para o tipo atual (ex: tipo "ambos")
+  const atual = contatoPorId($("lanc-contato").value);
+  const valido = atual && (atual.tipo === tipoC || atual.tipo === "ambos");
+  definirContatoLanc(valido ? atual.id : "");
+  fecharListaContato();
 }
 
 function preencherSelectsContato() {
@@ -1973,6 +2058,20 @@ function renderContatos() {
   let lista = [...contatos];
   // "ambos" aparece tanto em Fornecedores quanto em Clientes
   if (filtro !== "todos") lista = lista.filter((c) => c.tipo === filtro || c.tipo === "ambos");
+
+  // busca por nome (ignora acentos/maiúsculas) ou por CNPJ/CPF (ignora pontuação)
+  const termo = ($("busca-contato").value || "").trim();
+  if (termo) {
+    const semAcento = (s) => (s || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    const soDigitos = (s) => (s || "").replace(/\D/g, "");
+    const termoNome = semAcento(termo);
+    const termoDoc = soDigitos(termo);
+    lista = lista.filter((c) =>
+      semAcento(c.nome).includes(termoNome) ||
+      (termoDoc && soDigitos(c.doc).includes(termoDoc))
+    );
+  }
+
   lista.sort((a, b) => a.nome.localeCompare(b.nome));
 
   $("lista-contatos").innerHTML = lista.length
@@ -1994,10 +2093,22 @@ function renderContatos() {
           </div>
         </div>`;
       }).join("")
-    : `<div class="vazio">Nenhum contato cadastrado. Clique em "+ Novo contato".</div>`;
+    : `<div class="vazio">${termo
+        ? `Nenhum contato encontrado para "${escapar(termo)}".`
+        : `Nenhum contato cadastrado. Clique em "+ Novo contato".`}</div>`;
 }
 
 $("filtro-contato-tipo").onchange = renderContatos;
+$("busca-contato").addEventListener("input", () => {
+  $("limpar-busca-contato").classList.toggle("oculto", !$("busca-contato").value);
+  renderContatos();
+});
+$("limpar-busca-contato").onclick = () => {
+  $("busca-contato").value = "";
+  $("limpar-busca-contato").classList.add("oculto");
+  renderContatos();
+  $("busca-contato").focus();
+};
 $("btn-novo-contato").onclick = () => abrirModalContato();
 $("contato-cancelar").onclick = () => $("modal-contato").classList.add("oculto");
 
@@ -2056,7 +2167,7 @@ $("contato-salvar").onclick = async () => {
     // volta ao lançamento e seleciona o contato criado
     contatoVoltarParaLanc = false;
     preencherSelectContatoModal();
-    if (dados.tipo === tipoContatoDoLancamento() || dados.tipo === "ambos") $("lanc-contato").value = idSalvo;
+    if (dados.tipo === tipoContatoDoLancamento() || dados.tipo === "ambos") definirContatoLanc(idSalvo);
   }
   renderTudo();
 };
